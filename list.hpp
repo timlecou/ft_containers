@@ -7,21 +7,6 @@
 
 namespace	ft
 {
-	template < typename T >
-	struct	Node
-	{
-		T			content;
-		Node<T>		*previous;
-		Node<T>		*next;
-
-		Node (void)
-		{
-			content = T();
-			previous = NULL;
-			next = NULL;
-		}
-	};
-
 	/**
 	 * Lists are sequence containers that allow constant time insert and
 	 * erase operations anywhere within the sequence, and iteration in both directions.
@@ -29,6 +14,14 @@ namespace	ft
 	template < class T, class Alloc = std::allocator<T> >
 	class list
 	{
+		private:
+			struct	node
+			{
+				T					content;
+				struct	node		*previous;
+				struct	node		*next;
+			};
+
 		public:
 			typedef	T						value_type;
 			typedef	Alloc					allocator_type;
@@ -40,29 +33,9 @@ namespace	ft
 			typedef	size_t					size_type;
 
 		protected:
-			Node<value_type>	*_c_begin;
-			Node<value_type>	*_c_end;
+			node				*_c_node;
 			allocator_type		_c_allocator;
 			size_type			_c_size;
-
-		private:
-
-			/**
-			 * Initialise the linked list.
-			 */
-			void		init_linked_list(void)
-			{
-				this->_c_begin = new Node<value_type>();
-				this->_c_end = this->_c_begin;
-				this->bounds();
-			}
-
-			void		bounds(void)
-			{
-				this->_c_begin = this->_c_end;
-				this->_c_end->previous = this->_c_begin;
-				this->_c_end->next = this->_c_begin;
-			}
 
 		public:
 
@@ -75,10 +48,11 @@ namespace	ft
 			explicit list (const allocator_type& alloc = allocator_type())
 			{
 				this->_c_allocator = alloc;
-				this->_c_begin = NULL;
-				this->_c_end = NULL;
+				this->_c_node = this->_c_allocator.allocate(1);
+				this->_c_allocator.construct(&this->_c_size->content, value_type());
+				this->_c_node->next = this->_c_node;
+				this->_c_node->previous = this->_c_node;
 				this->_c_size = 0;
-				this->init_linked_list();
 			}
 
 			/**
@@ -89,14 +63,35 @@ namespace	ft
 			 * @val : Value to fill the container with.
 			 * @alloc : Allocator object.
 			 */
-			explicit list (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type());
+			explicit list (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 			{
-				this->_allocator = alloc;
-				this->_c_begin = NULL;
-				this->_c_end = NULL;
-				this->_c_size = 0;
-				this->init_linked_list();
-				this->assign(n, val);
+				this->_c_allocator = alloc;
+				this->_c_node = this->_c_allocator.allocate(n);
+				for (size_type i = 0; i < n; ++i)
+					this->_c_allocator.construct(&this->_c_node->content, val);
+				this->_c_size = n;
+			}
+
+			/**
+			 * Test whether container is empty.
+			 *
+			 * Returns whether the list container is empty.
+			 * @return : true if the container size is 0, false otherwise.
+			 */
+			bool	empty (void) const
+			{
+				return (this->_c_size > 0);
+			}
+
+			/**
+			 * Return size.
+			 *
+			 * Returns the number of elements in the list container.
+			 * @return : The number of elements in the container.
+			 */
+			size_type size (void) const
+			{
+				return (this->_c_size);
 			}
 	};
 }
