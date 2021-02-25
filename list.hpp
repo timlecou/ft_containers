@@ -33,9 +33,10 @@ namespace	ft
 			typedef	size_t					size_type;
 
 		protected:
-			node				*_c_node;
-			allocator_type		_c_allocator;
-			size_type			_c_size;
+			node					*_c_node;
+			allocator_type			_c_value_allocator;
+			std::allocator<node>	_c_node_allocator;
+			size_type				_c_size;
 
 		public:
 
@@ -45,11 +46,10 @@ namespace	ft
 			 * Constructs an empty container, with no elements.
 			 * @alloc : Allocator object.
 			 */
-			explicit list (const allocator_type& alloc = allocator_type())
+			explicit list (const allocator_type& alloc = allocator_type()) : _c_value_allocator(alloc)
 			{
-				this->_c_allocator = alloc;
-				this->_c_node = this->_c_allocator.allocate(1);
-				this->_c_allocator.construct(&this->_c_size->content, value_type());
+				this->_c_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&this->_c_node->content, value_type());
 				this->_c_node->next = this->_c_node;
 				this->_c_node->previous = this->_c_node;
 				this->_c_size = 0;
@@ -63,14 +63,22 @@ namespace	ft
 			 * @val : Value to fill the container with.
 			 * @alloc : Allocator object.
 			 */
-			explicit list (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+			explicit list (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _c_value_allocator(alloc)
 			{
-				this->_c_allocator = alloc;
-				this->_c_node = this->_c_allocator.allocate(n);
+				node	*tmp;
+				tmp = this->_c_node;
 				for (size_type i = 0; i < n; ++i)
-					this->_c_allocator.construct(&this->_c_node->content, val);
+				{
+					this->_c_node = this->_c_node_allocator.allocate(1);
+					this->_c_value_allocator.construct(&this->_c_node->content, val);
+					this->_c_node->next->previous = this->_c_node;
+					this->_c_node = this->_c_node->next;
+				}
+				this->_c_node->previous = tmp;
 				this->_c_size = n;
 			}
+
+			//CAPACITY METHODS
 
 			/**
 			 * Test whether container is empty.
@@ -92,6 +100,103 @@ namespace	ft
 			size_type size (void) const
 			{
 				return (this->_c_size);
+			}
+
+			/**
+			 * Return maximum size.
+			 *
+			 * Returns the maximum number of elements that the list container can hold.
+			 * @return : The maximum number of elements the object can hold as content.
+			 */
+			size_type max_size (void) const
+			{
+				return (this->_c_node_allocator.max_size());
+			}
+
+			//ELEMENT ACCESS METHODS
+			
+			/**
+			 * Access first element.
+			 *
+			 * Returns a reference to the first element in the list container.
+			 * @return : A reference to the first element in the list container.
+			 */
+			reference front (void)
+			{
+				return (this->_c_node->next->content);
+			}
+
+			/**
+			 * Access first element.
+			 *
+			 * Returns a const reference to the first element in the list container.
+			 * @return : A const reference to the first element in the list container.
+			 */
+			const_reference front (void) const
+			{
+				return (this->_c_node->next->content);
+			}
+
+			/**
+			 * Access last element.
+			 *
+			 * Returns a reference to the last element in the list container.
+			 * @return : A reference to the last element in the list container.
+			 */
+			reference back (void)
+			{
+				return (this->_c_node->previous->content);
+			}
+			
+			/**
+			 * Access last element.
+			 *
+			 * Returns a const reference to the last element in the list container.
+			 * @return : A const reference to the flast element in the list container.
+			 */
+			const_reference back (void) const
+			{
+				return (this->_c_node->previous->content);
+			}
+
+			//MODIFIERS METHODS
+			
+			/**
+			 * Add element at the end.
+			 *
+			 * Adds a new element at the end of the list container, after its current last element.
+			 * @val : Value to be copied (or moved) to the new element.
+			 */
+			void push_back (const value_type& val)
+			{
+				node	*new_node;
+
+				new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->content, val);
+				new_node->next = this->_c_node;
+				new_node->previous = this->_c_node->previous;
+				this->_c_node->previous->next = new_node;
+				this->_c_node->previous = new_node;
+				this->_c_size++;
+			}
+
+			/**
+			 * Add element at beginning.
+			 *
+			 * Adds a new element at beginning of the list container, before its current first element.
+			 * @val : Value to be copied (or moved) to the new element.
+			 */
+			void push_front (const value_type& val)
+			{
+				node	*new_node;
+
+				new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->content, val);
+				new_node->next = this->_c_node->next;
+				new_node->previous = this->_c_node;
+				this->_c_node->next->previous = new_node;
+				this->_c_node->next = new_node;
+				this->_c_size++;
 			}
 	};
 }
