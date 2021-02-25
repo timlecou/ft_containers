@@ -161,6 +161,12 @@ namespace	ft
 
 			//MODIFIERS METHODS
 			
+			void assign (size_type n, const value_type& val)
+			{
+				(void)n;
+				(void)val;
+			}
+
 			/**
 			 * Add element at the end.
 			 *
@@ -197,6 +203,45 @@ namespace	ft
 				this->_c_node->next->previous = new_node;
 				this->_c_node->next = new_node;
 				this->_c_size++;
+			}
+
+			/**
+			 * Delete first element.
+			 *
+			 * Removes the first element in the list container, effectively reducing its size by one.
+			 */
+			void pop_front (void)
+			{
+				node	*tmp;
+
+				tmp = this->_c_node->next;
+				this->_c_node->next = this->_c_node->next->next;
+				
+				//	destroying/freeing the element and its value
+				this->_c_value_allocator.destroy(&tmp->content);
+				this->_c_node_allocator.deallocate(tmp, 1);
+
+				this->_c_size--;
+			}
+
+			/**
+			 * Delete last element.
+			 *
+			 * Removes the last element in the list container, effectively reducing its size by one.
+			 */
+			void pop_back (void)
+			{
+				node	*tmp;
+
+				tmp = this->_c_node->previous;
+				this->_c_node->previous = this->_c_node->previous->previous;
+				this->_c_node->previous->previous->next = this->_c_node;
+				
+				//	destroying/freeing the element and its value
+				this->_c_value_allocator.destroy(&tmp->content);
+				this->_c_node_allocator.deallocate(tmp, 1);
+
+				this->_c_size--;
 			}
 	};
 }
