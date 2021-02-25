@@ -4,6 +4,7 @@
 # define LIST_HPP
 
 #include <iostream>
+#include <unistd.h>
 
 namespace	ft
 {
@@ -39,6 +40,12 @@ namespace	ft
 			size_type				_c_size;
 
 		public:
+			class	iterator
+			{
+				private:
+					node	*container;
+			};
+		public:
 
 			/**
 			 * Empty container constructor (Default cnstructor).
@@ -65,17 +72,12 @@ namespace	ft
 			 */
 			explicit list (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _c_value_allocator(alloc)
 			{
-				node	*tmp;
-				tmp = this->_c_node;
-				for (size_type i = 0; i < n; ++i)
-				{
-					this->_c_node = this->_c_node_allocator.allocate(1);
-					this->_c_value_allocator.construct(&this->_c_node->content, val);
-					this->_c_node->next->previous = this->_c_node;
-					this->_c_node = this->_c_node->next;
-				}
-				this->_c_node->previous = tmp;
-				this->_c_size = n;
+				this->_c_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&this->_c_node->content, value_type());
+				this->_c_node->next = this->_c_node;
+				this->_c_node->previous = this->_c_node;
+				this->_c_size = 0;
+				assign(n, val);
 			}
 
 			//CAPACITY METHODS
@@ -161,29 +163,31 @@ namespace	ft
 
 			//MODIFIERS METHODS
 			
+			/**
+			 * Assign new content to container. (fill)
+			 *
+			 * Assigns new contents to the list container, replacing its
+			 * current contents, and modifying its size accordingly.
+			 * @n : New size for the container.
+			 * @val : Value to fill the container with.
+			 */
 			void assign (size_type n, const value_type& val)
 			{
-				(void)n;
-				(void)val;
-			}
+				size_type	i = 0;
 
-			/**
-			 * Add element at the end.
-			 *
-			 * Adds a new element at the end of the list container, after its current last element.
-			 * @val : Value to be copied (or moved) to the new element.
-			 */
-			void push_back (const value_type& val)
-			{
-				node	*new_node;
-
-				new_node = this->_c_node_allocator.allocate(1);
-				this->_c_value_allocator.construct(&new_node->content, val);
-				new_node->next = this->_c_node;
-				new_node->previous = this->_c_node->previous;
-				this->_c_node->previous->next = new_node;
-				this->_c_node->previous = new_node;
-				this->_c_size++;
+				while (i < this->_c_size && i < n)
+				{
+					this->_c_node = this->_c_node->next;
+					this->_c_node->content = val;
+					i++;
+				}
+				while (i < this->_c_size)
+					pop_back();
+				while (i < n)
+				{
+					push_back(val);
+					i++;
+				}
 			}
 
 			/**
@@ -222,6 +226,25 @@ namespace	ft
 				this->_c_node_allocator.deallocate(tmp, 1);
 
 				this->_c_size--;
+			}
+
+			/**
+			 * Add element at the end.
+			 *
+			 * Adds a new element at the end of the list container, after its current last element.
+			 * @val : Value to be copied (or moved) to the new element.
+			 */
+			void push_back (const value_type& val)
+			{
+				node	*new_node;
+
+				new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->content, val);
+				new_node->next = this->_c_node;
+				new_node->previous = this->_c_node->previous;
+				this->_c_node->previous->next = new_node;
+				this->_c_node->previous = new_node;
+				this->_c_size++;
 			}
 
 			/**
