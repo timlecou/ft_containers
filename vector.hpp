@@ -75,6 +75,43 @@ namespace ft
 
 		}
 
+		//CAPACITY METHODS
+
+		/**
+		 * Returns the number of elements in the vector.
+		 * @return : The number of elements in the container.
+		 */
+		size_type	size(void)
+		{
+			return (this->_size);
+		}
+
+		/**
+		 * Assign : Fill version
+		 *
+		 * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
+		 * @param n : New size for the container
+		 * @param val : Value to fill the container with.
+		 */
+		/*void assign (size_type n, const value_type& val)
+		{
+			this->_size = n;
+			this->_capacity = n;
+		}*/
+
+		/**
+		 * Return maximum size.
+		 *
+		 * Returns the maximum number of elements that the vector can hold.
+		 * @return : The maximum number of elements a vector container can hold as content.
+		 */
+		size_type max_size() const
+		{
+			return (this->_allocator.max_size());
+		}
+
+		//ELEMENT ACCESS METHODS
+
 		/**
 		 * Access element
 		 *
@@ -143,27 +180,6 @@ namespace ft
 			return (this->_c_container[this->_size - 1]);
 		}
 
-		/**
-		 * Returns the number of elements in the vector.
-		 * @return : The number of elements in the container.
-		 */
-		size_type	size(void)
-		{
-			return (this->_size);
-		}
-
-		/**
-		 * Assign : Fill version
-		 *
-		 * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
-		 * @param n : New size for the container
-		 * @param val : Value to fill the container with.
-		 */
-		/*void assign (size_type n, const value_type& val)
-		{
-			this->_size = n;
-			this->_capacity = n;
-		}*/
 
 		/**
 		 * Request a change in capacity
