@@ -24,6 +24,73 @@ namespace ft
 		size_type		_c_size;
 		size_type		_c_capacity;
 
+	public:
+		class	iterator
+		{
+			private:
+				value_type	*_i_container;
+
+			public:
+
+				/**
+				 * Default constructor.
+				 */
+				iterator (void)
+				{
+					_i_container = NULL;
+				}
+
+				/**
+				 * Assignation constructor.
+				 *
+				 * @container : the container to assign.
+				 */
+				iterator (pointer container)
+				{
+					this->_i_container = container;
+				}
+
+				/**
+				 * Copy constructor.
+				 *
+				 * @it : the iterator to copy.
+				 */
+				iterator (iterator it)
+				{
+					*this = it;
+				}
+
+				//OPERATORS
+
+				/**
+				 * Equality operator.
+				 *
+				 * @return : true if the 2 containers are equals, otherwise it returns false.
+				 */
+				bool	operator== (const iterator &it)	{ return (it._i_container == _i_container); }
+
+				/**
+				 * Disequality operator.
+				 *
+				 * @return : true if the 2 containers are not equals, otherwise it returns false.
+				 */
+				bool	operator!= (const iterator &it)	{ return (it._i_container != _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A < B, otherwise it returns false.
+				 */
+				bool	operator< (const iterator &it) { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A > B, otherwise it returns false.
+				 */
+				bool	operator> (const iterator &it) { return (it._i_container < _i_container); }
+		};
+
 	private:
 		void			realloc(size_type new_capacity)
 		{
@@ -66,12 +133,11 @@ namespace ft
 		 */
 		vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
+			this->_c_size = 0;
 			this->_c_allocator = alloc;
 			this->_c_container = this->_c_allocator.allocate(n);
-			for (size_type i = 0; i < n; ++i)
-				this->_c_allocator.construct(&this->_c_container[i], val);
-			this->_c_size = n;
 			this->_c_capacity = n;
+			assign(n, val);
 		}
 
 		/**
@@ -79,7 +145,11 @@ namespace ft
 		 */
 		~vector (void)
 		{
-
+			if (this->_c_capacity > 0)
+			{
+				for (size_type i = this->_c_size; i; i--)
+					pop_back();
+			}
 		}
 
 		//CAPACITY METHODS
@@ -94,19 +164,6 @@ namespace ft
 		}
 
 		/**
-		 * Assign : Fill version
-		 *
-		 * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
-		 * @param n : New size for the container
-		 * @param val : Value to fill the container with.
-		 */
-		/*void assign (size_type n, const value_type& val)
-		{
-			this->_size = n;
-			this->_capacity = n;
-		}*/
-
-		/**
 		 * Return maximum size.
 		 *
 		 * Returns the maximum number of elements that the vector can hold.
@@ -115,6 +172,19 @@ namespace ft
 		size_type max_size (void) const
 		{
 			return (this->_c_allocator.max_size());
+		}
+
+		/**
+		 * Return size of allocated storage capacity.
+		 *
+		 * Returns the size of the storage space currently allocated for
+		 * the vector, expressed in terms of elements.
+		 * @return : The size of the currently allocated storage capacity
+		 * in the vector, measured in terms of the number elements it can hold.
+		 */
+		size_type capacity() const
+		{
+			return (this->_c_capacity);;
 		}
 
 		/**
@@ -213,6 +283,22 @@ namespace ft
 		//MODIFIERS METHODS
 		
 		/**
+		 * Assign : Fill version
+		 *
+		 * Assigns new contents to the vector, replacing its current
+		 * contents, and modifying its size accordingly.
+		 * @param n : New size for the container
+		 * @param val : Value to fill the container with.
+		 */
+		void assign (size_type n, const value_type& val)
+		{
+			for (size_type i = this->_c_size; i; i--)
+				pop_back();
+			for (size_type j = 0; j < n; ++j)
+				push_back(val);
+		}
+
+		/**
 		 * Add element at the end.
 		 *
 		 * Adds a new element at the end of the vector, after its current last element.
@@ -224,6 +310,17 @@ namespace ft
 				reserve(this->_c_size + 1);
 			this->_c_container[this->_c_size] = val;
 			this->_c_size++;
+		}
+
+		/**
+		 * Delete last element.
+		 *
+		 * Removes the last element in the vector, effectively reducing the container size by one.
+		 */
+		void pop_back (void)
+		{
+			this->_c_allocator.destroy(&this->_c_container[this->_c_size]);
+			this->_c_size--;
 		}
 	};
 }

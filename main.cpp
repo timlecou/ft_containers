@@ -5,10 +5,13 @@
 int		main(void)
 {
 	{
-		ft::vector<int>	l(3, 42);
+		ft::vector<int>	l(0, 42);
 		
+		std::cout << "back : " << l.back() << std::endl << "size : " << l.size() << std::endl;
 		l.push_back(234);
-		std::cout << l.back() << std::endl;
+		std::cout << "back : " << l.back() << std::endl << "capacity : " << l.capacity() << std::endl;
+		l.pop_back();
+		std::cout << "back : " << l.back() << std::endl << "size : " << l.size() << std::endl;
 	}
 	return (0);
 }
