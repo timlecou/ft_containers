@@ -55,40 +55,89 @@ namespace ft
 				 *
 				 * @it : the iterator to copy.
 				 */
-				iterator (iterator it)
+				iterator (const iterator &it)
 				{
-					*this = it;
+					this->_i_container = it._i_container;
 				}
 
 				//OPERATORS
+
+				/**
+				 * Offset dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				value_type	operator[] (size_type n) const { return (_i_container[n]); }
+
+				/**
+				 * Dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				value_type	operator* (void) const { return (*_i_container); }
+
+				/**
+				 * Dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				value_type	operator-> (void) const { return (_i_container); }
 
 				/**
 				 * Equality operator.
 				 *
 				 * @return : true if the 2 containers are equals, otherwise it returns false.
 				 */
-				bool	operator== (const iterator &it)	{ return (it._i_container == _i_container); }
+				bool	operator== (const iterator &it) const	{ return (it._i_container == _i_container); }
 
 				/**
 				 * Disequality operator.
 				 *
 				 * @return : true if the 2 containers are not equals, otherwise it returns false.
 				 */
-				bool	operator!= (const iterator &it)	{ return (it._i_container != _i_container); }
+				bool	operator!= (const iterator &it) const	{ return (it._i_container != _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A < B, otherwise it returns false.
 				 */
-				bool	operator< (const iterator &it) { return (it._i_container < _i_container); }
+				bool	operator< (const iterator &it) const { return (it._i_container < _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A > B, otherwise it returns false.
 				 */
-				bool	operator> (const iterator &it) { return (it._i_container < _i_container); }
+				bool	operator> (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A <= B, otherwise it returns false.
+				 */
+				bool	operator<= (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A >= B, otherwise it returns false.
+				 */
+				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Increment operator.
+				 *
+				 * @return : 
+				 */
+				iterator operator++ (int n)
+				{
+					iterator	copy(*this);
+
+					(void)n;
+					++this->_i_container;
+					return (copy);
+				}
 		};
 
 	private:
@@ -151,6 +200,49 @@ namespace ft
 					pop_back();
 			}
 		}
+
+		//ITERATORS
+
+		/**
+		 * Return iterator to beginning.
+		 *
+		 * Returns an iterator pointing to the first element in the vector.
+		 */
+		iterator begin (void)
+		{
+			return (iterator(this->_c_container));
+		}
+		
+		/**
+		 * Return const iterator to beginning.
+		 *
+		 * Returns an const iterator pointing to the first element in the vector.
+		 */
+//		const_iterator begin (void) const
+//		{
+//			return (iterator(this->_c_container));
+//		}
+
+		/**
+		 * Return iterator to end.
+		 *
+		 * Returns an iterator pointing to the last element in the vector.
+		 */
+		iterator end (void)
+		{
+			return (iterator(this->_c_container + this->_c_size));
+		}
+		
+		/**
+		 * Return const iterator to last.
+		 *
+		 * Returns an const iterator pointing to the last element in the vector.
+		 */
+//		const_iterator end (void) const
+//		{
+//			return (iterator(this->_c_container + this->_c_size));
+//		}
+
 
 		//CAPACITY METHODS
 
