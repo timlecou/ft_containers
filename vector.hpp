@@ -6,7 +6,7 @@
 namespace ft
 {
 	template < class T, class Alloc = std::allocator<T> >
-	class	Vector
+	class	vector
 	{
 	public:
 		typedef	T				value_type;
@@ -20,18 +20,25 @@ namespace ft
 
 	protected:
 		value_type		*_c_container;
-		allocator_type 	_allocator;
-		size_type		_size;
-		size_type		_capacity;
+		allocator_type 	_c_allocator;
+		size_type		_c_size;
+		size_type		_c_capacity;
 
 	private:
-		/*void			realloc(size_type previous_size)
+		void			realloc(size_type new_capacity)
 		{
 			value_type	*tmp;
 
-			if (!(tmp = (value_type*)malloc(sizeof(value_type))))
-				return (NULL);
-		}*/
+			//if (new_capacity > max_size())
+			//	throw length_error;
+			tmp = this->_c_allocator.allocate(new_capacity);
+			for (size_type i = 0; i < this->_c_size; i++)
+				tmp[i] = this->_c_container[i];
+			for (size_type j = 0; j < this->_c_size; j++)
+				this->_c_allocator.destroy(&this->_c_container[j]);
+			this->_c_container = tmp;
+			this->_c_capacity = new_capacity;
+		}
 
 	public:
 
@@ -41,12 +48,12 @@ namespace ft
 		 * Constructs an empty container, with no elements.
 		 * @param alloc : Allocator object
 		 */
-		Vector(const allocator_type& alloc = allocator_type())
+		vector (const allocator_type& alloc = allocator_type())
 		{
-			this->_allocator = alloc;
+			this->_c_allocator = alloc;
 			this->_c_container = NULL;
-			this->_size = 0;
-			this->_capacity = 0;
+			this->_c_size = 0;
+			this->_c_capacity = 0;
 		}
 
 		/**
@@ -57,20 +64,20 @@ namespace ft
 		 * @param val : Value to fill the container with
 		 * @param alloc : Allocator object
 		 */
-		Vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+		vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
-			this->_allocator = alloc;
-			this->_c_container = this->_allocator.allocate(n);
+			this->_c_allocator = alloc;
+			this->_c_container = this->_c_allocator.allocate(n);
 			for (size_type i = 0; i < n; ++i)
-				this->_c_container[i] = val;
-			this->_size = n;
-			this->_capacity = n;
+				this->_c_allocator.construct(&this->_c_container[i], val);
+			this->_c_size = n;
+			this->_c_capacity = n;
 		}
 
 		/**
 		 * Destructor of the container
 		 */
-		~Vector(void)
+		~vector (void)
 		{
 
 		}
@@ -81,9 +88,9 @@ namespace ft
 		 * Returns the number of elements in the vector.
 		 * @return : The number of elements in the container.
 		 */
-		size_type	size(void)
+		size_type	size (void)
 		{
-			return (this->_size);
+			return (this->_c_size);
 		}
 
 		/**
@@ -105,9 +112,21 @@ namespace ft
 		 * Returns the maximum number of elements that the vector can hold.
 		 * @return : The maximum number of elements a vector container can hold as content.
 		 */
-		size_type max_size() const
+		size_type max_size (void) const
 		{
-			return (this->_allocator.max_size());
+			return (this->_c_allocator.max_size());
+		}
+
+		/**
+		 * Request a change in capacity.
+		 *
+		 * Requests that the vector capacity be at least enough to contain n elements.
+		 * @n : Minimum capacity for the vector.
+		 */
+		void reserve (size_type n)
+		{
+			if (n > this->_c_size)
+				realloc(n);
 		}
 
 		//ELEMENT ACCESS METHODS
@@ -142,7 +161,7 @@ namespace ft
 		 * Returns a reference to the first element in the vector.
 		 * @return : A reference to the first element in the vector container.
 		 */
-		reference front()
+		reference front (void)
 		{
 			return (this->_c_container[0]);
 		}
@@ -153,7 +172,7 @@ namespace ft
 		 * Returns a const reference to the first element in the vector.
 		 * @return : A reference to the first element in the vector container.
 		 */
-		const_reference front() const
+		const_reference front (void) const
 		{
 			return (this->_c_container[0]);
 		}
@@ -164,9 +183,9 @@ namespace ft
 		 * Returns a reference to the last element in the vector.
 		 * @return : A reference to the last element in the vector container.
 		 */
-		reference back()
+		reference back (void)
 		{
-			return (this->_c_container[this->_size - 1]);
+			return (this->_c_container[this->_c_size - 1]);
 		}
 
 		/**
@@ -175,24 +194,9 @@ namespace ft
 		 * Returns a const reference to the last element in the vector.
 		 * @return : A reference to the last element in the vector container.
 		 */
-		const_reference back() const
+		const_reference back (void) const
 		{
-			return (this->_c_container[this->_size - 1]);
-		}
-
-
-		/**
-		 * Request a change in capacity
-		 *
-		 * Requests that the vector capacity be at least enough to contain n elements.
-		 * @param n : Minimum capacity for the vector.
-		 */
-		void reserve (size_type n)
-		{
-			if (n > this->_capacity)
-			{
-				this->realloc(n);
-			}
+			return (this->_c_container[this->_c_size - 1]);
 		}
 
 		/**
@@ -201,9 +205,25 @@ namespace ft
 		 * Returns whether the vector is empty
 		 * @return : true if the container size is 0, false otherwise.
 		 */
-		bool	empty(void) const
+		bool	empty (void) const
 		{
-			return (size() == 0);
+			return (this->_c_size == 0);
+		}
+
+		//MODIFIERS METHODS
+		
+		/**
+		 * Add element at the end.
+		 *
+		 * Adds a new element at the end of the vector, after its current last element.
+		 * @val : Value to be copied (or moved) to the new element.
+		 */
+		void push_back (const value_type& val)
+		{
+			if (this->_c_capacity <= this->_c_size)
+				reserve(this->_c_size + 1);
+			this->_c_container[this->_c_size] = val;
+			this->_c_size++;
 		}
 	};
 }

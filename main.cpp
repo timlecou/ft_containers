@@ -1,11 +1,14 @@
 #include "list.hpp"
+#include "vector.hpp"
 #include <list>
 
 int		main(void)
 {
 	{
-		ft::list<int>	l(3, 42);
-		std::cout << l.size() << std::endl;
+		ft::vector<int>	l(3, 42);
+		
+		l.push_back(234);
+		std::cout << l.back() << std::endl;
 	}
 	return (0);
 }
