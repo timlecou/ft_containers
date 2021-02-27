@@ -63,6 +63,19 @@ namespace ft
 				//OPERATORS
 
 				/**
+				 * Assignation operator.
+				 *
+				 * Copies all the elements from x into the container.
+				 * @param it : the iterator to assign.
+				 * @return : *this.
+				 */
+				iterator &operator= (iterator const &it)
+				{
+					_i_container = it._i_container;
+					return (*this);
+				}
+
+				/**
 				 * Offset dereference operator.
 				 *
 				 * @return : the value of the dereferenced container.
@@ -128,15 +141,57 @@ namespace ft
 				/**
 				 * Increment operator.
 				 *
-				 * @return : 
+				 * @return : the iterator increased by 1.
 				 */
 				iterator operator++ (int n)
 				{
-					iterator	copy(*this);
+					iterator	it(*this);
 
 					(void)n;
 					++this->_i_container;
-					return (copy);
+					return (it);
+				}
+
+				/**
+				 * Decrement operator.
+				 *
+				 * @return : the iterator decreased by 1.
+				 */
+				iterator operator-- (int n)
+				{
+					iterator	it(*this);
+
+					(void)n;
+					--this->_i_container;
+					return (it);
+				}
+
+				/**
+				 * Addition operator.
+				 *
+				 * @param n : number to add.
+				 * @return : increased iterator.
+				 */
+				iterator operator+ (int n)
+				{
+					iterator	it(*this);
+
+					it._i_container += n;
+					return (it);
+				}
+
+				/**
+				 * Substraction operator.
+				 *
+				 * @param n : number to substract.
+				 * @return : substracted iterator.
+				 */
+				iterator operator- (int n)
+				{
+					iterator	it(*this);
+
+					it._i_container -= n;
+					return (it);
 				}
 		};
 
@@ -267,6 +322,23 @@ namespace ft
 		}
 
 		/**
+		 * Change size.
+		 *
+		 * Resizes the container so that it contains n elements.
+		 * @param n : New container size, expressed in number of elements.
+		 * @param val : Object whose content is copied to the added elements in case that n is greater than the current container size.
+		 */
+		void resize (size_type n, value_type val = value_type())
+		{
+			if (n < this->_c_size)
+				for (size_type i = 0; i < n; ++i)
+					pop_back();
+			else
+				while (this->_c_size != n)
+					push_back(val);
+		}
+
+		/**
 		 * Return size of allocated storage capacity.
 		 *
 		 * Returns the size of the storage space currently allocated for
@@ -277,6 +349,17 @@ namespace ft
 		size_type capacity() const
 		{
 			return (this->_c_capacity);;
+		}
+
+		/**
+		 * Test whether vector is empty
+		 *
+		 * Returns whether the vector is empty
+		 * @return : true if the container size is 0, false otherwise.
+		 */
+		bool	empty (void) const
+		{
+			return (this->_c_size == 0);
 		}
 
 		/**
@@ -313,6 +396,30 @@ namespace ft
 		 * @return : The element at the specified position in the vector.
 		 */
 		const_reference operator[] (size_type n) const
+		{
+			return (this->_c_container[n]);
+		}
+
+		/**
+		 * Access element.
+		 *
+		 * Returns a reference to the element at position n in the vector.
+		 * @param n : Position of an element in the container.
+		 * @return : The element at the specified position in the container.
+		 */
+		reference at (size_type n)
+		{
+			return (this->_c_container[n]);
+		}
+
+		/**
+		 * Access element.
+		 *
+		 * Returns a const reference to the element at position n in the vector.
+		 * @param n : Position of an element in the container.
+		 * @return : The element at the specified position in the container.
+		 */
+		const_reference at (size_type n) const
 		{
 			return (this->_c_container[n]);
 		}
@@ -361,16 +468,6 @@ namespace ft
 			return (this->_c_container[this->_c_size - 1]);
 		}
 
-		/**
-		 * Test whether vector is empty
-		 *
-		 * Returns whether the vector is empty
-		 * @return : true if the container size is 0, false otherwise.
-		 */
-		bool	empty (void) const
-		{
-			return (this->_c_size == 0);
-		}
 
 		//MODIFIERS METHODS
 		
