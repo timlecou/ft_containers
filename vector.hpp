@@ -37,7 +37,7 @@ namespace ft
 				 */
 				iterator (void)
 				{
-					_i_container = NULL;
+					this->_i_container = NULL;
 				}
 
 				/**
@@ -137,6 +137,14 @@ namespace ft
 				 * @return : true if the A >= B, otherwise it returns false.
 				 */
 				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
+
+				iterator &operator+=(int n){ _i_container = _i_container + n; return (*this); }
+
+				iterator &operator-=(int n){ _i_container -= n; return (*this); }
+
+				iterator &operator++(){ _i_container++; return (*this); }
+
+				iterator &operator--(){ _i_container--; return (*this); }
 
 				/**
 				 * Increment operator.
@@ -331,7 +339,7 @@ namespace ft
 		void resize (size_type n, value_type val = value_type())
 		{
 			if (n < this->_c_size)
-				for (size_type i = 0; i < n; ++i)
+				while (this->_c_size != n)
 					pop_back();
 			else
 				while (this->_c_size != n)
@@ -511,5 +519,51 @@ namespace ft
 			this->_c_allocator.destroy(&this->_c_container[this->_c_size]);
 			this->_c_size--;
 		}
+
+		/**
+		 * Insert elements. (single element)
+		 *
+		 * The vector is extended by inserting new elements before the element at the specified position,
+		 * effectively increasing the container size by the number of elements inserted.
+		 * @param position : Position in the vector where the new elements are inserted.
+		 * @param val : Value to be copied (or moved) to the inserted elements.
+		 * @return : An iterator that points to the first of the newly inserted elements.
+		 */
+		iterator insert (iterator position, const value_type& val)
+		{
+			size_type	pos = *position - *begin();
+			size_type	end = this->_c_size;
+
+			if (this->_c_size + 1 < this->_c_capacity)
+				reserve(this->_c_size + 1);
+			while (end > pos)
+			{
+				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - 1]);
+				end--;
+			}
+			this->_c_allocator.construct(&this->_c_container[end], val);
+			return (begin() + pos);
+		}
+
+		/**
+		 * Insert elements. (fill)
+		 *
+		 * The vector is extended by inserting new elements before the element at the specified position,
+		 * effectively increasing the container size by the number of elements inserted.
+		 * @param position : Position in the vector where the new elements are inserted.
+		 * @n : Number of elements to insert.
+		 * @param val : Value to be copied (or moved) to the inserted elements.
+		 */
+		/*void insert (iterator position, size_type n, const value_type& val)
+		{
+			size_type	pos = *position - begin();
+
+			if (this->_c_size + n < this->_c_capacity)
+				reserve(this->_c_size + n);
+			for (size_type	end = this->_c_size; end > pos; end--)
+				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - 1]);
+			this->_c_allocator.construct(&this->_c_container[end], position);
+			return (begin() + pos);
+		}*/
 	};
 }
