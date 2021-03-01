@@ -257,11 +257,7 @@ namespace ft
 		 */
 		~vector (void)
 		{
-			if (this->_c_capacity > 0)
-			{
-				for (size_type i = this->_c_size; i; i--)
-					pop_back();
-			}
+			clear();
 		}
 
 		//ITERATORS
@@ -283,6 +279,7 @@ namespace ft
 		 */
 //		const_iterator begin (void) const
 //		{
+//		TODO
 //			return (iterator(this->_c_container));
 //		}
 
@@ -303,6 +300,7 @@ namespace ft
 		 */
 //		const_iterator end (void) const
 //		{
+//		TODO
 //			return (iterator(this->_c_container + this->_c_size));
 //		}
 
@@ -669,18 +667,33 @@ namespace ft
 		{
 			vector		tmp;
 			size_type	size = x.size();
-			int			i = 0;
 
-			for (int i = 0; i < size, i++)
-				tmp.push_back(x[i++]);
+			tmp.reserve(size);
+			for (size_type i = 0; i < size; i++)
+				tmp.push_back(x[i]);
 			while (x.size() > 0)
 				x.pop_back();
-			for (int j = 0; j < this->_c_size; j++)
+			for (size_type j = 0; j < this->_c_size; j++)
 				x.push_back(this->_c_container[j]);
 			while (this->_c_size > 0)
 				pop_back();
-			for (int k = 0; k < tmp.size(); k++)
+			for (size_type k = 0; k < tmp.size(); k++)
 				push_back(tmp[k]);
+		}
+
+		/**
+		 * Clear content.
+		 *
+		 * Removes all elements from the vector (which are destroyed),
+		 * leaving the container with a size of 0.
+		 */
+		void clear (void)
+		{
+			size_type	i = 0;
+			size_type	size = this->_c_size;
+
+			for (iterator it = begin(); i < size; i++)
+				erase(it++);
 		}
 	};
 }
