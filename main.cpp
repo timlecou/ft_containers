@@ -6,8 +6,7 @@
 int		main(void)
 {
 	{
-		std::vector<int>	l(1, 42);
-		std::vector<int>::iterator test = l.begin();
+		ft::vector<int>	l(1, 42);
 
 
 
@@ -19,14 +18,21 @@ int		main(void)
 		l.push_back(4);
 		l.push_back(2065);
 
-		test += 4;
+		ft::vector<int>::iterator test = l.begin();
+		test++;
+		test++;
+		test++;
 
-		std::cout << "test : " << *test << std::endl;
-
-		//l.resize(12);
-		l.insert(test, 34500000);
-		std::vector<int>::iterator	it = l.begin();
-		for (std::vector<int>::iterator ite = l.end(); it != ite ; it++)
+		std::cout << "size : " << l.size() << std::endl;
+		ft::vector<int>::iterator	ita = l.begin();
+		for (ft::vector<int>::iterator itb = l.end(); ita != itb ; ita++)
+			std::cout << *ita << "  " << std::endl;
+		std::cout << "------------" << std::endl;
+		//l.insert(test, 3, 3333);
+		l.erase(l.begin() + 1, l.end() - 2);
+		std::cout << "size : " << l.size() << std::endl;
+		ft::vector<int>::iterator	it = l.begin();
+		for (ft::vector<int>::iterator ite = l.end(); it != ite ; it++)
 			std::cout << *it << "  " << std::endl;
 		std::cout << "size = " << l.size() << std::endl;
 	}

@@ -356,7 +356,7 @@ namespace ft
 		 */
 		size_type capacity() const
 		{
-			return (this->_c_capacity);;
+			return (this->_c_capacity);
 		}
 
 		/**
@@ -531,16 +531,20 @@ namespace ft
 		 */
 		iterator insert (iterator position, const value_type& val)
 		{
-			size_type	pos = *position - *begin();
+			size_type	pos = 0;
 			size_type	end = this->_c_size;
 
-			if (this->_c_size + 1 < this->_c_capacity)
+			for (iterator it = begin(); it != position; it++)
+				pos++;
+			if (this->_c_size + 1 > this->_c_capacity)
 				reserve(this->_c_size + 1);
 			while (end > pos)
 			{
+				this->_c_allocator.destroy(&this->_c_container[end]);
 				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - 1]);
 				end--;
 			}
+			this->_c_size++;
 			this->_c_allocator.construct(&this->_c_container[end], val);
 			return (begin() + pos);
 		}
@@ -550,20 +554,107 @@ namespace ft
 		 *
 		 * The vector is extended by inserting new elements before the element at the specified position,
 		 * effectively increasing the container size by the number of elements inserted.
-		 * @param position : Position in the vector where the new elements are inserted.
+		 * @position : Position in the vector where the new elements are inserted.
 		 * @n : Number of elements to insert.
-		 * @param val : Value to be copied (or moved) to the inserted elements.
+		 * @val : Value to be copied (or moved) to the inserted elements.
 		 */
-		/*void insert (iterator position, size_type n, const value_type& val)
+		void insert (iterator position, size_type n, const value_type& val)
 		{
-			size_type	pos = *position - begin();
+			size_type	pos = 0;
+			size_type	end = this->_c_size + n;
 
-			if (this->_c_size + n < this->_c_capacity)
-				reserve(this->_c_size + n);
-			for (size_type	end = this->_c_size; end > pos; end--)
-				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - 1]);
-			this->_c_allocator.construct(&this->_c_container[end], position);
+			for (iterator it = begin(); it != position; it++)
+				pos++;
+			if (end > this->_c_capacity)
+				reserve(end);
+			while (end > pos + n)
+			{
+				this->_c_allocator.destroy(&this->_c_container[end]);
+				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - n]);
+				end--;
+			}
+			while (end > pos)
+			{
+				this->_c_allocator.construct(&this->_c_container[end], val);
+				end--;
+			}
+			this->_c_size += n;
+		}
+
+		/**
+		 * Insert elements. (range)
+		 *
+		 * The vector is extended by inserting new elements before the element at the specified position,
+		 * effectively increasing the container size by the number of elements inserted.
+		 * @position : Position in the vector where the new elements are inserted.
+		 * @first : Iterators specifying a range of elements.
+		 * @last : Iterators specifying a range of elements.
+		 */
+//		template <class InputIterator>
+  //  	void insert (iterator position, InputIterator first, InputIterator last)
+	//	{
+			//TODO
+	//	}
+
+		/**
+		 * Erase elements.
+		 *
+		 * Removes from the vector either a single element (position) or a range of elements ([first,last)).
+		 * @position : Iterator pointing to a single element to be removed from the vector.
+		 * @return : An iterator pointing to the new location of the element
+		 * that followed the last element erased by the function call.
+		 */
+		iterator erase (iterator position)
+		{
+			size_type	pos = 0;
+			size_type	end = this->_c_size;
+
+			for (iterator it = begin(); it != position; it++)
+				pos++;
+			this->_c_allocator.destroy(&this->_c_container[pos]);
+			while (pos < end)
+			{
+				this->_c_allocator.construct(&this->_c_container[pos], this->_c_container[pos + 1]);
+				pos++;
+			}
+			this->_c_size--;
+			this->_c_allocator.destroy(&this->_c_container[end]);
 			return (begin() + pos);
-		}*/
+		}
+
+		/**
+		 * Erase elements.
+		 *
+		 * Removes from the vector either a single element (position) or a range of elements ([first,last)).
+		 * @first : Iterators specifying a range within the vector] to be removed: [first,last).
+		 * @last : Iterators specifying a range within the vector] to be removed: [first,last).
+		 * @return : An iterator pointing to the new location of the element
+		 * that followed the last element erased by the function call.
+		 */
+		iterator erase (iterator first, iterator last)
+		{
+			size_type	pos = 0;
+			int			cnt = 0;
+			size_type	end = this->_c_size;
+			iterator	it = begin();
+
+			for (iterator itb = begin(); itb != first; itb++)
+				cnt++;
+			while (it != last)
+			{
+				pos++;
+				it++;
+			}
+			while (pos >= cnt)
+			{
+				this->_c_allocator.destroy(&this->_c_container[pos]);
+				this->_c_allocator.construct(&this->_c_container[pos], this->_c_container[this->_c_size - 1]);
+				this->_c_allocator.destroy(&this->_c_container[this->_c_size - 1]);
+				it--;
+				pos--;
+				this->_c_size--;
+			}
+			return (begin() + cnt);
+		}
 	};
 }
