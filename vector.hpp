@@ -654,7 +654,33 @@ namespace ft
 				pos--;
 				this->_c_size--;
 			}
-			return (begin() + cnt);
+			return (begin() + pos);
+		}
+
+		/**
+		 * Swap content.
+		 *
+		 * Exchanges the content of the container by the content of x,
+		 * which is another vector object of the same type.
+		 * @x : Another vector container of the same type whose content is
+		 * swapped with that of this container.
+		 */
+		void swap (vector& x)
+		{
+			vector		tmp;
+			size_type	size = x.size();
+			int			i = 0;
+
+			for (int i = 0; i < size, i++)
+				tmp.push_back(x[i++]);
+			while (x.size() > 0)
+				x.pop_back();
+			for (int j = 0; j < this->_c_size; j++)
+				x.push_back(this->_c_container[j]);
+			while (this->_c_size > 0)
+				pop_back();
+			for (int k = 0; k < tmp.size(); k++)
+				push_back(tmp[k]);
 		}
 	};
 }
