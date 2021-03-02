@@ -300,7 +300,7 @@ namespace ft
 		 */
 //		const_iterator end (void) const
 //		{
-//		TODO
+//
 //			return (iterator(this->_c_container + this->_c_size));
 //		}
 
@@ -633,7 +633,6 @@ namespace ft
 		{
 			size_type	pos = 0;
 			int			cnt = 0;
-			size_type	end = this->_c_size;
 			iterator	it = begin();
 
 			for (iterator itb = begin(); itb != first; itb++)
