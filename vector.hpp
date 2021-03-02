@@ -28,7 +28,7 @@ namespace ft
 		class	iterator
 		{
 			private:
-				value_type	*_i_container;
+				pointer	_i_container;
 
 			public:
 
@@ -203,6 +203,47 @@ namespace ft
 				}
 		};
 
+		class	const_iterator
+		{
+			private:
+				pointer	_i_container;
+
+			public:
+
+				/**
+				 * Default constructor.
+				 */
+				const_iterator (void)
+				{
+					this->_i_container = NULL;
+				}
+
+				/**
+				 * Assignation constructor.
+				 *
+				 * @container : the container to assign.
+				 */
+				const_iterator (pointer container)
+				{
+					this->_i_container = container;
+				}
+
+				/**
+				 * Copy constructor.
+				 *
+				 * @it : the iterator to copy.
+				 */
+				const_iterator (const const_iterator &it)
+				{
+					this->_i_container = it._i_container;
+					return (*this);
+				}
+
+				//OPERATORS
+
+
+		};
+
 	private:
 		void			realloc(size_type new_capacity)
 		{
@@ -277,11 +318,10 @@ namespace ft
 		 *
 		 * Returns an const iterator pointing to the first element in the vector.
 		 */
-//		const_iterator begin (void) const
-//		{
-//		TODO
-//			return (iterator(this->_c_container));
-//		}
+		const_iterator begin (void) const
+		{
+			return (iterator(this->_c_container));
+		}
 
 		/**
 		 * Return iterator to end.

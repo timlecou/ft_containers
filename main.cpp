@@ -5,24 +5,12 @@
 
 int		main(void)
 {
-	ft::vector<int> myvector;
-  myvector.push_back (100);
-  myvector.push_back (200);
-  myvector.push_back (300);
+	ft::vector<int> v;
 
-  std::cout << "myvector contains:";
-  for (unsigned i=0; i<myvector.size(); i++)
-    std::cout << ' ' << myvector[i];
-  std::cout << '\n';
+	v.push_back(42);
 
-  myvector.clear();
-  myvector.push_back (1101);
-  myvector.push_back (2202);
+	ft::vector<int>::const_iterator	it = v.begin();
 
-  std::cout << "myvector contains:";
-  for (unsigned i=0; i<myvector.size(); i++)
-    std::cout << ' ' << myvector[i];
-  std::cout << '\n';
-
+	std::cout << *it << std::endl;
 	return (0);
 }
