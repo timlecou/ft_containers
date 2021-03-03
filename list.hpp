@@ -44,6 +44,9 @@ namespace	ft
 			{
 				private:
 					node	*container;
+
+				public:
+
 			};
 		public:
 

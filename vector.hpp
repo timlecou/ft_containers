@@ -13,8 +13,8 @@ namespace ft
 		typedef	Alloc			allocator_type;
 		typedef	T				&reference;
 		typedef	T	const		&const_reference;
-		typedef	T				*pointer;
-		typedef	T	const		*const_pointer;
+		typedef	T*				pointer;
+		typedef	T*	const		const_pointer;
 		typedef	ptrdiff_t		difference_type;
 		typedef	size_t			size_type;
 
@@ -25,6 +25,7 @@ namespace ft
 		size_type		_c_capacity;
 
 	public:
+		class	const_iterator;
 		class	iterator
 		{
 			private:
@@ -35,7 +36,7 @@ namespace ft
 				/**
 				 * Default constructor.
 				 */
-				iterator (void)
+				explicit	iterator (void)
 				{
 					this->_i_container = NULL;
 				}
@@ -45,9 +46,8 @@ namespace ft
 				 *
 				 * @container : the container to assign.
 				 */
-				iterator (pointer container)
+				explicit	iterator (pointer container): _i_container(container)
 				{
-					this->_i_container = container;
 				}
 
 				/**
@@ -223,9 +223,8 @@ namespace ft
 				 *
 				 * @container : the container to assign.
 				 */
-				const_iterator (pointer container)
+				const_iterator (const_pointer container): _i_container(container)
 				{
-					this->_i_container = container;
 				}
 
 				/**
@@ -233,14 +232,94 @@ namespace ft
 				 *
 				 * @it : the iterator to copy.
 				 */
-				const_iterator (const const_iterator &it)
+				const_iterator (const const_iterator &it): _i_container(it._i_container)
 				{
-					this->_i_container = it._i_container;
-					return (*this);
 				}
+
+				const_iterator (const iterator &it)
+				{
+					*this = it;
+				}
+
+				~const_iterator (void) {}
 
 				//OPERATORS
 
+				/**
+				 * Assignation operator.
+				 *
+				 * Copies all the elements from x into the container.
+				 * @param it : the iterator to assign.
+				 * @return : *this.
+				 */
+				const_iterator &operator= (const_iterator const &it)
+				{
+					_i_container = it._i_container;
+					return (*this);
+				}
+
+				/**
+				 * Offset dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				value_type	operator[] (size_type n) const { return (_i_container[n]); }
+
+				/**
+				 * Dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				reference	operator* (void) const { return (*_i_container); }
+
+				/**
+				 * Dereference operator.
+				 *
+				 * @return : the value of the dereferenced container.
+				 */
+				value_type	operator-> (void) const { return (_i_container); }
+
+				/**
+				 * Equality operator.
+				 *
+				 * @return : true if the 2 containers are equals, otherwise it returns false.
+				 */
+				bool	operator== (const iterator &it) const	{ return (it._i_container == _i_container); }
+
+				/**
+				 * Disequality operator.
+				 *
+				 * @return : true if the 2 containers are not equals, otherwise it returns false.
+				 */
+				bool	operator!= (const iterator &it) const	{ return (it._i_container != _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A < B, otherwise it returns false.
+				 */
+				bool	operator< (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A > B, otherwise it returns false.
+				 */
+				bool	operator> (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A <= B, otherwise it returns false.
+				 */
+				bool	operator<= (const iterator &it) const { return (it._i_container < _i_container); }
+
+				/**
+				 * Comparison operator.
+				 *
+				 * @return : true if the A >= B, otherwise it returns false.
+				 */
+				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
 
 		};
 
@@ -310,6 +389,7 @@ namespace ft
 		 */
 		iterator begin (void)
 		{
+			std::cout << "je paaaaaaaaaaasse ici" << std::endl;
 			return (iterator(this->_c_container));
 		}
 		
@@ -320,7 +400,8 @@ namespace ft
 		 */
 		const_iterator begin (void) const
 		{
-			return (iterator(this->_c_container));
+			std::cout << "je psse ici" << std::endl;
+			return (const_iterator(this->_c_container));
 		}
 
 		/**
@@ -338,11 +419,11 @@ namespace ft
 		 *
 		 * Returns an const iterator pointing to the last element in the vector.
 		 */
-//		const_iterator end (void) const
-//		{
-//
-//			return (iterator(this->_c_container + this->_c_size));
-//		}
+		const_iterator end (void) const
+		{
+
+			return (const_iterator(this->_c_container + this->_c_size));
+		}
 
 
 		//CAPACITY METHODS
