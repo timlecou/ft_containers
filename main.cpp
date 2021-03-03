@@ -10,6 +10,7 @@ int		main(void)
 	v.push_back(42);
 
 	ft::vector<int>::const_iterator	it = v.begin();
+	std::cout << "test" << std::endl;
 
 	std::cout << *it << std::endl;
 	return (0);

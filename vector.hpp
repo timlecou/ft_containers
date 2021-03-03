@@ -25,7 +25,6 @@ namespace ft
 		size_type		_c_capacity;
 
 	public:
-		class	const_iterator;
 		class	iterator
 		{
 			private:
@@ -36,9 +35,8 @@ namespace ft
 				/**
 				 * Default constructor.
 				 */
-				explicit	iterator (void)
+				explicit	iterator (void): _i_container(NULL)
 				{
-					this->_i_container = NULL;
 				}
 
 				/**
@@ -55,9 +53,8 @@ namespace ft
 				 *
 				 * @it : the iterator to copy.
 				 */
-				iterator (const iterator &it)
+				iterator (const iterator &it): _i_container(it._i_container)
 				{
-					this->_i_container = it._i_container;
 				}
 
 				//OPERATORS
@@ -213,9 +210,8 @@ namespace ft
 				/**
 				 * Default constructor.
 				 */
-				const_iterator (void)
+				const_iterator (void): _i_container(NULL)
 				{
-					this->_i_container = NULL;
 				}
 
 				/**
@@ -624,7 +620,7 @@ namespace ft
 		{
 			if (this->_c_capacity <= this->_c_size)
 				reserve(this->_c_size + 1);
-			this->_c_container[this->_c_size] = val;
+			this->_c_allocator.construct(&this->_c_container[this->_c_size], val);
 			this->_c_size++;
 		}
 
