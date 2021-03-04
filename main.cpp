@@ -11,10 +11,10 @@ int		main(void)
 	v.push_back(2);
 	v.push_back(21);
 
-	std::list<int>::iterator	it = v.begin();
+	//std::list<int>::iterator	it = v.begin();
 
-	std::cout << *it << std::endl;
-	++it;
-	std::cout << *it << std::endl;
+	std::cout << v.front() << std::endl;
+	//++it;
+	//std::cout << *it << std::endl;
 	return (0);
 }

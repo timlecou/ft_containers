@@ -372,6 +372,23 @@ namespace	ft
 
 				this->_c_size--;
 			}
+
+			/**
+			 * Insert elements.
+			 *
+			 * The container is extended by inserting new elements before the element at the specified position.
+			 * @position : Position in the container where the new elements are inserted.
+			 * @val : Value to be copied (or moved) to the inserted elements.
+			 */
+			iterator insert (iterator position, const value_type& val)
+			{
+				size_type	pos = 0;
+				size_type	end = this->_c_size;
+
+				for (iterator it = begin(); it != position; it++)
+					pos++;
+				while (end > pos)
+			}
 	};
 }
 
