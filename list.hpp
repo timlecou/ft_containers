@@ -93,7 +93,7 @@ namespace	ft
 					 *
 					 * @return : true if the 2 containers are not equals, otherwise it returns false.
 					 */
-					bool	operator!= (const iterator &it) const { return (it._i_container == _i_container); }
+					bool	operator!= (const iterator &it) const { return (it._i_container != _i_container); }
 
 					/**
 					 * Dereference operator.
@@ -107,7 +107,27 @@ namespace	ft
 					 *
 					 * @return : the value of the dereferenced container.
 					 */
-					pointer	operator-> (void) const { return (&_i_container->content); }
+					pointer		operator-> (void) const { return (&_i_container->content); }
+
+					/**
+					 * Incrementation operator.
+					 */
+					iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (*this); }
+
+					/**
+					 * Decrementation operator.
+					 */
+					iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (*this); }
+
+					/**
+					 * Value incrementation operator.
+					 */
+					iterator	&operator++ (void) { _i_container = _i_container->next; return (*this); }
+
+					/**
+					 * Value incrementation operator.
+					 */
+					iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
 			};
 		public:
 

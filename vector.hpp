@@ -135,13 +135,29 @@ namespace ft
 				 */
 				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
 
-				iterator &operator+=(int n){ _i_container = _i_container + n; return (*this); }
+				/**
+				 * Incrementation operator.
+				 *
+				 * @n : the value to add.
+				 */
+				iterator &operator+= (int n) { _i_container = _i_container + n; return (*this); }
 
-				iterator &operator-=(int n){ _i_container -= n; return (*this); }
+				/**
+				 * Decrementation operator.
+				 *
+				 * @n : the value to substract.
+				 */
+				iterator &operator-= (int n) { _i_container -= n; return (*this); }
 
-				iterator &operator++(){ _i_container++; return (*this); }
+				/**
+				 * Incrementation operator.
+				 */
+				iterator &operator++ (void) { _i_container++; return (*this); }
 
-				iterator &operator--(){ _i_container--; return (*this); }
+				/**
+				 * Decrementation operator.
+				 */
+				iterator &operator-- (void) { _i_container--; return (*this); }
 
 				/**
 				 * Increment operator.

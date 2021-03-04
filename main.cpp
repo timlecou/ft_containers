@@ -1,14 +1,20 @@
 #include "list.hpp"
 #include "vector.hpp"
+#include <list>
 
 int		main(void)
 {
-	ft::list<int> v;
+	std::list<int> v;
+	int		tmp = 34;
 
 	v.push_back(42);
+	v.push_back(2);
+	v.push_back(21);
 
-	ft::list<int>::iterator	it = v.begin();
+	std::list<int>::iterator	it = v.begin();
 
+	std::cout << *it << std::endl;
+	++it;
 	std::cout << *it << std::endl;
 	return (0);
 }
