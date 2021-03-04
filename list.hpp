@@ -43,10 +43,71 @@ namespace	ft
 			class	iterator
 			{
 				private:
-					node	*container;
+					node	*_i_container;
 
 				public:
 
+					/**
+					 * Default constuctor.
+					 */
+					explicit	iterator (void): _i_container(NULL) {}
+
+					/**
+					 * Assignation constructor.
+					 *
+					 * @container : the container to assign.
+					 */
+					explicit	iterator (node *container): _i_container(container) {}
+
+					/**
+					 * Copy constructor.
+					 *
+					 * @it : the iterator to copy.
+					 */
+					iterator (const iterator &it): _i_container(it._i_container) {}
+
+					//OPERATORS
+
+					/**
+					 * Assignation operator.
+					 *
+					 * Copies all the elements from x into the container.
+					 * @x : the iterator to assign.
+					 * @return : *this.
+					 */
+					iterator	&operator= (const iterator &it)
+					{
+						this->_i_container = it-_i_container;
+						return (*this);
+					}
+
+					/**
+					 * Equality operator.
+					 *
+					 * @return : true if the 2 containers are equals, otherwise it returns false.
+					 */
+					bool	operator== (const iterator &it) const { return (it._i_container == _i_container); }
+
+					/**
+					 * Disequality operator.
+					 *
+					 * @return : true if the 2 containers are not equals, otherwise it returns false.
+					 */
+					bool	operator!= (const iterator &it) const { return (it._i_container == _i_container); }
+
+					/**
+					 * Dereference operator.
+					 *
+					 * @return : the value of the dereferenced container.
+					 */
+					reference	operator* (void) const { return (_i_container->content); }
+
+					/**
+					 * Dereference operator.
+					 *
+					 * @return : the value of the dereferenced container.
+					 */
+					pointer	operator-> (void) const { return (&_i_container->content); }
 			};
 		public:
 
@@ -81,6 +142,28 @@ namespace	ft
 				this->_c_node->previous = this->_c_node;
 				this->_c_size = 0;
 				assign(n, val);
+			}
+
+			//ITERATORS
+
+			/**
+		 	* Return iterator to beginning.
+		 	*
+		 	* Returns an iterator pointing to the first element in the list.
+		 	*/
+			iterator	begin (void)
+			{
+				return (iterator(_c_node->next));
+			}
+
+			/**
+			 * Return iterator to end.
+			 *
+			 * Returns an iterator pointing to the last element in the list.
+			 */
+			iterator end (void)
+			{
+				return (iterator(this->_c_node));
 			}
 
 			//CAPACITY METHODS

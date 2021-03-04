@@ -1,16 +1,13 @@
 #include "list.hpp"
 #include "vector.hpp"
-#include <list>
-#include <vector>
 
 int		main(void)
 {
-	ft::vector<int> v;
+	ft::list<int> v;
 
 	v.push_back(42);
 
-	ft::vector<int>::const_iterator	it = v.begin();
-	std::cout << "test" << std::endl;
+	ft::list<int>::iterator	it = v.begin();
 
 	std::cout << *it << std::endl;
 	return (0);
