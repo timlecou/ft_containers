@@ -132,7 +132,30 @@ namespace	ft
 
 			class	const_iterator
 			{
-				//TODO
+				private:
+					node	*_i_container;
+
+				public:
+
+				/**
+				 * Default constuctor.
+				 */
+				explicit	const_iterator (void): _i_container(NULL) {}
+
+				/**
+				 * Assignation constructor.
+				 *
+				 * @container : the container to assign.
+				 */
+				explicit	const_iterator (node *container): _i_container(container) {}
+
+				/**
+				 * Copy constructor.
+				 *
+				 * @it : the iterator to copy.
+				 */
+				const_iterator (const const_iterator &it): _i_container(it._i_container) {}
+
 			};
 		public:
 
@@ -222,6 +245,16 @@ namespace	ft
 			}
 
 			/**
+			 * Return iterator to beginning.
+			 *
+			 * Returns an iterator pointing to the first element in the list.
+			 */
+			const_iterator	begin (void) const
+			{
+				return (const_iterator(this->_c_node->next));
+			}
+
+			/**
 			 * Return iterator to end.
 			 *
 			 * Returns an iterator pointing to the last element in the list.
@@ -231,7 +264,17 @@ namespace	ft
 				return (iterator(this->_c_node));
 			}
 
-			//CAPACITY METHODS
+			/**
+		 	* Return iterator to end.
+			 *
+			 * Returns an iterator pointing to the last element in the list.
+			 */
+			const_iterator end (void) const
+			{
+				return (const_iterator(this->_c_node));
+			}
+
+		//CAPACITY METHODS
 
 			/**
 			 * Test whether container is empty.
