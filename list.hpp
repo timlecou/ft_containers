@@ -129,10 +129,15 @@ namespace	ft
 					 */
 					iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
 			};
+
+			class	const_iterator
+			{
+				//TODO
+			};
 		public:
 
 			/**
-			 * Empty container constructor (Default cnstructor).
+			 * Empty container constructor (Default constructor).
 			 *
 			 * Constructs an empty container, with no elements.
 			 * @alloc : Allocator object.
@@ -164,6 +169,46 @@ namespace	ft
 				assign(n, val);
 			}
 
+			/**
+			 * Range constructor.
+			 *
+			 * Constructs a container with as many elements as the range [first,last), with
+			 * each element constructed from its corresponding element in that range, in the same order.
+			 * @first/@last : Input iterators to the initial and final positions in a range.
+			 * @alloc : Allocator object.
+			 */
+			template <class InputIterator>
+			list (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()): _c_value_allocator(alloc)
+			{
+				this->_c_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&this->_c_node->content, value_type());
+				this->_c_node->next = this->_c_node;
+				this->_c_node->previous = this->_c_node;
+				this->_c_size = 0;
+				assign(first, last);
+			}
+
+			/**
+			 * Copy constructor.
+			 *
+			 * Constructs a container with a copy of each of the elements in x, in the same order.
+			 * @x : Another list object of the same type (with the same class
+			 * template arguments), whose contents are either copied or acquired.
+			 */
+			list (const list& x)
+			{
+				for (iterator it = x.begin(); it != x.end(); it++)
+					push_back(*it);
+			}
+
+			/**
+			 * Destructor.
+			 */
+			virtual	~list (void)
+			{
+				clear();
+			}
+
 			//ITERATORS
 
 			/**
@@ -173,7 +218,7 @@ namespace	ft
 		 	*/
 			iterator	begin (void)
 			{
-				return (iterator(_c_node->next));
+				return (iterator(this->_c_node->next));
 			}
 
 			/**
@@ -270,6 +315,21 @@ namespace	ft
 			//MODIFIERS METHODS
 			
 			/**
+			 * Assign new content to container.
+			 *
+			 * Assigns new contents to the list container, replacing its
+			 * current contents, and modifying its size accordingly.
+			 * @first/@last : Input iterators to the initial and final positions in a sequence.
+			 */
+			template <class InputIterator>
+			void assign (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
+			{
+				clear();
+				while (first != last)
+					push_back(*first++);
+			}
+
+			/**
 			 * Assign new content to container. (fill)
 			 *
 			 * Assigns new contents to the list container, replacing its
@@ -281,19 +341,9 @@ namespace	ft
 			{
 				size_type	i = 0;
 
-				while (i < this->_c_size && i < n)
-				{
-					this->_c_node = this->_c_node->next;
-					this->_c_node->content = val;
-					i++;
-				}
-				while (i < this->_c_size)
-					pop_back();
-				while (i < n)
-				{
+				clear();
+				while (i++ < n)
 					push_back(val);
-					i++;
-				}
 			}
 
 			/**
@@ -306,8 +356,10 @@ namespace	ft
 			{
 				node	*new_node;
 
+				//allocating/constructing new element
 				new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->content, val);
+
 				new_node->next = this->_c_node->next;
 				new_node->previous = this->_c_node;
 				this->_c_node->next->previous = new_node;
@@ -344,8 +396,10 @@ namespace	ft
 			{
 				node	*new_node;
 
+				//allocating/constructing new element
 				new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->content, val);
+
 				new_node->next = this->_c_node;
 				new_node->previous = this->_c_node->previous;
 				this->_c_node->previous->next = new_node;
@@ -362,14 +416,15 @@ namespace	ft
 			{
 				node	*tmp;
 
-				tmp = this->_c_node->previous;
-				this->_c_node->previous = this->_c_node->previous->previous;
-				this->_c_node->previous->previous->next = this->_c_node;
-				
-				//	destroying/freeing the element and its value
-				this->_c_value_allocator.destroy(&tmp->content);
-				this->_c_node_allocator.deallocate(tmp, 1);
+				tmp = this->_c_node->previous->previous;
 
+				//	destroying/freeing the element and its value
+				this->_c_value_allocator.destroy(&this->_c_node->previous->content);
+				this->_c_node_allocator.deallocate(this->_c_node->previous, 1);
+
+				tmp->next = this->_c_node;
+				this->_c_node->previous = tmp;
+				
 				this->_c_size--;
 			}
 
@@ -483,6 +538,50 @@ namespace	ft
 				while (first != last)
 					erase(first++);
 				return (first);
+			}
+
+
+			/**
+			 * Swap content.
+			 *
+			 * Exchanges the content of the container by the content of x, which is another list of the same type.
+			 * @x : Another list container of the same type.
+			 */
+			void swap (list& x)
+			{
+				list	tmp;
+
+				tmp = x;
+				x = this;
+				this = tmp;
+			}
+
+			/**
+			 * Change size.
+			 *
+			 * Resizes the container so that it contains n elements.
+			 * @n : New container size, expressed in number of elements.
+			 * @val : Object whose content is copied to the added elements in case
+			 * that n is greater than the current container size.
+			 */
+			void resize (size_type n, value_type val = value_type())
+			{
+				while (n < this->_c_size)
+					pop_back();
+				while (n > this->_c_size)
+					push_back(val);
+			}
+
+			/**
+			 * Clear content.
+			 *
+			 * Removes all elements from the list container (which are destroyed),
+			 * and leaving the container with a size of 0.
+			 */
+			void clear (void)
+			{
+				while (this->_c_size)
+					pop_back();
 			}
 	};
 }

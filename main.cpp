@@ -3,33 +3,22 @@
 #include <list>
 #include <vector>
 
-int		main(void)
+int main ()
 {
-  ft::list<int> mylist;
-  ft::list<int>::iterator it1, it2;
+  ft::list<int> first;                                // empty list of ints
+  ft::list<int> second (4,100);                       // four ints with value 100
+  ft::list<int> third (second.begin(),second.end());  // iterating through second
+  ft::list<int> fourth (third);                       // a copy of third
 
-  // set some values:
-  for (int i=1; i<10; ++i) mylist.push_back(i*10);
+  // the iterator constructor can also be used to construct from arrays:
+  int myints[] = {16,2,77,29};
+  ft::list<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
 
-                              // 10 20 30 40 50 60 70 80 90
-  it1 = it2 = mylist.begin(); // ^^
-  ++it1;                      //    ^              ^
+  std::cout << "The contents of fifth are: ";
+  for (ft::list<int>::iterator it = fifth.begin(); it != fifth.end(); it++)
+    std::cout << *it << ' ';
 
-  it1 = mylist.erase (it1);   // 10 30 40 50 60 70 80 90
-                              //    ^           ^
-
-  it2 = mylist.erase (it2);   // 10 30 40 50 60 80 90
-                              //    ^           ^
-
-  ++it1;                      //       ^        ^
-  --it2;                      //       ^     ^
-
-  mylist.erase (it1, it2);     // 10 30 60 80 90
-                              //        ^
-
-  std::cout << "mylist contains:";
-  for (it1=mylist.begin(); it1!=mylist.end(); ++it1)
-    std::cout << ' ' << *it1;
   std::cout << '\n';
 
-  return 0;}
+  return 0;
+}
