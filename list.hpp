@@ -4,7 +4,7 @@
 # define LIST_HPP
 
 #include <iostream>
-#include <unistd.h>
+#include "utils.hpp"
 
 namespace	ft
 {
@@ -77,7 +77,7 @@ namespace	ft
 					 */
 					iterator	&operator= (const iterator &it)
 					{
-						this->_i_container = it-_i_container;
+						this->_i_container = it._i_container;
 						return (*this);
 					}
 
@@ -374,20 +374,115 @@ namespace	ft
 			}
 
 			/**
-			 * Insert elements.
+			 * Insert elements. (single element)
 			 *
 			 * The container is extended by inserting new elements before the element at the specified position.
 			 * @position : Position in the container where the new elements are inserted.
 			 * @val : Value to be copied (or moved) to the inserted elements.
+			 * @return : an iterator to the inserted element.
 			 */
 			iterator insert (iterator position, const value_type& val)
 			{
+				node	*new_node;
+				node	*tmp;
 				size_type	pos = 0;
-				size_type	end = this->_c_size;
+
+				tmp = this->_c_node->next;
+
+				//find the node where we have to insert the elements
+				for (iterator it = this->begin(); it != position; it++)
+				{
+				   	tmp = tmp->next;
+					pos++;
+				}
+
+				//allocating/constructing new element
+				new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->content, val);
+
+				//insertingthe new element into the list
+				tmp->previous->next = new_node;
+				new_node->previous = tmp->previous;
+				tmp->previous = new_node;
+				new_node->next = tmp;
+
+				this->_c_size++;
+
+				iterator	ret = begin();
+				while (pos--)
+					ret++;
+				return (ret);
+			}
+
+			/**
+			 * Insert elements. (fill)
+			 *
+			 * The container is extended by inserting new elements before the element at the specified position.
+			 * @position : Position in the container where the new elements are inserted.
+			 * @n : Number of elements to insert.
+			 * @val : Value to be copied (or moved) to the inserted elements.
+			 */
+			void insert (iterator position, size_type n, const value_type& val)
+			{
+				while (n--)
+				{
+					insert(position, val);
+				}
+			}
+
+			 /**
+			  * Insert elements. (range)
+			  *
+			  * The container is extended by inserting new elements before the element at the specified position.
+			  * @position : Position in the container where the new elements are inserted.
+			  * @first/@last : Iterators specifying a range of elements.
+			  */
+			template <class InputIterator>
+			void insert (iterator position, InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
+			{
+				while (first != last)
+				{
+					insert(position, *first++);
+				}
+			}
+
+			 /**
+			  * Erase elements. (single)
+			  *
+			  * Removes from the list container either a single element (position) or a range of elements ([first,last)).
+			  * @position : Iterator pointing to a single element to be removed from the list.
+			  * @return : An iterator pointing to the element that followed the last element erased by the function call.
+			  */
+			iterator erase (iterator position)
+			{
+				node	*tmp = this->_c_node->next;
 
 				for (iterator it = begin(); it != position; it++)
-					pos++;
-				while (end > pos)
+					tmp = tmp->next;
+
+				tmp->next->previous = tmp->previous;
+				tmp->previous->next = tmp->next;
+
+				this->_c_value_allocator.destroy(&tmp->content);
+				this->_c_node_allocator.deallocate(tmp, 1);
+
+				this->_c_size--;
+
+				return (--position);
+			}
+
+			/**
+			 * Erase elements. (range)
+			 *
+			 * Removes from the list container either a single element (position) or a range of elements ([first,last)).
+			 * @first/@last : Iterators specifying a range within the list to be removed.
+			 * @return : An iterator pointing to the element that followed the last element erased by the function call.
+			 */
+			iterator erase (iterator first, iterator last)
+			{
+				while (first != last)
+					erase(first++);
+				return (first);
 			}
 	};
 }

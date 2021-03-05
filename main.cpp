@@ -1,20 +1,35 @@
 #include "list.hpp"
 #include "vector.hpp"
 #include <list>
+#include <vector>
 
 int		main(void)
 {
-	std::list<int> v;
-	int		tmp = 34;
+  ft::list<int> mylist;
+  ft::list<int>::iterator it1, it2;
 
-	v.push_back(42);
-	v.push_back(2);
-	v.push_back(21);
+  // set some values:
+  for (int i=1; i<10; ++i) mylist.push_back(i*10);
 
-	//std::list<int>::iterator	it = v.begin();
+                              // 10 20 30 40 50 60 70 80 90
+  it1 = it2 = mylist.begin(); // ^^
+  ++it1;                      //    ^              ^
 
-	std::cout << v.front() << std::endl;
-	//++it;
-	//std::cout << *it << std::endl;
-	return (0);
-}
+  it1 = mylist.erase (it1);   // 10 30 40 50 60 70 80 90
+                              //    ^           ^
+
+  it2 = mylist.erase (it2);   // 10 30 40 50 60 80 90
+                              //    ^           ^
+
+  ++it1;                      //       ^        ^
+  --it2;                      //       ^     ^
+
+  mylist.erase (it1, it2);     // 10 30 60 80 90
+                              //        ^
+
+  std::cout << "mylist contains:";
+  for (it1=mylist.begin(); it1!=mylist.end(); ++it1)
+    std::cout << ' ' << *it1;
+  std::cout << '\n';
+
+  return 0;}
