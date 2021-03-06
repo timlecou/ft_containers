@@ -125,7 +125,7 @@ namespace	ft
 					iterator	&operator++ (void) { _i_container = _i_container->next; return (*this); }
 
 					/**
-					 * Value incrementation operator.
+					 * Value decrementation operator.
 					 */
 					iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
 			};
@@ -137,24 +137,87 @@ namespace	ft
 
 				public:
 
-				/**
-				 * Default constuctor.
-				 */
-				explicit	const_iterator (void): _i_container(NULL) {}
+					/**
+					 * Default constuctor.
+					 */
+					explicit	const_iterator (void): _i_container(NULL) {}
 
-				/**
-				 * Assignation constructor.
-				 *
-				 * @container : the container to assign.
-				 */
-				explicit	const_iterator (node *container): _i_container(container) {}
+					/**
+					 * Assignation constructor.
+					 *
+					 * @container : the container to assign.
+					 */
+					explicit	const_iterator (node *container): _i_container(container) {}
 
-				/**
-				 * Copy constructor.
-				 *
-				 * @it : the iterator to copy.
-				 */
-				const_iterator (const const_iterator &it): _i_container(it._i_container) {}
+					/**
+					 * Copy constructor.
+					 *
+					 * @it : the iterator to copy.
+					 */
+					const_iterator (const const_iterator &it): _i_container(it._i_container) {}
+
+				//OPERATORS
+
+					/**
+					 * Assignation operator.
+					 *
+					 * Copies all the elements from x into the container.
+					 * @x : the iterator to assign.
+					 * @return : *this.
+					 */
+					const_iterator	&operator= (const const_iterator &it)
+					{
+						this->_i_container = it._i_container;
+						return (*this);
+					}
+
+					/**
+					 * Equality operator.
+					 *
+					 * @return : true if the 2 containers are equals, otherwise it returns false.
+					 */
+					bool	operator== (const const_iterator &it) const { return (it._i_container == _i_container); }
+
+					/**
+					 * Disequality operator.
+					 *
+					 * @return : true if the 2 containers are not equals, otherwise it returns false.
+					 */
+					bool	operator!= (const const_iterator &it) const { return (it._i_container != _i_container); }
+
+					/**
+					 * Dereference operator.
+					 *
+					 * @return : the value of the dereferenced container.
+					 */
+					reference	operator* (void) const { return (_i_container->content); }
+
+					/**
+					 * Dereference operator.
+					 *
+					 * @return : the value of the dereferenced container.
+					 */
+					pointer		operator-> (void) const { return (&_i_container->content); }
+
+					/**
+					 * Incrementation operator.
+					 */
+					const_iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (*this); }
+
+					/**
+					 * Decrementation operator.
+					 */
+					const_iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (*this); }
+
+					/**
+					 * Value incrementation operator.
+					 */
+					const_iterator	&operator++ (void) { _i_container = _i_container->next; return (*this); }
+
+					/**
+					 * Value decrementation operator.
+					 */
+					const_iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
 
 			};
 		public:
@@ -220,8 +283,7 @@ namespace	ft
 			 */
 			list (const list& x)
 			{
-				for (iterator it = x.begin(); it != x.end(); it++)
-					push_back(*it);
+				list(x.begin(), x.end());
 			}
 
 			/**
@@ -625,6 +687,213 @@ namespace	ft
 			{
 				while (this->_c_size)
 					pop_back();
+			}
+
+		//OPERATIONS
+
+			/**
+			 * Transfer elements from list to list. (entire list)
+			 *
+			 * Transfers elements from x into the container, inserting them at position.
+			 * @position : Position within the container where the elements of x are inserted.
+			 * @x : A list object of the same type.
+			 */
+			void splice (iterator position, list& x)
+			{
+				insert(position, --x.begin(), --x.end());
+				x.clear();
+			}
+
+			/**
+			 * Transfer elements from list to list. (single element)
+			 *
+			 * Transfers elements from x into the container, inserting them at position.
+			 * @position : Position within the container where the elements of x are inserted.
+			 * @x : A list object of the same type.
+			 * @i : Iterator to an element in x.
+			 */
+			void splice (iterator position, list& x, iterator i)
+			{
+				insert(position, *i);
+				x.erase(i);
+			}
+
+			/**
+			 * Transfer elements from list to list. (element range)
+			 *
+			 * Transfers elements from x into the container, inserting them at position.
+			 * @position : Position within the container where the elements of x are inserted.
+			 * @x : A list object of the same type.
+			 * @first/@last : Iterators specifying a range of elements in x.
+			 */
+			void splice (iterator position, list& x, iterator first, iterator last)
+			{
+				insert(position, --first, --last);
+				x.erase(first, last);
+			}
+
+			/**
+			 * Remove elements with specific value.
+			 *
+			 * Removes from the container all the elements that compare equal to val.
+			 * @val : Value of the elements to be removed.
+			 */
+			void remove (const value_type& val)
+			{
+				for (iterator it = begin(); it != end(); it++)
+					if (*it == val)
+						erase(it);
+			}
+
+			/**
+			 * Remove elements fullfilling condition.
+			 *
+			 * Removes from the container all the elements for which Predicate pred returns true.
+			 * @pred : Unary predicate that, taking a value of the same type as
+			 * those contained in the forward_list object, returns true for those
+			 * values to be removed from the container, and false for those remaining.
+			 */
+			template <class Predicate>
+			void remove_if (Predicate pred)
+			{
+				for (iterator it = begin(); it != end(); it++)
+					if (pred(*it) == true)
+						erase(it);
+			}
+
+			/**
+			 * Remove duplicate values.
+			 *
+			 * This version removes all but the first element
+			 * from every consecutive group of equal elements in the container.
+			 */
+			void unique (void)
+			{
+				iterator	it1 = begin();
+
+				it1++;
+				for (iterator it = begin(); it != end(); it1++)
+				{
+					if (*it == *it1)
+						it = erase(it1);
+					else
+						it++;
+				}
+			}
+
+			/**
+			 * Remove duplicate values.
+			 *
+			 * This version takes as argument a specific comparison
+			 * function that determine the "uniqueness" of an element.
+			 * @binary_pred : Binary predicate that, taking two values of the
+			 * same type than those contained in the list, returns true to remove
+			 * the element passed as first argument from the container, and false otherwise.
+			 */
+			template <class BinaryPredicate>
+			void unique (BinaryPredicate binary_pred)
+			{
+				iterator	it1 = begin();
+
+				it1++;
+				for (iterator it = begin(); it != end(); it1++)
+				{
+					if (binary_pred(*it1, *it))
+						it = erase(it1);
+					else
+						it++;
+				}
+			}
+
+			/**
+			 * Merge sorted lists.
+			 *
+			 * Merges x into the list by transferring all of
+			 * its elements at their respective ordered positions into
+			 * the container (both containers shall already be ordered).
+			 * @x : A list object of the same type.
+			 */
+			void merge (list& x)
+			{
+				if (&x != this)
+				{
+					splice(x);
+					sort();
+				}
+			}
+
+			/**
+			 * Merge sorted lists.
+			 *
+			 * Merges x into the list by transferring all of
+			 * its elements at their respective ordered positions into
+			 * the container (both containers shall already be ordered).
+			 * @x : A list object of the same type.
+			 * @comp : Binary predicate that, taking two values of the same
+			 * type than those contained in the list, returns true if the first
+			 * argument is considered to go before the second in the strict weak
+			 * ordering it defines, and false otherwise.
+			 */
+			template <class Compare>
+			void merge (list& x, Compare comp)
+			{
+				(void)x;
+				(void)comp;
+			}
+
+			/**
+			 * Sort elements in container.
+			 *
+			 * Sorts the elements in the list, altering their position within the container.
+			 */
+			void sort (void)
+			{
+				node		*tmp_node;
+				node		*tmp_elem;
+
+				for (iterator it1 = begin(); it1 != end(); it++)
+				{
+					tmp_node = this->_c_node->next;
+					for (iterator it2 = it1; it2 != end(); it++)
+					{
+						if (*it1 < *it2)
+						{
+							tmp_elem = tmp_node->next;
+							tmp_node->next = tmp_node;
+							tmp_node = tmp_elem;
+						}
+						else
+							tmp_node = tmp_node->next;
+					}
+				}
+			}
+
+			/**
+			 * Sort elements in container.
+			 *
+			 * Sorts the elements in the list, altering their position within the container.
+			 * @comp : Binary predicate that, taking two values of the same type
+			 * of those contained in the list, returns true if the first argument
+			 * goes before the second argument in the strict weak ordering it defines, and false otherwise.
+			 */
+			template <class Compare>
+			void sort (Compare comp)
+			{
+				node		*tmp_node = this->_c_node->next;
+				value_type	tmp;
+
+				for (size_type i = 0; i < size(); i++)
+				{
+					for (size_type j = 0; j < size(); j++)
+					{
+						if (comp(tmp_node->content, tmp_node->next->content) == true)
+						{
+							tmp = tmp_node->next->content;
+							tmp_node->next->content = tmp_node->content;
+							tmp_node->content = tmp;
+						}
+					}
+				}
 			}
 	};
 }
