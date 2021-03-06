@@ -940,9 +940,27 @@ namespace	ft
 				}
 			}
 
+			/**
+			 * Reverse the order of elements.
+			 *
+			 * Reverses the order of the elements in the list container.
+			 */
 			void reverse (void)
 			{
-				
+				iterator it = end();
+				iterator last = end();
+				node *tmp_node;
+				node *tmp_elem;
+
+				do
+				{
+					tmp_node = reinterpret_cast<node*>(&*it);
+					tmp_elem = tmp_node->previous;
+					tmp_node->previous = tmp_node->next;
+					tmp_node->next = tmp_elem;
+					++it;
+				}
+				while (it != last);
 			}
 	};
 }
