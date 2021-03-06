@@ -112,12 +112,12 @@ namespace	ft
 					/**
 					 * Incrementation operator.
 					 */
-					iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (*this); }
+					iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (iterator(_i_container->previous)); }
 
 					/**
 					 * Decrementation operator.
 					 */
-					iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (*this); }
+					iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (iterator(_i_container->next)); }
 
 					/**
 					 * Value incrementation operator.
@@ -700,8 +700,19 @@ namespace	ft
 			 */
 			void splice (iterator position, list& x)
 			{
-				insert(position, --x.begin(), --x.end());
-				x.clear();
+				node	*pos = reinterpret_cast<node*>(&*position);
+				node	*pos_inc = reinterpret_cast<node*>(&*(++position));
+				node	*pos_begin = reinterpret_cast<node*>(&*x.begin());
+				node	*pos_end = reinterpret_cast<node*>(&*(--x.end()));
+
+				pos->next = pos_begin;
+				pos_begin->previous = pos;
+
+				pos_end->next = pos_inc;
+				pos_inc->previous = pos_end;
+	
+				x._c_size = 0;
+				x = NULL;
 			}
 
 			/**
@@ -714,8 +725,20 @@ namespace	ft
 			 */
 			void splice (iterator position, list& x, iterator i)
 			{
-				insert(position, *i);
-				x.erase(i);
+				node	*pos = reinterpret_cast<node*>(&*position);
+				node	*pos_i = reinterpret_cast<node*>(&*i);
+
+				pos_i->next->previous = pos_i->previous;
+				pos_i->previous->next = pos_i->next;
+	
+				pos_i->next = pos;
+				pos_i->previous = pos->previous;
+
+				pos->previous->next = pos_i;
+				pos->previous = pos_i;
+
+				++this->_c_size;
+				--x._c_size;
 			}
 
 			/**
@@ -728,8 +751,8 @@ namespace	ft
 			 */
 			void splice (iterator position, list& x, iterator first, iterator last)
 			{
-				insert(position, --first, --last);
-				x.erase(first, last);
+				while (first != last)
+					splice(position, x, first++);
 			}
 
 			/**
@@ -848,22 +871,31 @@ namespace	ft
 			 */
 			void sort (void)
 			{
-				node		*tmp_node;
-				node		*tmp_elem;
+				iterator	it1 = begin();
+				iterator	it2 = it1;
+				iterator	beg = it1;
+				iterator	en = end();
 
-				for (iterator it1 = begin(); it1 != end(); it++)
+				++it2;
+				while (it2 != en)
 				{
-					tmp_node = this->_c_node->next;
-					for (iterator it2 = it1; it2 != end(); it++)
+					if (*it2 < *it1)
 					{
-						if (*it1 < *it2)
+						if (it1 != beg)
 						{
-							tmp_elem = tmp_node->next;
-							tmp_node->next = tmp_node;
-							tmp_node = tmp_elem;
+							splice(it1, *this, it2);
+							----it1;
 						}
 						else
-							tmp_node = tmp_node->next;
+						{
+							splice(it1, *this, it2);
+							++++it2;
+						}
+					}
+					else
+					{
+						++it2;
+						++it1;
 					}
 				}
 			}
@@ -879,21 +911,38 @@ namespace	ft
 			template <class Compare>
 			void sort (Compare comp)
 			{
-				node		*tmp_node = this->_c_node->next;
-				value_type	tmp;
+				iterator	it1 = begin();
+				iterator	it2 = it1;
+				iterator	beg = it1;
+				iterator	en = end();
 
-				for (size_type i = 0; i < size(); i++)
+				++it2;
+				while (it2 != en)
 				{
-					for (size_type j = 0; j < size(); j++)
+					if (comp(*it2, *it1))
 					{
-						if (comp(tmp_node->content, tmp_node->next->content) == true)
+						if (it1 != beg)
 						{
-							tmp = tmp_node->next->content;
-							tmp_node->next->content = tmp_node->content;
-							tmp_node->content = tmp;
+							splice(it1, *this, it2);
+							----it1;
+						}
+						else
+						{
+							splice(it1, *this, it2);
+							++++it2;
 						}
 					}
+					else
+					{
+						++it2;
+						++it1;
+					}
 				}
+			}
+
+			void reverse (void)
+			{
+				
 			}
 	};
 }
