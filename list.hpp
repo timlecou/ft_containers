@@ -453,7 +453,10 @@ namespace	ft
 			{
 				clear();
 				while (first != last)
-					push_back(*first++);
+				{
+					push_back(*first);
+					first++;
+				}
 			}
 
 			/**
@@ -722,19 +725,7 @@ namespace	ft
 			 */
 			void splice (iterator position, list& x)
 			{
-				node	*pos = reinterpret_cast<node*>(&*position);
-				node	*pos_inc = reinterpret_cast<node*>(&*(++position));
-				node	*pos_begin = reinterpret_cast<node*>(&*x.begin());
-				node	*pos_end = reinterpret_cast<node*>(&*(--x.end()));
-
-				pos->next = pos_begin;
-				pos_begin->previous = pos;
-
-				pos_end->next = pos_inc;
-				pos_inc->previous = pos_end;
-	
-				x._c_size = 0;
-				x = list(0);
+				splice(position, x, x.begin(), x.end());
 			}
 
 			/**
