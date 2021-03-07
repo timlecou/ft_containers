@@ -1,23 +1,26 @@
 #include "list.hpp"
-//#include "vector.hpp"
+#include "vector.hpp"
 #include <list>
 #include <vector>
 #include <math.h>
 
-
 int main ()
 {
-	ft::list<int> mylist;
+  // constructors used in the same order as described above:
+  ft::list<int> first;                                // empty list of ints
+  ft::list<int> second (4,100);                       // four ints with value 100
+  ft::list<int> third (second.begin(),second.end());  // iterating through second
+  ft::list<int> fourth (third);                       // a copy of third
 
-	for (int i=1; i<10; ++i) mylist.push_back(i);
+  // the iterator constructor can also be used to construct from arrays:
+  int myints[] = {16,2,77,29};
+  ft::list<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
 
-	mylist.reverse();
+  std::cout << "The contents of fifth are: ";
+  for (ft::list<int>::iterator it = fifth.begin(); it != fifth.end(); it++)
+    std::cout << *it << ' ';
 
-	std::cout << "mylist contains:";
-	for (ft::list<int>::iterator it=mylist.begin(); it!=mylist.end(); ++it)
-		std::cout << ' ' << *it;
+  std::cout << '\n';
 
-	std::cout << '\n';
-
-	return 0;
+  return 0;
 }

@@ -401,7 +401,6 @@ namespace ft
 		 */
 		iterator begin (void)
 		{
-			std::cout << "je paaaaaaaaaaasse ici" << std::endl;
 			return (iterator(this->_c_container));
 		}
 		
@@ -412,7 +411,6 @@ namespace ft
 		 */
 		const_iterator begin (void) const
 		{
-			std::cout << "je psse ici" << std::endl;
 			return (const_iterator(this->_c_container));
 		}
 

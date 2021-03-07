@@ -283,7 +283,12 @@ namespace	ft
 			 */
 			list (const list& x)
 			{
-				list(x.begin(), x.end());
+				this->_c_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&this->_c_node->content, value_type());
+				this->_c_node->next = this->_c_node;
+				this->_c_node->previous = this->_c_node;
+				this->_c_size = 0;
+				assign(x.begin(), x.end());
 			}
 
 			/**
@@ -292,6 +297,20 @@ namespace	ft
 			virtual	~list (void)
 			{
 				clear();
+			}
+
+			/**
+			 * Assign new content.
+			 *
+			 * Assigns new contents to the container, replacing its current contents,
+			 * and modifying its size accordingly.
+			 * @x : A list object of the same type.
+			 */
+			list& operator= (const list& x)
+			{
+				this->_c_node = x._c_node;
+				this->_c_size = x._c_size;
+				return (*this);
 			}
 
 			//ITERATORS
@@ -346,7 +365,10 @@ namespace	ft
 			 */
 			bool	empty (void) const
 			{
-				return (this->_c_size > 0);
+				if (this->_c_size > 0)
+					return (false);
+				else
+					return (true);
 			}
 
 			/**
@@ -712,7 +734,7 @@ namespace	ft
 				pos_inc->previous = pos_end;
 	
 				x._c_size = 0;
-				x = NULL;
+				x = list(0);
 			}
 
 			/**
@@ -821,7 +843,7 @@ namespace	ft
 				it1++;
 				for (iterator it = begin(); it != end(); it1++)
 				{
-					if (binary_pred(*it1, *it))
+					if (binary_pred(*it, *it1))
 						it = erase(it1);
 					else
 						it++;
@@ -838,11 +860,11 @@ namespace	ft
 			 */
 			void merge (list& x)
 			{
-				if (&x != this)
-				{
-					splice(x);
-					sort();
-				}
+				if (&x == this || x.empty())
+					return ;
+				insert(begin(), x.begin(), x.end());
+				sort();
+				x.clear();
 			}
 
 			/**
@@ -860,8 +882,11 @@ namespace	ft
 			template <class Compare>
 			void merge (list& x, Compare comp)
 			{
-				(void)x;
-				(void)comp;
+				if (&x == this || x.empty())
+					return ;
+				insert(begin(), x.begin(), x.end());
+				sort(comp);
+				x.clear();
 			}
 
 			/**
@@ -881,22 +906,13 @@ namespace	ft
 				{
 					if (*it2 < *it1)
 					{
-						if (it1 != beg)
-						{
-							splice(it1, *this, it2);
-							----it1;
-						}
-						else
-						{
-							splice(it1, *this, it2);
-							++++it2;
-						}
+						splice(it1, *this, it2);
+						it1 = begin();
+						it2 = it1;
 					}
 					else
-					{
-						++it2;
 						++it1;
-					}
+					++it2;
 				}
 			}
 
@@ -921,22 +937,13 @@ namespace	ft
 				{
 					if (comp(*it2, *it1))
 					{
-						if (it1 != beg)
-						{
-							splice(it1, *this, it2);
-							----it1;
-						}
-						else
-						{
-							splice(it1, *this, it2);
-							++++it2;
-						}
+						splice(it1, *this, it2);
+						it1 = begin();
+						it2 = it1;
 					}
 					else
-					{
-						++it2;
 						++it1;
-					}
+					++it2;
 				}
 			}
 
