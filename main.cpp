@@ -6,22 +6,30 @@
 
 int main ()
 {
-  // constructors used in the same order as described above:
-  ft::vector<int> first;                                // empty vector of ints
-  std::cout << "1" << std::endl;
-  ft::vector<int> second (4,100);                       // four ints with value 100
-  std::cout << "2" << std::endl;
-  ft::vector<int> third (second.begin(),second.end());  // iterating through second
-  std::cout << "3" << std::endl;
-  ft::vector<int> fourth (third);                       // a copy of third
-  std::cout << "4" << std::endl;
+  ft::vector<int> myvector (3,100);
+  ft::vector<int>::iterator it;
 
-  // the iterator constructor can also be used to construct from arrays:
-  int myints[] = {16,2,77,29};
-  ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+  it = myvector.begin();
+  it = myvector.insert ( it , 200 );
 
-  std::cout << "The contents of fifth are:";
-  for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
+  myvector.insert (it,2,300);
+
+  // "it" no longer valid, get a new one:
+  it = myvector.begin();
+
+  std::cout << "myvector contains:";
+  for (it=myvector.begin(); it != myvector.end(); it++)
+    std::cout << ' ' << *it << " - " << *myvector.end() << std::endl;
+  std::cout << '\n';
+  ft::vector<int> anothervector (2,400);
+  std::cout << " bug *it = " << *it << std::endl;
+  myvector.insert (it+2,anothervector.begin(),anothervector.end());
+
+  int myarray [] = { 501,502,503 };
+//  myvector.insert (myvector.begin(), myarray, myarray+3);
+
+  std::cout << "myvector contains:";
+  for (it=myvector.begin(); it != myvector.end(); it++)
     std::cout << ' ' << *it;
   std::cout << '\n';
 

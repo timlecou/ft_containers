@@ -65,10 +65,11 @@ namespace ft
 				 * Copy constructor.
 				 *
 				 * @it : the iterator to copy.
-				 *
-				iterator (const const_iterator &it): _i_container(it._i_container)
+				 */
+				iterator (const const_iterator &it)
 				{
-				}*/
+					this->_i_container = &*it;
+				}
 
 			//OPERATORS
 
@@ -94,7 +95,7 @@ namespace ft
 				 */
 				iterator &operator= (const_iterator const &it)
 				{
-					_i_container = it._i_container;
+					_i_container = &*it;
 					return (*this);
 				}
 
@@ -138,28 +139,28 @@ namespace ft
 				 *
 				 * @return : true if the A < B, otherwise it returns false.
 				 */
-				bool	operator< (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator< (const iterator &it) const { return (_i_container < it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A > B, otherwise it returns false.
 				 */
-				bool	operator> (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator> (const iterator &it) const { return (_i_container > it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A <= B, otherwise it returns false.
 				 */
-				bool	operator<= (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator<= (const iterator &it) const { return (_i_container <= it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A >= B, otherwise it returns false.
 				 */
-				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator>= (const iterator &it) const { return (_i_container >= it._i_container); }
 
 				/**
 				 * Incrementation operator.
@@ -298,7 +299,7 @@ namespace ft
 
 				const_iterator &operator= (iterator const &it)
 				{
-					_i_container = it._i_container;
+					_i_container = &*it;
 					return (*this);
 				}
 
@@ -342,28 +343,28 @@ namespace ft
 				 *
 				 * @return : true if the A < B, otherwise it returns false.
 				 */
-				bool	operator< (const const_iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator< (const const_iterator &it) const { return (_i_container < it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A > B, otherwise it returns false.
 				 */
-				bool	operator> (const const_iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator> (const const_iterator &it) const { return (_i_container > it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A <= B, otherwise it returns false.
 				 */
-				bool	operator<= (const const_iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator<= (const const_iterator &it) const { return (it._i_container <= it._i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A >= B, otherwise it returns false.
 				 */
-				bool	operator>= (const const_iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator>= (const const_iterator &it) const { return (_i_container >= it._i_container); }
 
 				/**
 				 * Incrementation operator.
@@ -437,8 +438,8 @@ namespace ft
 		{
 			value_type	*tmp;
 
-			//if (new_capacity > max_size())
-			//	throw length_error;
+			if (new_capacity > max_size())
+				throw std::length_error("vector::resize");
 			tmp = this->_c_allocator.allocate(new_capacity);
 			for (size_type i = 0; i < this->_c_size; i++)
 				tmp[i] = this->_c_container[i];
@@ -579,7 +580,7 @@ namespace ft
 		 *
 		 * @return : The number of elements in the container.
 		 */
-		size_type	size (void)
+		size_type	size (void) const
 		{
 			return (this->_c_size);
 		}
@@ -650,6 +651,8 @@ namespace ft
 		 */
 		void reserve (size_type n)
 		{
+			if (n == 0)
+				realloc(1);
 			if (n > this->_c_size)
 				realloc(n);
 		}
@@ -772,6 +775,7 @@ namespace ft
 		void assign (size_type n, const value_type& val)
 		{
 			clear();
+			reserve(n);
 			for (size_type j = 0; j < n; ++j)
 				push_back(val);
 		}
@@ -789,7 +793,12 @@ namespace ft
 		template <class InputIterator>
 		void assign (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
 		{
+			int		i = 0;
+
+			for (InputIterator tmp = first; tmp != last; tmp++)
+				i++;
 			clear();
+			reserve(i);
 			while (first != last)
 			{
 				push_back(*first);
@@ -807,7 +816,7 @@ namespace ft
 		void push_back (const value_type& val)
 		{
 			if (this->_c_capacity <= this->_c_size)
-				reserve(this->_c_size + 1);
+				reserve(this->_c_size * 2);
 			this->_c_allocator.construct(&this->_c_container[this->_c_size], val);
 			this->_c_size++;
 		}
@@ -838,8 +847,10 @@ namespace ft
 			size_type	pos = 0;
 			size_type	end = this->_c_size;
 
+			std::cout << "je passe" << *position << "hrtgfed" << *begin() << std::endl;
 			for (iterator it = begin(); it != position; it++)
 				pos++;
+			std::cout << "je paaaaaaaaaaaaaaaaaaaaasse" << std::endl;
 			if (this->_c_size + 1 > this->_c_capacity)
 				reserve(this->_c_size + 1);
 			while (end > pos)
@@ -900,7 +911,11 @@ namespace ft
    		void insert (iterator position, InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
 		{
 			while (first != last)
-				insert(position, *first++);
+			{
+				std::cout << *position << std::endl;
+				insert(position, *first);
+				first++;
+			}
 		}
 
 		/**
@@ -914,20 +929,14 @@ namespace ft
 		 */
 		iterator erase (iterator position)
 		{
-			size_type	pos = 0;
-			size_type	end = this->_c_size;
+			iterator	ret(position);
+			iterator	save_end(end());
 
-			for (iterator it = begin(); it != position; it++)
-				pos++;
-			this->_c_allocator.destroy(&this->_c_container[pos]);
-			while (pos < end)
-			{
-				this->_c_allocator.construct(&this->_c_container[pos], this->_c_container[pos + 1]);
-				pos++;
-			}
-			this->_c_size--;
-			this->_c_allocator.destroy(&this->_c_container[end]);
-			return (begin() + pos);
+			while (position  + 1 != save_end)
+				*position++ = *(position + 1);
+			this->_c_allocator.destroy(&*position);
+			--this->_c_size;
+			return (ret);
 		}
 
 		/**
@@ -941,27 +950,17 @@ namespace ft
 		 */
 		iterator erase (iterator first, iterator last)
 		{
-			size_type	pos = 0;
-			size_type	cnt = 0;
-			iterator	it = begin();
+			iterator	ret(first);
+			iterator	save_end(end());
 
-			for (iterator itb = begin(); itb != first; itb++)
-				cnt++;
-			while (it != last)
+			while (last != save_end)
+				*first++ = *last++;
+			while (first != save_end)
 			{
-				pos++;
-				it++;
-			}
-			while (pos >= cnt)
-			{
-				this->_c_allocator.destroy(&this->_c_container[pos]);
-				this->_c_allocator.construct(&this->_c_container[pos], this->_c_container[this->_c_size - 1]);
-				this->_c_allocator.destroy(&this->_c_container[this->_c_size - 1]);
-				it--;
-				pos--;
+				this->_c_allocator.destroy(&*(first++));
 				this->_c_size--;
 			}
-			return (begin() + pos);
+			return (ret);
 		}
 
 		/**
@@ -998,11 +997,7 @@ namespace ft
 		 */
 		void clear (void)
 		{
-			size_type	i = 0;
-			size_type	size = this->_c_size;
-
-			for (iterator it = begin(); i < size; i++)
-				erase(it++);
+			erase(begin(), end());
 		}
 
 		/**
