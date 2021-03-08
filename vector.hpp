@@ -1,5 +1,8 @@
-#include <iostream>
+#ifndef VECTOR_HPP
+# define VECTOR_HPP
 
+#include <iostream>
+#include "utils.hpp"
 /**
  * The namespace "ft" contains the Vector class
  */
@@ -258,7 +261,7 @@ namespace ft
 				 *
 				 * @container : the container to assign.
 				 */
-				const_iterator (const_pointer container): _i_container(container)
+				const_iterator (pointer container): _i_container(container)
 				{
 				}
 
@@ -288,6 +291,12 @@ namespace ft
 				 * @return : *this.
 				 */
 				const_iterator &operator= (const_iterator const &it)
+				{
+					_i_container = it._i_container;
+					return (*this);
+				}
+
+				const_iterator &operator= (iterator const &it)
 				{
 					_i_container = it._i_container;
 					return (*this);
@@ -447,7 +456,7 @@ namespace ft
 		 * Constructs an empty container, with no elements.
 		 * @param alloc : Allocator object
 		 */
-		vector (const allocator_type& alloc = allocator_type())
+		explicit	vector (const allocator_type& alloc = allocator_type())
 		{
 			this->_c_allocator = alloc;
 			this->_c_container = NULL;
@@ -459,14 +468,14 @@ namespace ft
 		 * Fill constructor
 		 *
 		 * Constructs a container with n elements. Each element is a copy of val.
+		 *
 		 * @param n : Initial container size
 		 * @param val : Value to fill the container with
 		 * @param alloc : Allocator object
 		 */
-		vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+		explicit	vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
 			this->_c_size = 0;
-			this->_c_allocator = alloc;
 			this->_c_container = this->_c_allocator.allocate(n);
 			this->_c_capacity = n;
 			assign(n, val);
@@ -482,10 +491,9 @@ namespace ft
 		 * @alloc : Allocator object.
 		 */
 		template <class InputIterator>
-		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+		vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
 			this->_c_size = 0;
-			this->_c_allocator = alloc;
 			this->_c_container = this->_c_allocator.allocate(1);
 			assign(first, last);
 		}
@@ -779,12 +787,12 @@ namespace ft
 		 * @first/@last : Input iterators to the initial and final positions in a sequence.
 		 */
 		template <class InputIterator>
-		void assign (InputIterator first, InputIterator last)
+		void assign (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
 		{
 			clear();
 			while (first != last)
 			{
-				std::cout << first << std::endl;//push_back(*first++);
+				push_back(*first);
 				first++;
 			}
 		}
@@ -889,7 +897,7 @@ namespace ft
 		 * @last : Iterators specifying a range of elements.
 		 */
 		template <class InputIterator>
-   		void insert (iterator position, InputIterator first, InputIterator last)
+   		void insert (iterator position, InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
 		{
 			while (first != last)
 				insert(position, *first++);
@@ -1105,3 +1113,5 @@ namespace ft
 
 	};
 }
+
+#endif
