@@ -40,6 +40,7 @@ namespace	ft
 			size_type				_c_size;
 
 		public:
+			class	const_iterator;
 			class	iterator
 			{
 				private:
@@ -305,11 +306,11 @@ namespace	ft
 			 * Assigns new contents to the container, replacing its current contents,
 			 * and modifying its size accordingly.
 			 * @x : A list object of the same type.
+			 * @return : *this.
 			 */
 			list& operator= (const list& x)
 			{
-				this->_c_node = x._c_node;
-				this->_c_size = x._c_size;
+				assign(x.begin(), x.end());
 				return (*this);
 			}
 
@@ -679,11 +680,16 @@ namespace	ft
 			 */
 			void swap (list& x)
 			{
-				list	tmp;
+				node		*tmp_node = this->_c_node;
+				size_type	tmp_size = this->_c_size;
 
-				tmp = x;
-				x = this;
-				this = tmp;
+				//swaping the sizes
+				this->_c_size = x.size();
+				x._c_size = tmp_size;
+
+				//swaping the lists
+				this->_c_node = x._c_node;
+				x._c_node = tmp_node;
 			}
 
 			/**
@@ -961,23 +967,29 @@ namespace	ft
 				while (it != last);
 			}
 
-			bool operator== (const list<T,Alloc>& rhs)
+			/**
+			 * Exchanges the contents of two lists.
+			 *
+			 * The contents of container x are exchanged with those of y.
+			 * Both container objects must be of the same type (same template parameters), although sizes may differ.
+			 * @x/@y : list containers of the same type.
+			 */
+  			void swap (list<T,Alloc>& x, list<T,Alloc>& y)
 			{
-				if (this->size() != rhs.size())
-					return (false);
-				list::iterator	it1 = this->begin();
-				list::iterator	it2 = rhs.begin();
-				while (it1 != this->end() || it2 != rhs.end())
-				{
-					if (*it1 == *it2)
-						return (false);
-					it1++;
-					it2++;
-				}
-				return (true);
+				list	tmp;
+
+				tmp = x;
+				x = y;
+				y = tmp;
 			}
 
-			bool operator!= (const list<T,Alloc>& rhs)
+		/**
+		 * Relational operators for list.
+		 *
+		 * Performs the appropriate comparison operation between the list containers lhs and rhs.
+		 */
+
+			bool operator== (const list<T,Alloc>& rhs)
 			{
 				if (this->size() != rhs.size())
 					return (false);
@@ -993,7 +1005,7 @@ namespace	ft
 				return (true);
 			}
 
-			bool operator== (const list<T,Alloc>& rhs)
+			bool operator!= (const list<T,Alloc>& rhs)
 			{
 				if (this->size() != rhs.size())
 					return (false);
@@ -1017,7 +1029,7 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 > *it2)
+					if (*it1 <= *it2)
 						return (false);
 					it1++;
 					it2++;
@@ -1033,7 +1045,7 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 < *it2)
+					if (*it1 >= *it2)
 						return (false);
 					it1++;
 					it2++;
@@ -1049,7 +1061,7 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 >= *it2)
+					if (*it1 < *it2)
 						return (false);
 					it1++;
 					it2++;
@@ -1065,7 +1077,7 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 <= *it2)
+					if (*it1 > *it2)
 						return (false);
 					it1++;
 					it2++;

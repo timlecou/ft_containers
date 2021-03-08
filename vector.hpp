@@ -25,6 +25,7 @@ namespace ft
 		size_type		_c_capacity;
 
 	public:
+		class	const_iterator;
 		class	iterator
 		{
 			private:
@@ -57,7 +58,16 @@ namespace ft
 				{
 				}
 
-				//OPERATORS
+				/**
+				 * Copy constructor.
+				 *
+				 * @it : the iterator to copy.
+				 *
+				iterator (const const_iterator &it): _i_container(it._i_container)
+				{
+				}*/
+
+			//OPERATORS
 
 				/**
 				 * Assignation operator.
@@ -67,6 +77,19 @@ namespace ft
 				 * @return : *this.
 				 */
 				iterator &operator= (iterator const &it)
+				{
+					_i_container = it._i_container;
+					return (*this);
+				}
+
+				/**
+				 * Assignation operator.
+				 *
+				 * Copies all the elements from x into the container.
+				 * @param it : the iterator to assign.
+				 * @return : *this.
+				 */
+				iterator &operator= (const_iterator const &it)
 				{
 					_i_container = it._i_container;
 					return (*this);
@@ -84,7 +107,7 @@ namespace ft
 				 *
 				 * @return : the value of the dereferenced container.
 				 */
-				value_type	operator* (void) const { return (*_i_container); }
+				reference	operator* (void) const { return (*(this->_i_container)); }
 
 				/**
 				 * Dereference operator.
@@ -282,7 +305,7 @@ namespace ft
 				 *
 				 * @return : the value of the dereferenced container.
 				 */
-				reference	operator* (void) const { return (*_i_container); }
+				reference	operator* (void) const { return (*(this->_i_container)); }
 
 				/**
 				 * Dereference operator.
@@ -296,43 +319,108 @@ namespace ft
 				 *
 				 * @return : true if the 2 containers are equals, otherwise it returns false.
 				 */
-				bool	operator== (const iterator &it) const	{ return (it._i_container == _i_container); }
+				bool	operator== (const const_iterator &it) const	{ return (it._i_container == _i_container); }
 
 				/**
 				 * Disequality operator.
 				 *
 				 * @return : true if the 2 containers are not equals, otherwise it returns false.
 				 */
-				bool	operator!= (const iterator &it) const	{ return (it._i_container != _i_container); }
+				bool	operator!= (const const_iterator &it) const	{ return (it._i_container != _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A < B, otherwise it returns false.
 				 */
-				bool	operator< (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator< (const const_iterator &it) const { return (it._i_container < _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A > B, otherwise it returns false.
 				 */
-				bool	operator> (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator> (const const_iterator &it) const { return (it._i_container < _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A <= B, otherwise it returns false.
 				 */
-				bool	operator<= (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator<= (const const_iterator &it) const { return (it._i_container < _i_container); }
 
 				/**
 				 * Comparison operator.
 				 *
 				 * @return : true if the A >= B, otherwise it returns false.
 				 */
-				bool	operator>= (const iterator &it) const { return (it._i_container < _i_container); }
+				bool	operator>= (const const_iterator &it) const { return (it._i_container < _i_container); }
 
+				/**
+				 * Incrementation operator.
+				 */
+				const_iterator &operator++ (void) { _i_container++; return (*this); }
+
+				/**
+				 * Decrementation operator.
+				 */
+				const_iterator &operator-- (void) { _i_container--; return (*this); }
+
+				/**
+				 * Increment operator.
+				 *
+				 * @return : the iterator increased by 1.
+				 */
+				const_iterator operator++ (int n)
+				{
+					const_iterator	it(*this);
+
+					(void)n;
+					++this->_i_container;
+					return (it);
+				}
+
+				/**
+				 * Decrement operator.
+				 *
+				 * @return : the iterator decreased by 1.
+				 */
+				const_iterator operator-- (int n)
+				{
+					const_iterator	it(*this);
+
+					(void)n;
+					--this->_i_container;
+					return (it);
+				}
+
+				/**
+				 * Addition operator.
+				 *
+				 * @param n : number to add.
+				 * @return : increased iterator.
+				 */
+				const_iterator operator+ (int n)
+				{
+					const_iterator	it(*this);
+
+					it._i_container += n;
+					return (it);
+				}
+
+				/**
+				 * Substraction operator.
+				 *
+				 * @param n : number to substract.
+				 * @return : substracted iterator.
+				 */
+				const_iterator operator- (int n)
+				{
+					const_iterator	it(*this);
+
+					it._i_container -= n;
+					return (it);
+				}
 		};
 
 	private:
@@ -385,6 +473,39 @@ namespace ft
 		}
 
 		/**
+		 * Range constructor.
+		 *
+		 * Constructs a container with as many elements as the range [first,last),
+		 * with each element constructed from its corresponding element in that range, in the same order.
+		 *
+		 * @first/@last : Input iterators to the initial and final positions in a range.
+		 * @alloc : Allocator object.
+		 */
+		template <class InputIterator>
+		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+		{
+			this->_c_size = 0;
+			this->_c_allocator = alloc;
+			this->_c_container = this->_c_allocator.allocate(1);
+			assign(first, last);
+		}
+
+		/**
+		 * Copy constructor.
+		 *
+		 * Constructs a container with a copy of each of the elements in x, in the same order.
+		 *
+		 * @x : Another vector object of the same type (with the same class template
+		 * arguments T and Alloc), whose contents are either copied or acquired.
+		 */
+		vector (const vector& x)
+		{
+			this->_c_size = 0;
+			this->_c_container = this->_c_allocator.allocate(1);
+			assign(x.begin(), x.end());
+		}
+
+		/**
 		 * Destructor of the container
 		 */
 		~vector (void)
@@ -392,7 +513,14 @@ namespace ft
 			clear();
 		}
 
-		//ITERATORS
+		vector& operator= (const vector& x)
+		{
+			this->_c_container = x._c_container;
+			this->_c_size = x.size();
+			return (*this);
+		}
+
+	//ITERATORS
 
 		/**
 		 * Return iterator to beginning.
@@ -436,10 +564,11 @@ namespace ft
 		}
 
 
-		//CAPACITY METHODS
+	//CAPACITY METHODS
 
 		/**
 		 * Returns the number of elements in the vector.
+		 *
 		 * @return : The number of elements in the container.
 		 */
 		size_type	size (void)
@@ -451,6 +580,7 @@ namespace ft
 		 * Return maximum size.
 		 *
 		 * Returns the maximum number of elements that the vector can hold.
+		 *
 		 * @return : The maximum number of elements a vector container can hold as content.
 		 */
 		size_type max_size (void) const
@@ -462,8 +592,10 @@ namespace ft
 		 * Change size.
 		 *
 		 * Resizes the container so that it contains n elements.
+		 *
 		 * @param n : New container size, expressed in number of elements.
-		 * @param val : Object whose content is copied to the added elements in case that n is greater than the current container size.
+		 * @param val : Object whose content is copied to the added elements in case
+		 * that n is greater than the current container size.
 		 */
 		void resize (size_type n, value_type val = value_type())
 		{
@@ -480,6 +612,7 @@ namespace ft
 		 *
 		 * Returns the size of the storage space currently allocated for
 		 * the vector, expressed in terms of elements.
+		 *
 		 * @return : The size of the currently allocated storage capacity
 		 * in the vector, measured in terms of the number elements it can hold.
 		 */
@@ -491,7 +624,8 @@ namespace ft
 		/**
 		 * Test whether vector is empty
 		 *
-		 * Returns whether the vector is empty
+		 * Returns whether the vector is empty.
+		 *
 		 * @return : true if the container size is 0, false otherwise.
 		 */
 		bool	empty (void) const
@@ -503,6 +637,7 @@ namespace ft
 		 * Request a change in capacity.
 		 *
 		 * Requests that the vector capacity be at least enough to contain n elements.
+		 *
 		 * @n : Minimum capacity for the vector.
 		 */
 		void reserve (size_type n)
@@ -511,12 +646,13 @@ namespace ft
 				realloc(n);
 		}
 
-		//ELEMENT ACCESS METHODS
+	//ELEMENT ACCESS METHODS
 
 		/**
 		 * Access element
 		 *
 		 * Returns a reference to the element at position n in the vector container.
+		 *
 		 * @param n : Position of an element in the container.
 		 * @return : The element at the specified position in the vector.
 		 */
@@ -529,6 +665,7 @@ namespace ft
 		 * Access element
 		 *
 		 * Returns a const reference to the element at position n in the vector container.
+		 *
 		 * @param n : Position of an element in the container.
 		 * @return : The element at the specified position in the vector.
 		 */
@@ -541,6 +678,7 @@ namespace ft
 		 * Access element.
 		 *
 		 * Returns a reference to the element at position n in the vector.
+		 *
 		 * @param n : Position of an element in the container.
 		 * @return : The element at the specified position in the container.
 		 */
@@ -553,6 +691,7 @@ namespace ft
 		 * Access element.
 		 *
 		 * Returns a const reference to the element at position n in the vector.
+		 *
 		 * @param n : Position of an element in the container.
 		 * @return : The element at the specified position in the container.
 		 */
@@ -565,6 +704,7 @@ namespace ft
 		 * Access first element
 		 *
 		 * Returns a reference to the first element in the vector.
+		 *
 		 * @return : A reference to the first element in the vector container.
 		 */
 		reference front (void)
@@ -576,6 +716,7 @@ namespace ft
 		 * Access first element
 		 *
 		 * Returns a const reference to the first element in the vector.
+		 *
 		 * @return : A reference to the first element in the vector container.
 		 */
 		const_reference front (void) const
@@ -587,6 +728,7 @@ namespace ft
 		 * Access last element
 		 *
 		 * Returns a reference to the last element in the vector.
+		 *
 		 * @return : A reference to the last element in the vector container.
 		 */
 		reference back (void)
@@ -606,28 +748,52 @@ namespace ft
 		}
 
 
-		//MODIFIERS METHODS
+	//MODIFIERS METHODS
 		
 		/**
 		 * Assign : Fill version
 		 *
 		 * Assigns new contents to the vector, replacing its current
 		 * contents, and modifying its size accordingly.
+		 *
+		 * The new contents are n elements, each initialized to a copy of val.
+		 *
 		 * @param n : New size for the container
 		 * @param val : Value to fill the container with.
 		 */
 		void assign (size_type n, const value_type& val)
 		{
-			for (size_type i = this->_c_size; i; i--)
-				pop_back();
+			clear();
 			for (size_type j = 0; j < n; ++j)
 				push_back(val);
+		}
+
+		/**
+		 * Assign : Range version.
+		 *
+		 * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
+		 *
+		 * The new contents are elements constructed from each of the elements
+		 * in the range between first and last, in the same order.
+		 *
+		 * @first/@last : Input iterators to the initial and final positions in a sequence.
+		 */
+		template <class InputIterator>
+		void assign (InputIterator first, InputIterator last)
+		{
+			clear();
+			while (first != last)
+			{
+				std::cout << first << std::endl;//push_back(*first++);
+				first++;
+			}
 		}
 
 		/**
 		 * Add element at the end.
 		 *
 		 * Adds a new element at the end of the vector, after its current last element.
+		 *
 		 * @val : Value to be copied (or moved) to the new element.
 		 */
 		void push_back (const value_type& val)
@@ -654,6 +820,7 @@ namespace ft
 		 *
 		 * The vector is extended by inserting new elements before the element at the specified position,
 		 * effectively increasing the container size by the number of elements inserted.
+		 *
 		 * @param position : Position in the vector where the new elements are inserted.
 		 * @param val : Value to be copied (or moved) to the inserted elements.
 		 * @return : An iterator that points to the first of the newly inserted elements.
@@ -683,6 +850,7 @@ namespace ft
 		 *
 		 * The vector is extended by inserting new elements before the element at the specified position,
 		 * effectively increasing the container size by the number of elements inserted.
+		 *
 		 * @position : Position in the vector where the new elements are inserted.
 		 * @n : Number of elements to insert.
 		 * @val : Value to be copied (or moved) to the inserted elements.
@@ -715,20 +883,23 @@ namespace ft
 		 *
 		 * The vector is extended by inserting new elements before the element at the specified position,
 		 * effectively increasing the container size by the number of elements inserted.
+		 *
 		 * @position : Position in the vector where the new elements are inserted.
 		 * @first : Iterators specifying a range of elements.
 		 * @last : Iterators specifying a range of elements.
 		 */
-//		template <class InputIterator>
-  //  	void insert (iterator position, InputIterator first, InputIterator last)
-	//	{
-			//TODO
-	//	}
+		template <class InputIterator>
+   		void insert (iterator position, InputIterator first, InputIterator last)
+		{
+			while (first != last)
+				insert(position, *first++);
+		}
 
 		/**
 		 * Erase elements.
 		 *
 		 * Removes from the vector either a single element (position) or a range of elements ([first,last)).
+		 *
 		 * @position : Iterator pointing to a single element to be removed from the vector.
 		 * @return : An iterator pointing to the new location of the element
 		 * that followed the last element erased by the function call.
@@ -763,7 +934,7 @@ namespace ft
 		iterator erase (iterator first, iterator last)
 		{
 			size_type	pos = 0;
-			int			cnt = 0;
+			size_type	cnt = 0;
 			iterator	it = begin();
 
 			for (iterator itb = begin(); itb != first; itb++)
@@ -825,5 +996,112 @@ namespace ft
 			for (iterator it = begin(); i < size; i++)
 				erase(it++);
 		}
+
+		/**
+		 * Exchanges contents of vectors.
+		 *
+		 * The contents of container x are exchanged with those of y.
+		 * @x/@y : vector containers of the same type.
+		 */
+		void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
+		{
+			vector	tmp = x;
+
+			x = y;
+			y = tmp;
+		}
+
+	/**
+	 * Relational operators for vector.
+	 *
+	 * Performs the appropriate comparison operation between the vector containers lhs and rhs.
+	 */
+		bool operator== (const vector<T,Alloc>& rhs)
+		{
+			if (this->_c_size != rhs.size())
+				return (false);
+
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 != *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
+		bool operator!= (const vector<T,Alloc>& rhs)
+		{
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 == *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
+		bool operator< (const vector<T,Alloc>& rhs)
+		{
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 >= *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
+		bool operator<= (const vector<T,Alloc>& rhs)
+		{
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 > *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
+		bool operator> (const vector<T,Alloc>& rhs)
+		{
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 <= *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
+		bool operator>= (const vector<T,Alloc>& rhs)
+		{
+			iterator	it1 = begin();
+			iterator	it2 = rhs.begin();
+			while (it1 != end() || it2 != rhs.end())
+			{
+				if (*it1 < *it2)
+					return (false);
+				it1++;
+				it2++;
+			}
+			return (true);
+		}
+
 	};
 }
