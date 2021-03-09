@@ -39,8 +39,9 @@ namespace ft
 				/**
 				 * Default constructor.
 				 */
-				explicit	iterator (void): _i_container(NULL)
+				explicit	iterator (void)
 				{
+					this->_i_container = NULL;
 				}
 
 				/**
@@ -48,8 +49,9 @@ namespace ft
 				 *
 				 * @container : the container to assign.
 				 */
-				explicit	iterator (pointer container): _i_container(container)
+				explicit	iterator (pointer container)
 				{
+					this->_i_container = container;
 				}
 
 				/**
@@ -57,8 +59,9 @@ namespace ft
 				 *
 				 * @it : the iterator to copy.
 				 */
-				iterator (const iterator &it): _i_container(it._i_container)
+				iterator (const iterator &it)
 				{
+					this->_i_container = it._i_container;
 				}
 
 				/**
@@ -68,7 +71,7 @@ namespace ft
 				 */
 				iterator (const const_iterator &it)
 				{
-					this->_i_container = &*it;
+					this->_i_container = it._icontainer;
 				}
 
 			//OPERATORS
@@ -95,8 +98,13 @@ namespace ft
 				 */
 				iterator &operator= (const_iterator const &it)
 				{
-					_i_container = &*it;
+					_i_container = it._i_container;
 					return (*this);
+				}
+
+				operator const_iterator()
+				{
+					return (const_iterator(this->_i_container));
 				}
 
 				/**
@@ -253,8 +261,9 @@ namespace ft
 				/**
 				 * Default constructor.
 				 */
-				const_iterator (void): _i_container(NULL)
+				const_iterator (void)
 				{
+					this->_i_container = NULL;
 				}
 
 				/**
@@ -262,8 +271,9 @@ namespace ft
 				 *
 				 * @container : the container to assign.
 				 */
-				const_iterator (pointer container): _i_container(container)
+				const_iterator (pointer container)
 				{
+					this->_i_container = container;
 				}
 
 				/**
@@ -273,7 +283,7 @@ namespace ft
 				 */
 				const_iterator (const iterator &it)
 				{
-					*this = it;
+					this->_i_container = it._i_container;
 				}
 
 				/**
@@ -283,7 +293,7 @@ namespace ft
 				 */
 				const_iterator (const const_iterator &it)
 				{
-					*this = it;
+					this->_i_container = it._i_container;
 				}
 
 				/**
@@ -315,8 +325,13 @@ namespace ft
 				 */
 				const_iterator &operator= (iterator const &it)
 				{
-					_i_container = &*it;
+					_i_container = it._i_container;
 					return (*this);
+				}
+
+				operator	iterator()
+				{
+					return (iterator(this->_i_container));
 				}
 
 				/**
