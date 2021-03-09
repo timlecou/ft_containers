@@ -271,15 +271,24 @@ namespace ft
 				 *
 				 * @it : the iterator to copy.
 				 */
-				const_iterator (const const_iterator &it): _i_container(it._i_container)
-				{
-				}
-
 				const_iterator (const iterator &it)
 				{
 					*this = it;
 				}
 
+				/**
+				 * Copy constructor.
+				 *
+				 * @it : the iterator to copy.
+				 */
+				const_iterator (const const_iterator &it)
+				{
+					*this = it;
+				}
+
+				/**
+				 * Destructor.
+				 */
 				~const_iterator (void) {}
 
 				//OPERATORS
@@ -297,6 +306,13 @@ namespace ft
 					return (*this);
 				}
 
+				/**
+				 * Assignation operator.
+				 *
+				 * Copies all the elements from x into the container.
+				 * @param it : the iterator to assign.
+				 * @return : *this.
+				 */
 				const_iterator &operator= (iterator const &it)
 				{
 					_i_container = &*it;
@@ -847,11 +863,9 @@ namespace ft
 			size_type	pos = 0;
 			size_type	end = this->_c_size;
 
-			std::cout << "je passe" << *position << "hrtgfed" << *begin() << std::endl;
 			for (iterator it = begin(); it != position; it++)
 				pos++;
-			std::cout << "je paaaaaaaaaaaaaaaaaaaaasse" << std::endl;
-			if (this->_c_size + 1 > this->_c_capacity)
+			if (this->_c_size <= this->_c_capacity)
 				reserve(this->_c_size + 1);
 			while (end > pos)
 			{
@@ -861,7 +875,7 @@ namespace ft
 			}
 			this->_c_size++;
 			this->_c_allocator.construct(&this->_c_container[end], val);
-			return (begin() + pos);
+			return (begin() + end);
 		}
 
 		/**
@@ -876,25 +890,8 @@ namespace ft
 		 */
 		void insert (iterator position, size_type n, const value_type& val)
 		{
-			size_type	pos = 0;
-			size_type	end = this->_c_size + n;
-
-			for (iterator it = begin(); it != position; it++)
-				pos++;
-			if (end > this->_c_capacity)
-				reserve(end);
-			while (end > pos + n)
-			{
-				this->_c_allocator.destroy(&this->_c_container[end]);
-				this->_c_allocator.construct(&this->_c_container[end], this->_c_container[end - n]);
-				end--;
-			}
-			while (end > pos)
-			{
-				this->_c_allocator.construct(&this->_c_container[end], val);
-				end--;
-			}
-			this->_c_size += n;
+			while (n--)
+				position = insert(position, val);
 		}
 
 		/**
@@ -912,9 +909,8 @@ namespace ft
 		{
 			while (first != last)
 			{
-				std::cout << *position << std::endl;
-				insert(position, *first);
-				first++;
+				position = insert(position, *first++);
+				position++;
 			}
 		}
 
@@ -1056,12 +1052,12 @@ namespace ft
 			iterator	it2 = rhs.begin();
 			while (it1 != end() || it2 != rhs.end())
 			{
-				if (*it1 >= *it2)
-					return (false);
+				if (*it1 < *it2)
+					return (true);
 				it1++;
 				it2++;
 			}
-			return (true);
+			return (false);
 		}
 
 		bool operator<= (const vector<T,Alloc>& rhs)
@@ -1084,12 +1080,12 @@ namespace ft
 			iterator	it2 = rhs.begin();
 			while (it1 != end() || it2 != rhs.end())
 			{
-				if (*it1 <= *it2)
-					return (false);
+				if (*it1 > *it2)
+					return (true);
 				it1++;
 				it2++;
 			}
-			return (true);
+			return (false);
 		}
 
 		bool operator>= (const vector<T,Alloc>& rhs)
