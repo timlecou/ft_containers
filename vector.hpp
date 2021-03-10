@@ -17,11 +17,11 @@ namespace ft
 			typedef	T	const								&const_reference;
 			typedef	T*										pointer;
 			typedef	T*	const								const_pointer;
-			typedef	vectorIterator<T>					iterator;
-			typedef	vectorConstIterator<T>				const_iterator;
-			typedef vectorReverseIterator<T>			reverse_iterator;
-			typedef	ptrdiff_t							difference_type;
-			typedef	size_t								size_type;
+			typedef	vectorIterator<T>						iterator;
+			typedef	vectorConstIterator<T>					const_iterator;
+			typedef reverse_iterator<iterator>				reverse_iterator;
+			typedef	ptrdiff_t								difference_type;
+			typedef	size_t									size_type;
 
 		protected:
 			value_type		*_c_container;

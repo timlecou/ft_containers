@@ -2,7 +2,7 @@
 # define VECTORITERATORS_HPP
 # include <iostream>
 # include "utils.hpp"
-# include "vector.hpp"
+# include "reverse_iterator.hpp"
 
 namespace	ft
 {
@@ -14,8 +14,10 @@ namespace	ft
 	{
 		public:
 			typedef	T					value_type;
-			typedef	T&					reference;
-			typedef	T*					pointer;
+			typedef	T					&reference;
+			typedef	T	const			&const_reference;
+			typedef	T					*pointer;
+			typedef	T	const			*const_pointer;
 			typedef	std::ptrdiff_t		difference_type;
 		private:
 			pointer	_i_container;
@@ -99,7 +101,7 @@ namespace	ft
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			value_type	operator[] (size_type n) const { return (_i_container[n]); }
+			value_type	operator[] (size_t n) const { return (_i_container[n]); }
 
 			/**
 			 * Dereference operator.
@@ -241,6 +243,13 @@ namespace	ft
 		template <typename T>
 		class	vectorConstIterator
 		{
+			public:
+				typedef	T					value_type;
+				typedef	T					&reference;
+				typedef	T	const			&const_reference;
+				typedef	T					*pointer;
+				typedef	T	const			*const_pointer;
+				typedef	std::ptrdiff_t		difference_type;
 			private:
 				pointer	_i_container;
 
@@ -327,7 +336,7 @@ namespace	ft
 				 *
 				 * @return : the value of the dereferenced container.
 				 */
-				value_type	operator[] (size_type n) const { return (_i_container[n]); }
+				value_type	operator[] (size_t n) const { return (_i_container[n]); }
 
 				/**
 				 * Dereference operator.
@@ -452,57 +461,6 @@ namespace	ft
 				}
 		};
 		
-		/**
-		 * This class reverses the direction in which a bidirectional or
-		 * random-access vectorIterator<T> iterates through a range.
-		 *
-		 * A copy of the original vectorIterator<T> (the base vectorIterator<T>) is kept internally
-		 * and used to reflect the operations performed on the reverse_vectorIterator<T>:
-		 * whenever the reverse_vectorIterator<T> is incremented, its base vectorIterator<T> is decreased,
-		 * and vice versa. A copy of the base vectorIterator<T> with the current state can be
-		 * obtained at any time by calling member base.
-		 */
-		template <class Iterator>
-		class vectorReverseIterator<T>
-		{
-			public:
-				typedef	Iterator	iterator_type;
-
-			private:
-				iterator_type	_base;
-
-			public:
-
-				/**
-				 * Default constructor.
-				 *
-				 * Constructs a reverse vectorIterator<T> that points to no object.
-				 */
-				reverse_iterator<T>(void)
-				{
-					this->_base = NULL;
-				}
-
-				/**
-				 * Initialization constructor.
-				 *
-				 * Constructs a reverse vectorIterator<T> from some original vectorIterator<T> it.
-				 *
-				 * @it : An vectorIterator<T>, whose sense of iteration is inverted in the constructed object.
-				 */
-				explicit reverse_iterator<T> (iterator_type it)
-				{
-					this->_base = it;
-				}
-
-				/**
-				 * Copy / Type-cast constructor.
-				 *
-				 * Constructs a reverse vectorIterator<T> from some other reverse vectorIterator<T>.
-				 *
-				 * @rev_it : An vectorIterator<T> of a reverse_vectorIterator<T> type, whose sense of iteration is preserved.
-				 */
-		};
 }
 
 #endif
