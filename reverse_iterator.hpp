@@ -240,11 +240,11 @@ namespace   ft
 				 */
 				bool operator== (const reverse_iterator<Iterator>& rhs)
 				{
-					return (*this == rhs);
+					return (base() == rhs.base());
 				}
 
 				/**
-				 * Relationnale operators for reverse_iterator.
+				 * Relationnal operators for reverse_iterator.
 				 * 
 				 * Performs the appropriate comparison operation between the reverse_iterator objects lhs and rhs.
 				 * 
@@ -253,7 +253,59 @@ namespace   ft
 				 */
 				bool operator!= (const reverse_iterator<Iterator>& rhs)
 				{
-					return (*this != rhs);
+					return (base() != rhs.base());
+				}
+
+				/**
+				 * Relationnal operators for reverse_iterator.
+				 *
+				 * Performs the appropriate comparison operation between the reverse_iterator objects lhs and rhs.
+				 *
+				 * @rhs : reverse_iterator objects.
+				 * @return : true if the condition holds, and false otherwise.
+				 */
+				bool operator< (const reverse_iterator<Iterator>& rhs)
+				{
+					return (base() > rhs.base());
+				}
+
+				/**
+				 * Relationnal operators for reverse_iterator.
+				 *
+				 * Performs the appropriate comparison operation between the reverse_iterator objects lhs and rhs.
+				 *
+				 * @rhs : reverse_iterator objects.
+				 * @return : true if the condition holds, and false otherwise.
+				 */
+				bool operator<= (const reverse_iterator<Iterator>& rhs)
+				{
+					return (base() >= rhs.base());
+				}
+
+				/**
+				 * Relationnal operators for reverse_iterator.
+				 *
+				 * Performs the appropriate comparison operation between the reverse_iterator objects lhs and rhs.
+				 *
+				 * @rhs : reverse_iterator objects.
+				 * @return : true if the condition holds, and false otherwise.
+				 */
+				bool operator> (const reverse_iterator<Iterator>& rhs)
+				{
+					return (base() < rhs.base());
+				}
+
+				/**
+				 * Relationnal operators for reverse_iterator.
+				 *
+				 * Performs the appropriate comparison operation between the reverse_iterator objects lhs and rhs.
+				 *
+				 * @rhs : reverse_iterator objects.
+				 * @return : true if the condition holds, and false otherwise.
+				 */
+				bool operator>= (const reverse_iterator<Iterator>& rhs)
+				{
+					return (base() <= rhs.base());
 				}
 
 		};

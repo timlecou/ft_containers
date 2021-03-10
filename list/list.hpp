@@ -2,9 +2,7 @@
 
 #ifndef	LIST_HPP
 # define LIST_HPP
-
-#include <iostream>
-#include "utils.hpp"
+# include "listIterators.hpp"
 
 namespace	ft
 {
@@ -24,14 +22,18 @@ namespace	ft
 			};
 
 		public:
-			typedef	T						value_type;
-			typedef	Alloc					allocator_type;
-			typedef	value_type &			reference;
-			typedef	value_type const &		const_reference;
-			typedef	value_type *			pointer;
-			typedef	value_type const *		const_pointer;
-			typedef	ptrdiff_t				difference_type;
-			typedef	size_t					size_type;
+			typedef	T											value_type;
+			typedef	Alloc										allocator_type;
+			typedef	value_type &								reference;
+			typedef	value_type const &							const_reference;
+			typedef	value_type *								pointer;
+			typedef	value_type const *							const_pointer;
+			typedef	listIterator<T>								iterator;
+			typedef	listConstIterator<T>						const_iterator;
+	//		typedef reverse_iterator<iterator>					reverse_iterator;
+	//		typedef const_reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef	ptrdiff_t									difference_type;
+			typedef	size_t										size_type;
 
 		protected:
 			node					*_c_node;
@@ -39,188 +41,6 @@ namespace	ft
 			std::allocator<node>	_c_node_allocator;
 			size_type				_c_size;
 
-		public:
-			class	const_iterator;
-			class	iterator
-			{
-				private:
-					node	*_i_container;
-
-				public:
-
-					/**
-					 * Default constuctor.
-					 */
-					explicit	iterator (void): _i_container(NULL) {}
-
-					/**
-					 * Assignation constructor.
-					 *
-					 * @container : the container to assign.
-					 */
-					explicit	iterator (node *container): _i_container(container) {}
-
-					/**
-					 * Copy constructor.
-					 *
-					 * @it : the iterator to copy.
-					 */
-					iterator (const iterator &it): _i_container(it._i_container) {}
-
-					//OPERATORS
-
-					/**
-					 * Assignation operator.
-					 *
-					 * Copies all the elements from x into the container.
-					 * @x : the iterator to assign.
-					 * @return : *this.
-					 */
-					iterator	&operator= (const iterator &it)
-					{
-						this->_i_container = it._i_container;
-						return (*this);
-					}
-
-					/**
-					 * Equality operator.
-					 *
-					 * @return : true if the 2 containers are equals, otherwise it returns false.
-					 */
-					bool	operator== (const iterator &it) const { return (it._i_container == _i_container); }
-
-					/**
-					 * Disequality operator.
-					 *
-					 * @return : true if the 2 containers are not equals, otherwise it returns false.
-					 */
-					bool	operator!= (const iterator &it) const { return (it._i_container != _i_container); }
-
-					/**
-					 * Dereference operator.
-					 *
-					 * @return : the value of the dereferenced container.
-					 */
-					reference	operator* (void) const { return (_i_container->content); }
-
-					/**
-					 * Dereference operator.
-					 *
-					 * @return : the value of the dereferenced container.
-					 */
-					pointer		operator-> (void) const { return (&_i_container->content); }
-
-					/**
-					 * Incrementation operator.
-					 */
-					iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (iterator(_i_container->previous)); }
-
-					/**
-					 * Decrementation operator.
-					 */
-					iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (iterator(_i_container->next)); }
-
-					/**
-					 * Value incrementation operator.
-					 */
-					iterator	&operator++ (void) { _i_container = _i_container->next; return (*this); }
-
-					/**
-					 * Value decrementation operator.
-					 */
-					iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
-			};
-
-			class	const_iterator
-			{
-				private:
-					node	*_i_container;
-
-				public:
-
-					/**
-					 * Default constuctor.
-					 */
-					explicit	const_iterator (void): _i_container(NULL) {}
-
-					/**
-					 * Assignation constructor.
-					 *
-					 * @container : the container to assign.
-					 */
-					explicit	const_iterator (node *container): _i_container(container) {}
-
-					/**
-					 * Copy constructor.
-					 *
-					 * @it : the iterator to copy.
-					 */
-					const_iterator (const const_iterator &it): _i_container(it._i_container) {}
-
-				//OPERATORS
-
-					/**
-					 * Assignation operator.
-					 *
-					 * Copies all the elements from x into the container.
-					 * @x : the iterator to assign.
-					 * @return : *this.
-					 */
-					const_iterator	&operator= (const const_iterator &it)
-					{
-						this->_i_container = it._i_container;
-						return (*this);
-					}
-
-					/**
-					 * Equality operator.
-					 *
-					 * @return : true if the 2 containers are equals, otherwise it returns false.
-					 */
-					bool	operator== (const const_iterator &it) const { return (it._i_container == _i_container); }
-
-					/**
-					 * Disequality operator.
-					 *
-					 * @return : true if the 2 containers are not equals, otherwise it returns false.
-					 */
-					bool	operator!= (const const_iterator &it) const { return (it._i_container != _i_container); }
-
-					/**
-					 * Dereference operator.
-					 *
-					 * @return : the value of the dereferenced container.
-					 */
-					reference	operator* (void) const { return (_i_container->content); }
-
-					/**
-					 * Dereference operator.
-					 *
-					 * @return : the value of the dereferenced container.
-					 */
-					pointer		operator-> (void) const { return (&_i_container->content); }
-
-					/**
-					 * Incrementation operator.
-					 */
-					const_iterator	operator++ (int n) { (void)n; _i_container = _i_container->next; return (*this); }
-
-					/**
-					 * Decrementation operator.
-					 */
-					const_iterator	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (*this); }
-
-					/**
-					 * Value incrementation operator.
-					 */
-					const_iterator	&operator++ (void) { _i_container = _i_container->next; return (*this); }
-
-					/**
-					 * Value decrementation operator.
-					 */
-					const_iterator	&operator-- (void) { _i_container = _i_container->previous; return (*this); }
-
-			};
 		public:
 
 			/**
@@ -355,6 +175,54 @@ namespace	ft
 			{
 				return (const_iterator(this->_c_node));
 			}
+
+			/**
+			 * Return reverse iterator to reverse beginning.
+			 *
+			 * Returns a reverse iterator pointing to the last element in the container.
+			 *
+			 * @return : A reverse iterator to the reverse beginning of the sequence container.
+			 */
+//			reverse_iterator rbegin()
+//			{
+//				return (reverse_iterator(this->_c_node->previous));
+//			}
+
+			/**
+			 * Return const reverse iterator to reverse beginning.
+			 *
+			 * Returns a const reverse iterator pointing to the last element in the container.
+			 *
+			 * @return : A const reverse iterator to the reverse beginning of the sequence container.
+			 */
+//			const_reverse_iterator rbegin() const
+//			{
+//				return (const_reverse_iterator(this->_c_node->previous));
+//			}
+
+			/**
+			 * Return reverse iterator to reverse end.
+			 *
+			 * Returns a reverse iterator pointing to the first element in the container.
+			 *
+			 * @return : A reverse iterator to the reverse end of the sequence container.
+			 */
+//			reverse_iterator rend()
+//			{
+//				return (reverse_iterator(this->_c_node->previous));
+//			}
+
+			/**
+			 * Return const reverse iterator to reverse end.
+			 *
+			 * Returns a const reverse iterator pointing to the first element in the container.
+			 *
+			 * @return : A const reverse iterator to the reverse end of the sequence container.
+			 */
+//			const_reverse_iterator rend() const
+//			{
+//				return (const_reverse_iterator(this->_c_node->previous));
+//			}
 
 		//CAPACITY METHODS
 
