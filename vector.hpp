@@ -1,8 +1,7 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
+# include "vectorIterators.hpp"
 
-#include <iostream>
-#include "utils.hpp"
 /**
  * The namespace "ft" contains the Vector class
  */
@@ -11,476 +10,42 @@ namespace ft
 	template < class T, class Alloc = std::allocator<T> >
 	class	vector
 	{
-	public:
-		typedef	T				value_type;
-		typedef	Alloc			allocator_type;
-		typedef	T				&reference;
-		typedef	T	const		&const_reference;
-		typedef	T*				pointer;
-		typedef	T*	const		const_pointer;
-		typedef	ptrdiff_t		difference_type;
-		typedef	size_t			size_type;
-
-	protected:
-		value_type		*_c_container;
-		allocator_type 	_c_allocator;
-		size_type		_c_size;
-		size_type		_c_capacity;
-
-	public:
-		class	const_iterator;
-		class	iterator
-		{
-			private:
-				pointer	_i_container;
-
-			public:
-
-				/**
-				 * Default constructor.
-				 */
-				explicit	iterator (void)
-				{
-					this->_i_container = NULL;
-				}
-
-				/**
-				 * Assignation constructor.
-				 *
-				 * @container : the container to assign.
-				 */
-				explicit	iterator (pointer container)
-				{
-					this->_i_container = container;
-				}
-
-				/**
-				 * Copy constructor.
-				 *
-				 * @it : the iterator to copy.
-				 */
-				iterator (const iterator &it)
-				{
-					this->_i_container = it._i_container;
-				}
-
-				/**
-				 * Copy constructor.
-				 *
-				 * @it : the iterator to copy.
-				 */
-				iterator (const const_iterator &it)
-				{
-					this->_i_container = it._icontainer;
-				}
-
-			//OPERATORS
-
-				/**
-				 * Assignation operator.
-				 *
-				 * Copies all the elements from x into the container.
-				 * @param it : the iterator to assign.
-				 * @return : *this.
-				 */
-				iterator &operator= (iterator const &it)
-				{
-					_i_container = it._i_container;
-					return (*this);
-				}
-
-				/**
-				 * Assignation operator.
-				 *
-				 * Copies all the elements from x into the container.
-				 * @param it : the iterator to assign.
-				 * @return : *this.
-				 */
-				iterator &operator= (const_iterator const &it)
-				{
-					_i_container = it._i_container;
-					return (*this);
-				}
-
-				operator const_iterator()
-				{
-					return (const_iterator(this->_i_container));
-				}
-
-				/**
-				 * Offset dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				value_type	operator[] (size_type n) const { return (_i_container[n]); }
-
-				/**
-				 * Dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				reference	operator* (void) const { return (*(this->_i_container)); }
-
-				/**
-				 * Dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				value_type	operator-> (void) const { return (_i_container); }
-
-				/**
-				 * Equality operator.
-				 *
-				 * @return : true if the 2 containers are equals, otherwise it returns false.
-				 */
-				bool	operator== (const iterator &it) const	{ return (it._i_container == _i_container); }
-
-				/**
-				 * Disequality operator.
-				 *
-				 * @return : true if the 2 containers are not equals, otherwise it returns false.
-				 */
-				bool	operator!= (const iterator &it) const	{ return (it._i_container != _i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A < B, otherwise it returns false.
-				 */
-				bool	operator< (const iterator &it) const { return (_i_container < it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A > B, otherwise it returns false.
-				 */
-				bool	operator> (const iterator &it) const { return (_i_container > it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A <= B, otherwise it returns false.
-				 */
-				bool	operator<= (const iterator &it) const { return (_i_container <= it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A >= B, otherwise it returns false.
-				 */
-				bool	operator>= (const iterator &it) const { return (_i_container >= it._i_container); }
-
-				/**
-				 * Incrementation operator.
-				 *
-				 * @n : the value to add.
-				 */
-				iterator &operator+= (int n) { _i_container = _i_container + n; return (*this); }
-
-				/**
-				 * Decrementation operator.
-				 *
-				 * @n : the value to substract.
-				 */
-				iterator &operator-= (int n) { _i_container -= n; return (*this); }
-
-				/**
-				 * Incrementation operator.
-				 */
-				iterator &operator++ (void) { _i_container++; return (*this); }
-
-				/**
-				 * Decrementation operator.
-				 */
-				iterator &operator-- (void) { _i_container--; return (*this); }
-
-				/**
-				 * Increment operator.
-				 *
-				 * @return : the iterator increased by 1.
-				 */
-				iterator operator++ (int n)
-				{
-					iterator	it(*this);
-
-					(void)n;
-					++this->_i_container;
-					return (it);
-				}
-
-				/**
-				 * Decrement operator.
-				 *
-				 * @return : the iterator decreased by 1.
-				 */
-				iterator operator-- (int n)
-				{
-					iterator	it(*this);
-
-					(void)n;
-					--this->_i_container;
-					return (it);
-				}
-
-				/**
-				 * Addition operator.
-				 *
-				 * @param n : number to add.
-				 * @return : increased iterator.
-				 */
-				iterator operator+ (int n)
-				{
-					iterator	it(*this);
-
-					it._i_container += n;
-					return (it);
-				}
-
-				/**
-				 * Substraction operator.
-				 *
-				 * @param n : number to substract.
-				 * @return : substracted iterator.
-				 */
-				iterator operator- (int n)
-				{
-					iterator	it(*this);
-
-					it._i_container -= n;
-					return (it);
-				}
-		};
-
-		class	const_iterator
-		{
-			private:
-				pointer	_i_container;
-
-			public:
-
-				/**
-				 * Default constructor.
-				 */
-				const_iterator (void)
-				{
-					this->_i_container = NULL;
-				}
-
-				/**
-				 * Assignation constructor.
-				 *
-				 * @container : the container to assign.
-				 */
-				const_iterator (pointer container)
-				{
-					this->_i_container = container;
-				}
-
-				/**
-				 * Copy constructor.
-				 *
-				 * @it : the iterator to copy.
-				 */
-				const_iterator (const iterator &it)
-				{
-					this->_i_container = it._i_container;
-				}
-
-				/**
-				 * Copy constructor.
-				 *
-				 * @it : the iterator to copy.
-				 */
-				const_iterator (const const_iterator &it)
-				{
-					this->_i_container = it._i_container;
-				}
-
-				/**
-				 * Destructor.
-				 */
-				~const_iterator (void) {}
-
-				//OPERATORS
-
-				/**
-				 * Assignation operator.
-				 *
-				 * Copies all the elements from x into the container.
-				 * @param it : the iterator to assign.
-				 * @return : *this.
-				 */
-				const_iterator &operator= (const_iterator const &it)
-				{
-					_i_container = it._i_container;
-					return (*this);
-				}
-
-				/**
-				 * Assignation operator.
-				 *
-				 * Copies all the elements from x into the container.
-				 * @param it : the iterator to assign.
-				 * @return : *this.
-				 */
-				const_iterator &operator= (iterator const &it)
-				{
-					_i_container = it._i_container;
-					return (*this);
-				}
-
-				operator	iterator()
-				{
-					return (iterator(this->_i_container));
-				}
-
-				/**
-				 * Offset dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				value_type	operator[] (size_type n) const { return (_i_container[n]); }
-
-				/**
-				 * Dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				reference	operator* (void) const { return (*(this->_i_container)); }
-
-				/**
-				 * Dereference operator.
-				 *
-				 * @return : the value of the dereferenced container.
-				 */
-				value_type	operator-> (void) const { return (_i_container); }
-
-				/**
-				 * Equality operator.
-				 *
-				 * @return : true if the 2 containers are equals, otherwise it returns false.
-				 */
-				bool	operator== (const const_iterator &it) const	{ return (it._i_container == _i_container); }
-
-				/**
-				 * Disequality operator.
-				 *
-				 * @return : true if the 2 containers are not equals, otherwise it returns false.
-				 */
-				bool	operator!= (const const_iterator &it) const	{ return (it._i_container != _i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A < B, otherwise it returns false.
-				 */
-				bool	operator< (const const_iterator &it) const { return (_i_container < it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A > B, otherwise it returns false.
-				 */
-				bool	operator> (const const_iterator &it) const { return (_i_container > it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A <= B, otherwise it returns false.
-				 */
-				bool	operator<= (const const_iterator &it) const { return (it._i_container <= it._i_container); }
-
-				/**
-				 * Comparison operator.
-				 *
-				 * @return : true if the A >= B, otherwise it returns false.
-				 */
-				bool	operator>= (const const_iterator &it) const { return (_i_container >= it._i_container); }
-
-				/**
-				 * Incrementation operator.
-				 */
-				const_iterator &operator++ (void) { _i_container++; return (*this); }
-
-				/**
-				 * Decrementation operator.
-				 */
-				const_iterator &operator-- (void) { _i_container--; return (*this); }
-
-				/**
-				 * Increment operator.
-				 *
-				 * @return : the iterator increased by 1.
-				 */
-				const_iterator operator++ (int n)
-				{
-					const_iterator	it(*this);
-
-					(void)n;
-					++this->_i_container;
-					return (it);
-				}
-
-				/**
-				 * Decrement operator.
-				 *
-				 * @return : the iterator decreased by 1.
-				 */
-				const_iterator operator-- (int n)
-				{
-					const_iterator	it(*this);
-
-					(void)n;
-					--this->_i_container;
-					return (it);
-				}
-
-				/**
-				 * Addition operator.
-				 *
-				 * @param n : number to add.
-				 * @return : increased iterator.
-				 */
-				const_iterator operator+ (int n)
-				{
-					const_iterator	it(*this);
-
-					it._i_container += n;
-					return (it);
-				}
-
-				/**
-				 * Substraction operator.
-				 *
-				 * @param n : number to substract.
-				 * @return : substracted iterator.
-				 */
-				const_iterator operator- (int n)
-				{
-					const_iterator	it(*this);
-
-					it._i_container -= n;
-					return (it);
-				}
-		};
-
-	private:
-		void			realloc(size_type new_capacity)
-		{
-			value_type	*tmp;
-
-			if (new_capacity > max_size())
-				throw std::length_error("vector::resize");
-			tmp = this->_c_allocator.allocate(new_capacity);
-			for (size_type i = 0; i < this->_c_size; i++)
-				tmp[i] = this->_c_container[i];
-			for (size_type j = 0; j < this->_c_size; j++)
-				this->_c_allocator.destroy(&this->_c_container[j]);
-			this->_c_container = tmp;
-			this->_c_capacity = new_capacity;
-		}
-
-	public:
+		public:
+			typedef	T										value_type;
+			typedef	Alloc									allocator_type;
+			typedef	T										&reference;
+			typedef	T	const								&const_reference;
+			typedef	T*										pointer;
+			typedef	T*	const								const_pointer;
+			typedef	vectorIterator<T>					iterator;
+			typedef	vectorConstIterator<T>				const_iterator;
+			typedef vectorReverseIterator<T>			reverse_iterator;
+			typedef	ptrdiff_t							difference_type;
+			typedef	size_t								size_type;
+
+		protected:
+			value_type		*_c_container;
+			allocator_type 	_c_allocator;
+			size_type		_c_size;
+			size_type		_c_capacity;
+
+		private:
+			void			realloc(size_type new_capacity)
+			{
+				value_type	*tmp;
+
+				if (new_capacity > max_size())
+					throw std::length_error("vector::resize");
+				tmp = this->_c_allocator.allocate(new_capacity);
+				for (size_type i = 0; i < this->_c_size; i++)
+					tmp[i] = this->_c_container[i];
+				for (size_type j = 0; j < this->_c_size; j++)
+					this->_c_allocator.destroy(&this->_c_container[j]);
+				this->_c_container = tmp;
+				this->_c_capacity = new_capacity;
+			}
+
+		public:
 
 		/**
 		 * Empty container constructor
@@ -602,6 +167,48 @@ namespace ft
 
 			return (const_iterator(this->_c_container + this->_c_size));
 		}
+
+		/**
+		 * Return a reverse iterator to reverse beginning.
+		 *
+		 * Returns a reverse iterator pointing to the last element in the vector.
+		 */
+		reverse_iterator rbegin (void)
+		{
+			return (reverse_iterator(this->_c_container + this->_c_size - 1));
+		}
+
+		/**
+		 * Return a const reverse iterator to reverse beginning.
+		 *
+		 * Returns a const reverse iterator pointing to the last element in the vector.
+		 */
+//		const_reverse_iterator rbegin (void) const
+//		{
+//			return (reverse_iterator(this->_c_container + this->_c_size - 1));
+//		}
+
+		/**
+		 * Return a reverse iterator to reverse end.
+		 *
+		 * Returns a reverse iterator pointing to the theoretical element
+		 * preceding the first element in the vector.
+		 */
+		reverse_iterator rend (void)
+		{
+			return (reverse_iterator(this->_c_container - 1));
+		}
+
+		/**
+		 * Return a const reverse iterator to reverse end.
+		 *
+		 * Returns a const reverse iterator pointing to the theoretical element
+		 * preceding the first element in the vector.
+		 */
+//		const_reverse_iterator rend (void) const
+//		{
+//			return (reverse_iterator(this->_c_container - 1));
+//		}
 
 
 	//CAPACITY METHODS
