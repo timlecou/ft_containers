@@ -62,7 +62,7 @@ namespace   ft
 				{
 					*this = rev_it;
 				}
-
+				
 				/**
 				 * Destructor.
 				 */
@@ -309,6 +309,7 @@ namespace   ft
 				}
 
 		};
+
 }
 
 #endif

@@ -13,14 +13,6 @@ namespace	ft
 	template < class T, class Alloc = std::allocator<T> >
 	class list
 	{
-		private:
-			struct	node
-			{
-				T					content;
-				struct	node		*previous;
-				struct	node		*next;
-			};
-
 		public:
 			typedef	T											value_type;
 			typedef	Alloc										allocator_type;
@@ -28,17 +20,17 @@ namespace	ft
 			typedef	value_type const &							const_reference;
 			typedef	value_type *								pointer;
 			typedef	value_type const *							const_pointer;
-			typedef	listIterator<T>								iterator;
-			typedef	listConstIterator<T>						const_iterator;
-	//		typedef reverse_iterator<iterator>					reverse_iterator;
-	//		typedef const_reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef	ft::listIterator<T>								iterator;
+			typedef	ft::listConstIterator<T>						const_iterator;
+			typedef ft::reverse_iterator<iterator>				reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 			typedef	ptrdiff_t									difference_type;
 			typedef	size_t										size_type;
 
 		protected:
-			node					*_c_node;
+			node<T>					*_c_node;
 			allocator_type			_c_value_allocator;
-			std::allocator<node>	_c_node_allocator;
+			std::allocator<node<T> >	_c_node_allocator;
 			size_type				_c_size;
 
 		public:
@@ -183,10 +175,10 @@ namespace	ft
 			 *
 			 * @return : A reverse iterator to the reverse beginning of the sequence container.
 			 */
-//			reverse_iterator rbegin()
-//			{
-//				return (reverse_iterator(this->_c_node->previous));
-//			}
+			reverse_iterator rbegin (void)
+			{
+				return (reverse_iterator(iterator(this->_c_node->previous)));
+			}
 
 			/**
 			 * Return const reverse iterator to reverse beginning.
@@ -195,10 +187,10 @@ namespace	ft
 			 *
 			 * @return : A const reverse iterator to the reverse beginning of the sequence container.
 			 */
-//			const_reverse_iterator rbegin() const
-//			{
-//				return (const_reverse_iterator(this->_c_node->previous));
-//			}
+			const_reverse_iterator rbegin (void) const
+			{
+				return (const_reverse_iterator(const_iterator(this->_c_node->previous)));
+			}
 
 			/**
 			 * Return reverse iterator to reverse end.
@@ -207,10 +199,10 @@ namespace	ft
 			 *
 			 * @return : A reverse iterator to the reverse end of the sequence container.
 			 */
-//			reverse_iterator rend()
-//			{
-//				return (reverse_iterator(this->_c_node->previous));
-//			}
+			reverse_iterator rend (void)
+			{
+				return (reverse_iterator(iterator(this->_c_node)));
+			}
 
 			/**
 			 * Return const reverse iterator to reverse end.
@@ -219,10 +211,10 @@ namespace	ft
 			 *
 			 * @return : A const reverse iterator to the reverse end of the sequence container.
 			 */
-//			const_reverse_iterator rend() const
-//			{
-//				return (const_reverse_iterator(this->_c_node->previous));
-//			}
+			const_reverse_iterator rend (void) const
+			{
+				return (const_reverse_iterator(const_iterator(this->_c_node)));
+			}
 
 		//CAPACITY METHODS
 
@@ -353,7 +345,7 @@ namespace	ft
 			 */
 			void push_front (const value_type& val)
 			{
-				node	*new_node;
+				node<T>	*new_node;
 
 				//allocating/constructing new element
 				new_node = this->_c_node_allocator.allocate(1);
@@ -373,7 +365,7 @@ namespace	ft
 			 */
 			void pop_front (void)
 			{
-				node	*tmp;
+				node<T>	*tmp;
 
 				tmp = this->_c_node->next;
 				this->_c_node->next = this->_c_node->next->next;
@@ -393,7 +385,7 @@ namespace	ft
 			 */
 			void push_back (const value_type& val)
 			{
-				node	*new_node;
+				node<T>	*new_node;
 
 				//allocating/constructing new element
 				new_node = this->_c_node_allocator.allocate(1);
@@ -413,7 +405,7 @@ namespace	ft
 			 */
 			void pop_back (void)
 			{
-				node	*tmp;
+				node<T>	*tmp;
 
 				tmp = this->_c_node->previous->previous;
 
@@ -437,8 +429,8 @@ namespace	ft
 			 */
 			iterator insert (iterator position, const value_type& val)
 			{
-				node	*new_node;
-				node	*tmp;
+				node<T>	*new_node;
+				node<T>	*tmp;
 				size_type	pos = 0;
 
 				tmp = this->_c_node->next;
@@ -509,7 +501,7 @@ namespace	ft
 			  */
 			iterator erase (iterator position)
 			{
-				node	*tmp = this->_c_node->next;
+				node<T>	*tmp = this->_c_node->next;
 
 				for (iterator it = begin(); it != position; it++)
 					tmp = tmp->next;
@@ -548,7 +540,7 @@ namespace	ft
 			 */
 			void swap (list& x)
 			{
-				node		*tmp_node = this->_c_node;
+				node<T>		*tmp_node = this->_c_node;
 				size_type	tmp_size = this->_c_size;
 
 				//swaping the sizes
@@ -612,8 +604,8 @@ namespace	ft
 			 */
 			void splice (iterator position, list& x, iterator i)
 			{
-				node	*pos = reinterpret_cast<node*>(&*position);
-				node	*pos_i = reinterpret_cast<node*>(&*i);
+				node<T>	*pos = reinterpret_cast<node<T> *>(&*position);
+				node<T>	*pos_i = reinterpret_cast<node<T> *>(&*i);
 
 				pos_i->next->previous = pos_i->previous;
 				pos_i->previous->next = pos_i->next;
@@ -821,12 +813,12 @@ namespace	ft
 			{
 				iterator it = end();
 				iterator last = end();
-				node *tmp_node;
-				node *tmp_elem;
+				node<T>	 *tmp_node;
+				node<T>	 *tmp_elem;
 
 				do
 				{
-					tmp_node = reinterpret_cast<node*>(&*it);
+					tmp_node = reinterpret_cast<node<T> *>(&*it);
 					tmp_elem = tmp_node->previous;
 					tmp_node->previous = tmp_node->next;
 					tmp_node->next = tmp_elem;

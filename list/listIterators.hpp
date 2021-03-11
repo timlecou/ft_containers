@@ -3,6 +3,7 @@
 # include <iostream>
 # include "../reverse_iterator.hpp"
 # include "../utils.hpp"
+# include "structure.h"
 
 namespace	ft
 {
@@ -12,13 +13,6 @@ namespace	ft
 	template <typename T>
 	class	listIterator
 	{
-		private:
-			struct	node
-			{
-				T					content;
-				struct	node		*previous;
-				struct	node		*next;
-			};
 		public:
 			typedef	T					value_type;
 			typedef	T					&reference;
@@ -28,7 +22,7 @@ namespace	ft
 			typedef	std::ptrdiff_t		difference_type;
 
 		private:
-			node	*_i_container;
+			node<T>	*_i_container;
 
 		public:
 
@@ -45,7 +39,7 @@ namespace	ft
 			 *
 			 * @container : the container to assign.
 			 */
-			listIterator<T> (node *container)
+			listIterator<T> (node<T> *container)
 			{
 				this->_i_container = container;
 			}
@@ -94,7 +88,7 @@ namespace	ft
 			 */
 			listIterator<T>	&operator= (const listConstIterator<T> &it)
 			{
-				this->_i_container = &*it;
+				this->_i_container = it._i_container;
 				return (*this);
 			}
 
@@ -155,13 +149,6 @@ namespace	ft
 	template <typename T>
 	class	listConstIterator
 	{
-		private:
-			struct	node
-			{
-				T					content;
-				struct	node		*previous;
-				struct	node		*next;
-			};
 		public:
 			typedef	T					value_type;
 			typedef	T					&reference;
@@ -169,29 +156,39 @@ namespace	ft
 			typedef	T					*pointer;
 			typedef	T	const			*const_pointer;
 			typedef	std::ptrdiff_t		difference_type;
+
 		private:
-			node	*_i_container;
+			node<T>	*_i_container;
 
 		public:
 
 			/**
 			 * Default constuctor.
 			 */
-			explicit	listConstIterator<T> (void): _i_container(NULL) {}
+			listConstIterator<T> (void)
+			{
+				this->_i_container = NULL;
+			}
 
 			/**
 			 * Assignation constructor.
 			 *
 			 * @container : the container to assign.
 			 */
-			explicit	listConstIterator<T> (node *container): _i_container(container) {}
+			listConstIterator<T> (node<T> *container)
+			{
+				this->_i_container = container;
+			}
 
 			/**
 			 * Copy constructor.
 			 *
 			 * @it : the iterator to copy.
 			 */
-			listConstIterator<T> (const listConstIterator<T> &it): _i_container(it._i_container) {}
+			listConstIterator<T> (const listConstIterator<T> &it)
+			{
+				this->_i_container = it._i_container;
+			}
 
 			/**
 			 * Copy constructor.
@@ -200,7 +197,7 @@ namespace	ft
 			 */
 			listConstIterator<T> (const listIterator<T> &it)
 			{
-				this->_i_container = &*it;
+				this->_i_container = it._i_container;
 			}
 
 			//OPERATORS
@@ -227,7 +224,7 @@ namespace	ft
 			 */
 			listConstIterator<T>	&operator= (const listIterator<T> &it)
 			{
-				this->_i_container = &*it;
+				this->_i_container = it._i_container;
 				return (*this);
 			}
 

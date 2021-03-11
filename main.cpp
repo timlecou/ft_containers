@@ -1,5 +1,5 @@
-#include "list.hpp"
-#include "vector.hpp"
+#include "list/list.hpp"
+#include "vector/vector.hpp"
 #include <list>
 #include <vector>
 #include <math.h>
@@ -9,23 +9,14 @@
 #include <vector>       // std::vector
 
 int main () {
-	ft::vector<int> myvector;
-	for (int i=0; i<10; i++) myvector.push_back(i);
+	ft::list<int> mylist;
+  for (int i=1; i<=5; ++i) mylist.push_back(i);
 
-	typedef ft::vector<int>::iterator iter_type;
-	// ? 9 8 7 6 5 4 3 2 1 0 ?
-	iter_type from (myvector.begin());                     //   ^
-	//         ------>
-	iter_type until (myvector.end());                      //                       ^
-	//
-	ft::reverse_iterator<iter_type> rev_until (from);     // ^
-	//         <------
-	ft::reverse_iterator<iter_type> rev_from (until);     //                     ^
+  std::cout << "mylist backwards:";
+  for (ft::list<int>::reverse_iterator rit=mylist.rbegin(); rit!=mylist.rend(); ++rit)
+    std::cout << ' ' << *rit;
 
-	std::cout << "myvector:";
-	while (rev_from != rev_until)
-		std::cout << ' ' << *rev_from++;
-	std::cout << '\n';
+  std::cout << '\n';
 
-	return 0;
+  return 0;
 }
