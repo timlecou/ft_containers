@@ -28,10 +28,10 @@ namespace	ft
 			typedef	size_t										size_type;
 
 		protected:
-			node<T>					*_c_node;
-			allocator_type			_c_value_allocator;
+			node<T>						*_c_node;
+			allocator_type				_c_value_allocator;
 			std::allocator<node<T> >	_c_node_allocator;
-			size_type				_c_size;
+			size_type					_c_size;
 
 		public:
 
@@ -867,18 +867,10 @@ namespace	ft
 
 			bool operator!= (const list<T,Alloc>& rhs)
 			{
-				if (this->size() != rhs.size())
+				if (*this == rhs)
 					return (false);
-				list::iterator	it1 = this->begin();
-				list::iterator	it2 = rhs.begin();
-				while (it1 != this->end() || it2 != rhs.end())
-				{
-					if (*it1 == *it2)
-						return (false);
-					it1++;
-					it2++;
-				}
-				return (true);
+				else
+					return (true);
 			}
 
 			bool operator> (const list<T,Alloc>& rhs)
@@ -889,12 +881,12 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 <= *it2)
-						return (false);
+					if (*it1 > *it2)
+						return (true);
 					it1++;
 					it2++;
 				}
-				return (true);
+				return (false);
 			}
 
 			bool operator< (const list<T,Alloc>& rhs)
@@ -905,12 +897,12 @@ namespace	ft
 				list::iterator	it2 = rhs.begin();
 				while (it1 != this->end() || it2 != rhs.end())
 				{
-					if (*it1 >= *it2)
-						return (false);
+					if (*it1 < *it2)
+						return (true);
 					it1++;
 					it2++;
 				}
-				return (true);
+				return (false);
 			}
 
 			bool operator>= (const list<T,Alloc>& rhs)

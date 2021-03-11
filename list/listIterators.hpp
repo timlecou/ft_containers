@@ -252,7 +252,7 @@ namespace	ft
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			reference	operator* (void) const { return (_i_container->content); }
+			const_reference	operator* (void) const { return (_i_container->content); }
 
 			/**
 			 * Dereference operator.

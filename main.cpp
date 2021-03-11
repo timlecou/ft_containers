@@ -1,21 +1,23 @@
 #include "list/list.hpp"
 #include "vector/vector.hpp"
+#include "stack/stack.hpp"
 #include <list>
 #include <vector>
 #include <math.h>
 
 #include <iostream>     // std::cout
-#include <iterator>     // std::reverse_iterator
-#include <vector>       // std::vector
 
 int main () {
-	ft::list<int> mylist;
-  for (int i=1; i<=5; ++i) mylist.push_back(i);
+	ft::stack<int> mystack;
 
-  std::cout << "mylist backwards:";
-  for (ft::list<int>::reverse_iterator rit=mylist.rbegin(); rit!=mylist.rend(); ++rit)
-    std::cout << ' ' << *rit;
+  for (int i=0; i<5; ++i) mystack.push(i);
 
+  std::cout << "Popping out elements...";
+  while (!mystack.empty())
+  {
+     std::cout << ' ' << mystack.top();
+     mystack.pop();
+  }
   std::cout << '\n';
 
   return 0;
