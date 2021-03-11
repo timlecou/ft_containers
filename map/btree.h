@@ -10,6 +10,7 @@ struct btree
     typedef ft::pair<const key_type,mapped_type>        value_type;
 
     value_type      element;
+    btree           *previous;
     btree           *rigth;
     btree           *left;
 };

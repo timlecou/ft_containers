@@ -17,11 +17,7 @@ namespace   ft
          * 
          * Constructs a pair object with its elements value-initialized.
          */
-        pair (void)
-        {
-            this->first = 0;
-            this->second = 0;
-        }
+        pair (void): first(0), second(0) {}
 
         /**
          * Copy constructor.

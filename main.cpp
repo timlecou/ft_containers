@@ -1,24 +1,19 @@
 #include "list/list.hpp"
 #include "vector/vector.hpp"
 #include "stack/stack.hpp"
+#include "map/map.hpp"
 #include <list>
 #include <vector>
+#include <map>
 #include <math.h>
 
 #include <iostream>     // std::cout
 
 int main () {
-	ft::stack<int> mystack;
+	ft::map<int, int> mymap;
+  ft::map<int, int> mymap2(mymap);
 
-  for (int i=0; i<5; ++i) mystack.push(i);
 
-  std::cout << "Popping out elements...";
-  while (!mystack.empty())
-  {
-     std::cout << ' ' << mystack.top();
-     mystack.pop();
-  }
-  std::cout << '\n';
-
+  std::cout << mymap2.max_size() << std::endl;
   return 0;
 }
