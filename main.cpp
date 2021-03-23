@@ -11,12 +11,16 @@
 
 int main () {
 	ft::map<int, int> mymap;
-
+	std::map
 	ft::pair<int, int>	elem;
-	elem.first = 3;
+	elem.first = 13;
 	elem.second = 42;
 	mymap.insert(elem);
-	mymap.insert(elem);
-  std::cout << mymap.size() << std::endl;
+	ft::pair<int, int>	elem2;
+	elem.first = 3;
+	elem.second = 46;
+	mymap.insert(elem2);
+	mymap.display();
+  //std::cout << mymap.size() << std::endl;
   return 0;
 }

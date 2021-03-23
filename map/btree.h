@@ -9,7 +9,8 @@ struct btree
     btree						*parent;
     btree           			*right;
     btree           			*left;
-    int 						color;
+    bool						r_flag;
+    bool                        l_flag;
 };
 
 #endif

@@ -96,20 +96,10 @@ namespace   ft
 			 */
 			pointer		operator-> (void) const { return (&this->_i_root->element); }
 
-			mapIterator<Key, T> &operator++ (void)
-			{
-				bool flag;
-
-				flag = array_pointer->upper_flag;
-				array_pointer = array_pointer->upper;
-
-				while (flag == 1 && array_pointer->lower_flag)
-				{
-					array_pointer = array_pointer->lower;
-				}
-
-				return (*this);
-			}
+		//	mapIterator<Key, T> &operator++ (void)
+		//	{
+		//		return (*this);
+		//	}
     };
 }
 
