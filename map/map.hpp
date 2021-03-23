@@ -1,6 +1,6 @@
 #ifndef MAP_HPP
 # define MAP_HPP
-# include "btree.h"
+# include "mapIterators.hpp"
 # include <iostream>
 
 namespace   ft
@@ -15,7 +15,7 @@ namespace   ft
      * 
      * Maps are typically implemented as binary search trees.
      */
-    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<pair<const Key,T> > >
+    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key,T> > >
     class map
     {
         public:
@@ -33,10 +33,162 @@ namespace   ft
             typedef size_t                                      size_type;
 
         private:
-            btree<Key, T>                       *_c_node;
+            btree<Key, T>                       *_c_root;
             size_type                           _c_size;
             allocator_type				        _c_value_allocator;
 			std::allocator<btree<Key, T> >	    _c_node_allocator;
+			key_compare 						_cmp;
+
+			void	initialize_null_node(btree<Key, T> *node, btree<Key, T> *parent_node)
+			{
+				node->parent = parent_node;
+				node->color = 0;
+				node->element->first = 0;
+				node->element->second = 0;
+				node->left = NULL;
+				node->right = NULL;
+			}
+
+			btree<Key, T>	*search_node(btree<Key, T> *node, Key key)
+			{
+				if (node == NULL || node->element->first == key)
+					return (node);
+				if (key < node->element->first)
+					return (search_node(node->left, key));
+				return (search_node(node->right, key));
+			}
+
+			//template <typename T1, T2>
+			void	insertElem (ft::pair<Key, T> elem)
+			{
+				btree<Key, T>	*new_node = new btree<Key, T>;
+				new_node->color = 1;
+				new_node->right = NULL;
+				new_node->left = NULL;
+				new_node->parent = NULL;
+				new_node->element = elem;
+
+				btree<Key, T>	*y = NULL;
+				btree<Key, T>	*x = this->_c_root;
+
+				while (x != NULL)
+				{
+					y = x;
+					if (_cmp(new_node->element.first, x->element.first))
+						x = x->left;
+					else
+						x = x->right;
+				}
+
+				new_node->parent = y;
+				if (y == NULL)
+					this->_c_root = new_node;
+				else if (_cmp(new_node->element.first, y->element.first))
+					y->left = new_node;
+				else
+					y->right = new_node;
+
+				if (new_node->parent == NULL)
+				{
+					new_node->color = 0;
+					return ;
+				}
+
+				if (new_node->parent->parent == NULL)
+					return ;
+
+				fixInsert(new_node);
+			}
+
+			void	fixInsert(btree<Key, T> *node)
+			{
+				btree<Key, T>	*uncle;
+
+				while (node->parent->color == 1)
+				{
+					if (node->parent == node->parent->parent->right)
+					{
+						uncle = node->parent->parent->left;
+						if (uncle->color == 1)
+						{
+							uncle->color = 0;
+							node->parent->color = 0;
+							node->parent->parent->color = 1;
+							node = node->parent->parent;
+						}
+						else
+						{
+							if (node == node->parent->left)
+							{
+								node = node->parent;
+								right_rotate(node);
+							}
+							node->parent->color = 0;
+							node->parent->parent->color = 1;
+							left_rotate(node->parent->parent);
+						}
+					}
+					else
+					{
+						uncle = node->parent->parent->right;
+						if (uncle->color == 1)
+						{
+							uncle->color = 0;
+							node->parent->color = 0;
+							node->parent->parent->color = 1;
+							node = node->parent->parent;
+						}
+						else
+						{
+							if (node == node->parent->right)
+							{
+								node = node->parent;
+								left_rotate(node);
+							}
+							node->parent->color = 0;
+							node->parent->parent->color = 1;
+							right_rotate(node->parent->parent);
+						}
+					}
+					if (node == this->_c_root)
+						break ;
+				}
+				this->_c_root->color = 0;
+			}
+
+			void	right_rotate(btree<Key, T> *node)
+			{
+				btree<Key, T>	*tmp = node->left;
+				node->left = tmp->right;
+				if (tmp->right != NULL)
+					tmp->right->parent = node;
+				tmp->parent = node->parent;
+				if (node->parent == NULL)
+					this->_c_root = tmp;
+				else if (node == node->parent->right)
+					node->parent->right = tmp;
+				else
+					node->parent->left = tmp;
+				tmp->right = node;
+				node->parent = tmp;
+			}
+
+			void	left_rotate(btree<Key, T> *node)
+			{
+				btree<Key, T>	*tmp = node->right;
+				node->right = tmp->left;
+				if (tmp->left != NULL)
+					tmp->left->parent = node;
+				tmp->parent = node->parent;
+				if (node->parent == NULL)
+					this->_c_root = tmp;
+				else if (node == node->parent->left)
+					node->parent->left = tmp;
+				else
+					node->parent->right = tmp;
+				tmp->left = node;
+				node->parent = tmp;
+			}
 
         public:
         
@@ -51,10 +203,10 @@ namespace   ft
             explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
             {
                 this->_c_value_allocator = alloc;
-                this->_c_node = this->_c_node_allocator.allocate(1);
-                this->_c_value_allocator.construct(&this->_c_node->element, value_type());
-                this->_c_node->rigth = NULL;
-                this->_c_node->left = NULL;
+                this->_c_root = this->_c_node_allocator.allocate(1);
+                this->_c_value_allocator.construct(&this->_c_root->element, value_type());
+                this->_c_root->right = NULL;
+                this->_c_root->left = NULL;
                 this->_c_size = 0;
             }
 
@@ -82,7 +234,7 @@ namespace   ft
              */
             map (const map& x)
             {
-                this->_c_node = x._c_node;
+                this->_c_root = x._c_root;
                 this->_c_size = x.size();
             }
 
@@ -131,6 +283,13 @@ namespace   ft
                 return (this->_c_node_allocator.max_size());
             }
 
+        //MODIFIERS
+
+			void	insert (ft::pair<Key, T> elem)
+			{
+            	insertElem(elem);
+            	this->_c_size++;
+			}
             
     };
 }

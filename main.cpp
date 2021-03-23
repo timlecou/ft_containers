@@ -7,13 +7,16 @@
 #include <map>
 #include <math.h>
 
-#include <iostream>     // std::cout
+#include <iostream>
 
 int main () {
 	ft::map<int, int> mymap;
-  ft::map<int, int> mymap2(mymap);
 
-
-  std::cout << mymap2.max_size() << std::endl;
+	ft::pair<int, int>	elem;
+	elem.first = 3;
+	elem.second = 42;
+	mymap.insert(elem);
+	mymap.insert(elem);
+  std::cout << mymap.size() << std::endl;
   return 0;
 }

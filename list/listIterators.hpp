@@ -54,16 +54,6 @@ namespace	ft
 				this->_i_container = it._i_container;
 			}
 
-			/**
-			 * Copy constructor.
-			 *
-			 * @it : the iterator to copy.
-			 */
-			listIterator<T> (const listConstIterator<T> &it)
-			{
-				this->_i_container = it._i_container;
-			}
-
 			//OPERATORS
 
 			/**
