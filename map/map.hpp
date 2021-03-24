@@ -53,6 +53,7 @@ namespace   ft
             explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
             {
                 this->_c_value_allocator = alloc;
+                this->_cmp = comp;
                 this->_c_root = this->_c_node_allocator.allocate(1);
                 this->_c_value_allocator.construct(&this->_c_root->element, value_type());
                 this->_c_root->r_flag = true;

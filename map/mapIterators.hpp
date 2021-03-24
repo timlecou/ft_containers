@@ -80,7 +80,7 @@ namespace   ft
 			 * @param it : an iterator of the same type as this.
 			 * @return : true is the two values are different, otherwise it returns false.
 			 */
-			bool	operator!= (const mapIterator<Key, T> &it) { return (this->_i_root->element != it._i_root->element); }
+			bool	operator!= (const mapIterator<Key, T> &it) { return (this->_i_root != it._i_root); }
 
 			/**
 			 * Dereference operator.
@@ -96,15 +96,84 @@ namespace   ft
 			 */
 			pointer		operator-> (void) const { return (&this->_i_root->element.second); }
 
+			/**
+			 * Increment operator.
+			 * 
+			 * Increments the iterator by 1.
+			 */
 			mapIterator<Key, T> &operator++ (void)
 			{
-				this->_i_root = this->_i_root->right;
-				if (this->_i_root->r_flag != false)
+				if (this->_i_root->r_flag == false)
+					this->_i_root = this->_i_root->right;
+				else
 				{
+					this->_i_root = this->_i_root->right;
 					while (this->_i_root->l_flag == true)
 						this->_i_root = this->_i_root->left;
 				}
 				return (*this);
+			}
+
+			/**
+			 * Decrement operator.
+			 * 
+			 * Decrements the iterator by 1.
+			 */
+			mapIterator<Key, T> &operator-- (void)
+			{
+				if (this->_i_root->l_flag == false)
+					this->_i_root = this->_i_root->left;
+				else
+				{
+					this->_i_root = this->_i_root->left;
+					while (this->_i_root->r_flag == true)
+						this->_i_root = this->_i_root->right;
+				}
+				return (*this);
+			}
+
+			/**
+			 * Increment operator.
+			 * 
+			 * Increments the iterator by 1.
+			 * @return : the iterator before the incrementation.
+			 */
+			mapIterator<Key, T> operator++ (int n)
+			{
+				(void)n;
+				mapIterator<Key, T>		tmp(*this);
+				
+				if (this->_i_root->r_flag == false)
+					this->_i_root = this->_i_root->right;
+				else
+				{
+					this->_i_root = this->_i_root->right;
+					while (this->_i_root->l_flag == true)
+						this->_i_root = this->_i_root->left;
+				}
+				return (tmp);
+			}
+
+			/**
+			 * Decrement operator.
+			 * 
+			 * Decrements the iterator by 1.
+			 * @return : the iterator before the decrementation.
+			 */
+			mapIterator<Key, T> operator-- (int n)
+			{
+				(void)n;
+				mapIterator<Key, T>		tmp(*this);
+				
+				if (this->_i_root->l_flag == false)
+					this->_i_root = this->_i_root->left;
+				else
+				{
+					this->_i_root = this->_i_root->left;
+					while (this->_i_root->r_flag == true)
+						this->_i_root = this->_i_root->right;
+				}
+				return (tmp);
 			}
     };
 }

@@ -14,7 +14,7 @@ struct btree
 
     btree<Key, T> (void)
     {
-        this->parent = NULL;
+        //this->parent = NULL;
         this->right = NULL;
         this->left = NULL;
         this->r_flag = false;
