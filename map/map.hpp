@@ -30,7 +30,7 @@ namespace   ft
             typedef typename allocator_type::pointer                     pointer;
             typedef typename allocator_type::const_pointer               const_pointer;
             typedef mapIterator<Key, T>                         iterator;
-            //typedef mapConstIterator<Key, T>                    const_iterator;
+            typedef const mapIterator<Key, T>                   const_iterator;
             typedef ptrdiff_t                                   difference_type;
             typedef size_t                                      size_type;
 
@@ -61,24 +61,32 @@ namespace   ft
                 this->_c_root->l_flag = false;
                 this->_c_root->right = this->_c_root;
                 this->_c_root->left = this->_c_root;
-                this->_c_root->parent = NULL;
                 this->_c_size = 0;
             }
 
-                /**
-                 * Range constructor.
-                 * 
-                 * Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range.
-                 * 
-                 * @first / @last : Input iterators to the initial and final positions in a range.
-                 * @comp : Binary predicate that, taking two element keys as argument, returns true if the first argument goes before the second argument in the strict weak ordering it defines, and false otherwise.
-                 * @alloc : Allocator object.
-                 */
-      //      template <class InputIterator>
-    //        map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-  //          {
-//
-        //    }
+            /**
+             * Range constructor.
+             * 
+             * Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range.
+             * 
+             * @first / @last : Input iterators to the initial and final positions in a range.
+             * @comp : Binary predicate that, taking two element keys as argument, returns true if the first argument goes before the second argument in the strict weak ordering it defines, and false otherwise.
+             * @alloc : Allocator object.
+             */
+            template <class InputIterator>
+            map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+            {
+                this->_c_value_allocator = alloc;
+                this->_cmp = comp;
+                this->_c_root = this->_c_node_allocator.allocate(1);
+                this->_c_value_allocator.construct(&this->_c_root->element, value_type());
+                this->_c_root->r_flag = true;
+                this->_c_root->l_flag = false;
+                this->_c_root->right = this->_c_root;
+                this->_c_root->left = this->_c_root;
+                this->_c_size = 0;
+                insert(first, last);
+            }
 
             /**
              * Copy constructor.
@@ -109,9 +117,23 @@ namespace   ft
                 return (iterator(node));
             }
 
+            const_iterator    begin (void) const
+            {
+                btree<Key, T>       *node = this->_c_root->left;
+
+                while (node->l_flag == true)
+                    node = node->left;
+                return (const_iterator(node));
+            }
+
             iterator    end (void)
             {
                 return (iterator(this->_c_root));
+            }
+
+            const_iterator    end (void) const
+            {
+                return (const_iterator(this->_c_root));
             }
 
         //CAPACITY
@@ -152,6 +174,30 @@ namespace   ft
             size_type max_size() const
             {
                 return (this->_c_node_allocator.max_size());
+            }
+
+        //ELEMENTS ACCESS
+
+            /**
+             * Access element.
+             * 
+             * If k matches the key of an element in the container, the function returns a reference to its mapped value.
+             * 
+             * @k : Key value of the element whose mapped value is accessed.
+             * @return : A reference to the mapped value of the element with a key value equivalent to k.
+             */
+            mapped_type& operator[] (const key_type& k)
+            {
+                iterator    it = find(k);
+                if (it == end())
+                {
+                    ft::pair<Key, T>    elem;
+                    elem.first = k;
+                    return (insert(elem).first->second);
+                }
+                else
+                    return (it->second);
+                
             }
 
         //MODIFIERS
@@ -321,7 +367,7 @@ namespace   ft
              * @k : Key to be searched for.
              * @return : A const_iterator to the element, if an element with specified key is found, or map::end otherwise.
              */
-      /*      const_iterator find (const key_type& k) const
+            const_iterator find (const key_type& k) const
             {
                 for (const_iterator it = begin(); it != end(); it++)
                 {
@@ -329,7 +375,7 @@ namespace   ft
                         return (it);
                 }
                 return (end());
-            }*/
+            }
 
             /**
              * Count elements with specific keys.

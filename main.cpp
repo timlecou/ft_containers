@@ -13,13 +13,9 @@ int main ()
 {
 	ft::map<char, int> mymap;
 	
-	ft::pair<char, int>	e;
-	e.first = '1';
-	e.second = 42;
+	mymap['5'] = 3;
 
-	mymap.insert(e);
-
-	std::cout << mymap.count('1') << std::endl;
+	std::cout << mymap['5'] << std::endl;
 
 	
 

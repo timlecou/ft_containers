@@ -6,7 +6,6 @@ template < class Key, class T>
 struct btree
 {
 	ft::pair<Key, T>			element;
-    btree						*parent;
     btree           			*right;
     btree           			*left;
     bool						r_flag;
@@ -14,7 +13,6 @@ struct btree
 
     btree<Key, T> (void)
     {
-        //this->parent = NULL;
         this->right = NULL;
         this->left = NULL;
         this->r_flag = false;
