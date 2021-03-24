@@ -11,37 +11,17 @@
 
 int main ()
 {
-	ft::map<int, int> mymap;
-	ft::pair<int, int>	elem;
-	elem.first = 3;
-	elem.second = 42;
-	ft::pair<int, int>	elem2;
-	elem2.first = 5;
-	elem2.second = 65;
-	ft::pair<int, int>	elem3;
-	elem3.first = 15;
-	elem3.second = -675;
-	ft::pair<int, int>	elem4;
-	elem4.first = -5;
-	elem4.second = 654;
+	ft::map<char, int> mymap;
+	
+	ft::pair<char, int>	e;
+	e.first = '1';
+	e.second = 42;
 
-	//mymap.insert(elem);
-	mymap.insert(elem);
-	mymap.insert(elem2);
-	mymap.insert(elem3);
-	mymap.insert(elem4);
+	mymap.insert(e);
 
+	std::cout << mymap.count('1') << std::endl;
 
-	/*for (ft::map<int, int>::iterator it = mymap.begin(); it != mymap.end();)
-	{
-		std::cout << " " << *it++;
-	}
-	std::cout << std::endl;*/
-	ft::map<int, int>::iterator it1 = mymap.end();
-	--it1;
-	while (it1 != mymap.begin())
-	{
-		std::cout << " " << (it1--)->second;
-	}
+	
+
   	return 0;
 }

@@ -30,6 +30,7 @@ namespace   ft
             typedef typename allocator_type::pointer                     pointer;
             typedef typename allocator_type::const_pointer               const_pointer;
             typedef mapIterator<Key, T>                         iterator;
+            //typedef mapConstIterator<Key, T>                    const_iterator;
             typedef ptrdiff_t                                   difference_type;
             typedef size_t                                      size_type;
 
@@ -97,6 +98,22 @@ namespace   ft
              */
             ~map (void) {}
 
+        //ITERATORS
+        
+            iterator    begin (void)
+            {
+                btree<Key, T>       *node = this->_c_root->left;
+
+                while (node->l_flag == true)
+                    node = node->left;
+                return (iterator(node));
+            }
+
+            iterator    end (void)
+            {
+                return (iterator(this->_c_root));
+            }
+
         //CAPACITY
 
             /**
@@ -139,19 +156,26 @@ namespace   ft
 
         //MODIFIERS
 
-			void	display (void)
-			{
-				inOrderHelper(this->_c_root);
-			}
-
-            void    insert (value_type new_element)
+            /**
+             * Insert elements. (single element)
+             * 
+             * Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
+             * 
+             * @val : Value to be copied to (or moved as) the inserted element.
+             * @return : a pair, with its member pair::first set to an iterator pointing to either the newly inserted element or to the
+             * element with an equivalent key in the map. The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
+             */
+            ft::pair<iterator,bool> insert (const value_type& val)
             {
                 btree<Key, T>   *node = this->_c_node_allocator.allocate(1);
+                ft::pair<iterator, bool>            ret;
+
+                ret.second = false;
 
                 //if there is no value in the tree
                 if (this->_c_root->left == this->_c_root && this->_c_root->right == this->_c_root)
                 {
-                    this->_c_value_allocator.construct(&node->element, new_element);
+                    this->_c_value_allocator.construct(&node->element, val);
                     node->left = this->_c_root->left;
                     node->l_flag = this->_c_root->l_flag;
                     node->r_flag = false;
@@ -161,16 +185,18 @@ namespace   ft
                     this->_c_root->left = node;
                     this->_c_root->l_flag = true;
                     this->_c_size++;
-                    return ;
+                    ret.first = iterator(node);
+                    ret.second = true;
+                    return (ret);
                 }
 
                 node = this->_c_root->left;
                 while (true)
                 {
-                    if (_cmp(node->element.first, new_element.first))
+                    if (_cmp(node->element.first, val.first))
                     {
                         btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                        this->_c_value_allocator.construct(&new_node->element, new_element);
+                        this->_c_value_allocator.construct(&new_node->element, val);
                         if (node->r_flag == false)
                         {
                             new_node->right = node->right;
@@ -182,16 +208,18 @@ namespace   ft
                             node->r_flag = true;
                             node->right = new_node;
                             this->_c_size++;
-                            return ;
+                            ret.first = iterator(new_node);
+                            ret.second = true;
+                            return (ret);
                         }
                         else
                             node = node->right;
                     }
                     
-                    else if (_cmp(new_element.first, node->element.first))
+                    else if (_cmp(val.first, node->element.first))
                     {
                         btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                        this->_c_value_allocator.construct(&new_node->element, new_element);
+                        this->_c_value_allocator.construct(&new_node->element, val);
                         if (node->l_flag == false)
                         {
                             new_node->left = node->left;
@@ -203,33 +231,123 @@ namespace   ft
                             node->l_flag = true;
                             node->left = new_node;
                             this->_c_size++;
-                            return ;
+                            ret.first = iterator(new_node);
+                            ret.second = true;
+                            return (ret);
                         }
                         else
                             node = node->left;
                     }
                     else
-                        break ;
+                    {
+                        ret.first = iterator(node);
+                        ret.second = false;
+                        return (ret);
+                    }
                 }
+                return (ret);
             }
 
-		//	mapped_type& operator[] (const key_type& k)
-        //  {
-        //        
-        //  }
-
-            iterator    begin (void)
+            /**
+             * Insert elements. (with hint)
+             * 
+             * Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
+             * 
+             * @position : Hint for the position where the element can be inserted.
+             * @val : Value to be copied to (or moved as) the inserted element.
+             * @return : an iterator pointing to either the newly inserted element or to the element that already had an equivalent key in the map.
+             */
+            iterator insert (iterator position, const value_type& val)
             {
-                btree<Key, T>       *node = this->_c_root->left;
-
-                while (node->l_flag == true)
-                    node = node->left;
-                return (iterator(node));
+                (void)position;
+                return (insert(val).first);
             }
 
-            iterator    end (void)
+            /**
+             * Insert elements.
+             * 
+             * Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
+             * 
+             * @first / @last : Iterators specifying a range of elements.
+             */
+            template <class InputIterator>
+            void insert (InputIterator first, InputIterator last)
             {
-                return (iterator(this->_c_root));
+                while (first != last)
+                    insert(*first++);
+            }
+
+            /**
+             * Swap content.
+             * 
+             * Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
+             * 
+             * @x : Another map container of the same type as this (i.e., with the same template parameters, Key, T, Compare and Alloc) whose content is swapped with that of this container.
+             */
+            void swap (map& x)
+            {
+                map tmp;
+
+                tmp = *this;
+                *this = x;
+                x = tmp;
+            }
+
+        //OPERATIONS
+
+            /**
+             * Get iterator to element.
+             * 
+             * Searches the container for an element with a key equivalent to k and returns an iterator to it if found, otherwise it returns an iterator to map::end.
+             * 
+             * @k : Key to be searched for.
+             * @return : An iterator to the element, if an element with specified key is found, or map::end otherwise.
+             */
+            iterator find (const key_type& k)
+            {
+                for (iterator it = begin(); it != end(); it++)
+                {
+                    if (it->first == k)
+                        return (it);
+                }
+                return (end());
+            }
+
+            /**
+             * Get const_iterator to element.
+             * 
+             * Searches the container for an element with a key equivalent to k and returns an iterator to it if found, otherwise it returns a const_iterator to map::end.
+             * 
+             * @k : Key to be searched for.
+             * @return : A const_iterator to the element, if an element with specified key is found, or map::end otherwise.
+             */
+      /*      const_iterator find (const key_type& k) const
+            {
+                for (const_iterator it = begin(); it != end(); it++)
+                {
+                    if (it->first == k)
+                        return (it);
+                }
+                return (end());
+            }*/
+
+            /**
+             * Count elements with specific keys.
+             * 
+             * Searches the container for elements with a key equivalent to k and returns the number of matches.
+             * Because all elements in a map container are unique, the function can only return 1 (if the element is found) or zero (otherwise).
+             * 
+             * @k : key to search.
+             * @return : 1 if the container contains an element whose key is equivalent to k, or zero otherwise.
+             */
+            size_type count (const key_type& k) const
+            {
+                for (iterator it = begin(); it != end(); it++)
+                {
+                    if (it->first == k)
+                        return (1);
+                }
+                return (0);
             }
     };
 }

@@ -8,12 +8,12 @@ namespace   ft
     class   mapIterator
     {
         public:
-            typedef	T					value_type;
-			typedef	T					&reference;
-			typedef	T	const			&const_reference;
-			typedef	T					*pointer;
-			typedef	T	const			*const_pointer;
-			typedef	std::ptrdiff_t		difference_type;
+            typedef	T									value_type;
+			typedef	ft::pair<Key, T>					&reference;
+			typedef	ft::pair<Key, T>	const			&const_reference;
+			typedef	ft::pair<Key, T>					*pointer;
+			typedef	ft::pair<Key, T>	const			*const_pointer;
+			typedef	std::ptrdiff_t						difference_type;
         
         private:
             btree<Key, T>               *_i_root;
@@ -87,14 +87,14 @@ namespace   ft
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			reference	operator* (void) const { return (this->_i_root->element.second); }
+			reference	operator* (void) const { return (this->_i_root->element); }
 
 			/**
 			 * Dereference operator.
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			pointer		operator-> (void) const { return (&this->_i_root->element.second); }
+			pointer		operator-> (void) const { return (&this->_i_root->element); }
 
 			/**
 			 * Increment operator.
