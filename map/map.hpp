@@ -29,6 +29,7 @@ namespace   ft
             typedef typename allocator_type::const_reference             const_reference;
             typedef typename allocator_type::pointer                     pointer;
             typedef typename allocator_type::const_pointer               const_pointer;
+            typedef mapIterator<Key, T>                         iterator;
             typedef ptrdiff_t                                   difference_type;
             typedef size_t                                      size_type;
 
@@ -52,7 +53,13 @@ namespace   ft
             explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
             {
                 this->_c_value_allocator = alloc;
-				this->_c_root = NULL;
+                this->_c_root = this->_c_node_allocator.allocate(1);
+                this->_c_value_allocator.construct(&this->_c_root->element, value_type());
+                this->_c_root->r_flag = true;
+                this->_c_root->l_flag = false;
+                this->_c_root->right = this->_c_root;
+                this->_c_root->left = this->_c_root;
+                this->_c_root->parent = NULL;
                 this->_c_size = 0;
             }
 
@@ -131,19 +138,98 @@ namespace   ft
 
         //MODIFIERS
 
-			void	insert (ft::pair<Key, T> elem)
-			{
-            	this->_c_size++;
-			}
-
 			void	display (void)
 			{
 				inOrderHelper(this->_c_root);
 			}
 
-			mapped_type& operator[] (const key_type& k);
-			//TODO
-            
+            void    insert (value_type new_element)
+            {
+                btree<Key, T>   *node = this->_c_node_allocator.allocate(1);
+
+                //if there is no value in the tree
+                if (this->_c_root->left == this->_c_root && this->_c_root->right == this->_c_root)
+                {
+                    this->_c_value_allocator.construct(&node->element, new_element);
+                    node->left = this->_c_root->left;
+                    node->l_flag = this->_c_root->l_flag;
+                    node->r_flag = false;
+                    node->right = this->_c_root->right;
+
+                    //add the element at the left of the dummy_node
+                    this->_c_root->left = node;
+                    this->_c_root->l_flag = true;
+                    this->_c_size++;
+                    return ;
+                }
+
+                node = this->_c_root->left;
+                while (true)
+                {
+                    if (_cmp(node->element.first, new_element.first))
+                    {
+                        btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+                        this->_c_value_allocator.construct(&new_node->element, new_element);
+                        if (node->r_flag == false)
+                        {
+                            new_node->right = node->right;
+                            new_node->r_flag = node->r_flag;
+                            new_node->l_flag = false;
+                            new_node->left = node;
+
+                            //inserting node in the right
+                            node->r_flag = true;
+                            node->right = new_node;
+                            this->_c_size++;
+                            return ;
+                        }
+                        else
+                            node = node->right;
+                    }
+                    
+                    else if (_cmp(new_element.first, node->element.first))
+                    {
+                        btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+                        this->_c_value_allocator.construct(&new_node->element, new_element);
+                        if (node->l_flag == false)
+                        {
+                            new_node->left = node->left;
+                            new_node->l_flag = node->l_flag;
+                            new_node->r_flag = false;
+                            new_node->right = node;
+
+                            //inserting node in the left
+                            node->l_flag = true;
+                            node->left = new_node;
+                            this->_c_size++;
+                            return ;
+                        }
+                        else
+                            node = node->left;
+                    }
+                    else
+                        break ;
+                }
+            }
+
+		//	mapped_type& operator[] (const key_type& k)
+        //  {
+        //        
+        //  }
+
+            iterator    begin (void)
+            {
+                btree<Key, T>       *node = this->_c_root->left;
+
+                while (node->l_flag == true)
+                    node = node->left;
+                return (iterator(node));
+            }
+
+            iterator    end (void)
+            {
+                return (iterator(this->_c_root));
+            }
     };
 }
 

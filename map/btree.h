@@ -11,6 +11,15 @@ struct btree
     btree           			*left;
     bool						r_flag;
     bool                        l_flag;
+
+    btree<Key, T> (void)
+    {
+        this->parent = NULL;
+        this->right = NULL;
+        this->left = NULL;
+        this->r_flag = false;
+        this->l_flag = false;
+    }
 };
 
 #endif

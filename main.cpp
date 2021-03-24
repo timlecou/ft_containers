@@ -9,18 +9,25 @@
 
 #include <iostream>
 
-int main () {
+int main ()
+{
 	ft::map<int, int> mymap;
-	std::map
 	ft::pair<int, int>	elem;
-	elem.first = 13;
-	elem.second = 42;
-	mymap.insert(elem);
-	ft::pair<int, int>	elem2;
 	elem.first = 3;
-	elem.second = 46;
+	elem.second = 42;
+	ft::pair<int, int>	elem2;
+	elem.first = 5;
+	elem.second = 65;
+
+	//mymap.insert(elem);
+	//mymap.insert(elem);
 	mymap.insert(elem2);
-	mymap.display();
-  //std::cout << mymap.size() << std::endl;
-  return 0;
+
+	for (ft::map<int, int>::iterator it = mymap.begin(); it != mymap.end(); ++it)
+	{
+		std::cout << " salut " << *it;
+	}
+	std::cout << std::endl;
+
+  	return 0;
 }

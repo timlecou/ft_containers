@@ -43,7 +43,7 @@ namespace   ft
 			 *
 			 * @param root : the root of a binary tree;
 			 */
-			mapIterator<Key, T> (const btree<Key, T> &root)
+			mapIterator<Key, T> (btree<Key, T> *root)
 			{
             	this->_i_root = root;
 			}
@@ -80,26 +80,32 @@ namespace   ft
 			 * @param it : an iterator of the same type as this.
 			 * @return : true is the two values are different, otherwise it returns false.
 			 */
-			bool	operator!= (const mapIterator<Key, T> &it) { return (this->_i_root != it._i_root); }
+			bool	operator!= (const mapIterator<Key, T> &it) { return (this->_i_root->element != it._i_root->element); }
 
 			/**
 			 * Dereference operator.
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			reference	operator* (void) const { return (this->_i_root->element); }
+			reference	operator* (void) const { return (this->_i_root->element.second); }
 
 			/**
 			 * Dereference operator.
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			pointer		operator-> (void) const { return (&this->_i_root->element); }
+			pointer		operator-> (void) const { return (&this->_i_root->element.second); }
 
-		//	mapIterator<Key, T> &operator++ (void)
-		//	{
-		//		return (*this);
-		//	}
+			mapIterator<Key, T> &operator++ (void)
+			{
+				this->_i_root = this->_i_root->right;
+				if (this->_i_root->r_flag != false)
+				{
+					while (this->_i_root->l_flag == true)
+						this->_i_root = this->_i_root->left;
+				}
+				return (*this);
+			}
     };
 }
 
