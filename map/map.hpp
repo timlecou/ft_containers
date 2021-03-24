@@ -40,8 +40,111 @@ namespace   ft
             allocator_type				        _c_value_allocator;
 			std::allocator<btree<Key, T> >	    _c_node_allocator;
 			key_compare 						_cmp;
-		
-        public:
+
+			btree<Key, T>	*findSuccessor(btree<Key, T> *tmp)
+			{
+				if (tmp->r_flag == true)
+					return (tmp->right);
+
+				tmp = tmp->right;
+				while (tmp->l_flag == false)
+					tmp = tmp->left;
+				return (tmp);
+			}
+
+			btree<Key, T>	*findPredecessor(btree<Key, T> *tmp)
+			{
+				if (tmp->l_flag == true)
+					return (tmp->left);
+
+				tmp = tmp->left;
+				while (tmp->r_flag == false)
+					tmp = tmp->right;
+				return (tmp);
+			}
+
+			btree<Key, T>	*eraseA(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
+			{
+				//if node to be deleted is root
+				if (node == NULL)
+				{
+					tmp_root = NULL;
+				}
+
+				//if node to be deleted is left of its parent
+				else if (tmp == node->left)
+				{
+					node->l_flag = true;
+					node->left = tmp->left;
+				}
+				else
+				{
+					node->r_flag = true;
+					node->right = tmp->right;
+				}
+
+				//destroy/free the element
+				this->_c_value_allocator.destroy(&tmp->element);
+				this->_c_node_allocator.deallocate(tmp, 1);
+
+				return (tmp_root);
+			}
+
+			btree<Key, T>	*eraseB(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
+			{
+				btree<Key, T>		*child;
+
+				if (tmp->l_flag == false)
+					child = tmp->left;
+				else
+					child = tmp->right;
+
+				if (node == NULL)
+					tmp_root = child;
+				else if (tmp == node->left)
+					node->left = child;
+				else
+					node->right = child;
+
+				btree<Key, T>		*suc = findSuccessor(tmp);
+				btree<Key, T>		*pred = findPredecessor(tmp);
+
+				if (tmp->l_flag == false)
+					pred->right = suc;
+				else
+				{
+					if (tmp->r_flag == false)
+						suc->left = pred;
+				}
+
+				//destroy/free the element
+				this->_c_value_allocator.destroy(&tmp->element);
+				this->_c_node_allocator.deallocate(tmp, 1);
+
+				return (tmp_root);
+			}
+
+			btree<Key, T>	*eraseC(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
+			{
+				btree<Key, T>	*pSuc = tmp;
+				btree<Key, T>	*suc = tmp->right;
+
+				while (suc->l_flag == false)
+				{
+					pSuc = suc;
+					suc = suc->left;
+				}
+
+				tmp->element = suc->element;
+
+				if (suc->l_flag == true && suc->r_flag == true)
+					tmp_root = eraseA(tmp_root, node, tmp);
+				else
+					tmp_root = eraseB(tmp_root, node, tmp);
+				return (tmp_root);
+			}
+
+	public:
         
             /**
              * Empty container constructor.
@@ -193,6 +296,7 @@ namespace   ft
                 {
                     ft::pair<Key, T>    elem;
                     elem.first = k;
+                    //elem.second = 0;
                     return (insert(elem).first->second);
                 }
                 else
@@ -324,6 +428,72 @@ namespace   ft
             }
 
             /**
+             * Removes elements.
+             *
+             * Removes from the map container either a single element or a range of elements ([first,last)).
+             *
+             * @param position : Iterator pointing to a single element to be removed from the map.
+             */
+			void erase (iterator position)
+			{
+				erase(position->first);
+			}
+
+			/**
+			 * Removes elements.
+			 *
+			 * Removes from the map container either a single element or a range of elements ([first,last)).
+			 *
+			 * @param k : Key of the element to be removed from the map.
+			 * @return : The number of elements erased.
+			 */
+			size_type erase (const key_type& k)
+			{
+				btree<Key, T>		*tmp = this->_c_root->left;
+				btree<Key, T>		*node = NULL;
+				btree<Key, T>		*tmp_root = this->_c_root;
+				bool				found = false;
+
+				while (tmp != NULL)
+				{
+					if (tmp->element.first == k)
+					{
+						found = true;
+						break ;
+					}
+					node = tmp;
+					if (_cmp(tmp->element.first, k))
+					{
+						if (tmp->l_flag == true)
+							tmp = tmp->left;
+						else
+							break ;
+					}
+					else if (_cmp(k, tmp->element.first))
+					{
+						if (tmp->r_flag == true)
+							tmp = tmp->right;
+						else
+							break ;
+					}
+				}
+
+				if (found == false)
+					return (0);
+				else if (tmp->l_flag == false && tmp->r_flag == false)	//two children
+					tmp_root = eraseA(tmp_root, node, tmp);
+				else if (tmp->l_flag == false)							//only left child
+					tmp_root = eraseB(tmp_root, node, tmp);
+				else if (tmp->r_flag == false)							//only right child
+					tmp_root = eraseC(tmp_root, node, tmp);
+				else													//no child
+					tmp_root = eraseA(tmp_root, node, tmp);
+				this->_c_root = tmp_root;
+				this->_c_size--;
+				return (1);
+			}
+
+            /**
              * Swap content.
              * 
              * Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
@@ -371,7 +541,7 @@ namespace   ft
             {
                 for (const_iterator it = begin(); it != end(); it++)
                 {
-                    if (it->first == k)
+					if (it->first == k)
                         return (it);
                 }
                 return (end());

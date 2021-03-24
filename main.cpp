@@ -13,11 +13,20 @@ int main ()
 {
 	ft::map<char, int> mymap;
 	
-	mymap['5'] = 3;
+	mymap['1'] = 3;
+	mymap['2'] = 42;
 
-	std::cout << mymap['5'] << std::endl;
+	ft::map<char, int>::iterator	it = mymap.begin();
 
-	
+	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
+		std::cout << "first: " << it1->first << std::endl;
+
+	mymap.erase(it);
+
+	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
+	{
+		std::cout << "second: " << it1->first << std::endl;
+	}
 
   	return 0;
 }
