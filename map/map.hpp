@@ -234,7 +234,6 @@ namespace   ft
 
                 //the size of the tree is decreased by one.
                 --this->_c_size;
-                std::cout << "test: " << this->_c_size << std::endl;
             }
 
 	public:
@@ -293,8 +292,18 @@ namespace   ft
              */
             map (const map& x)
             {
-                this->_c_root = x._c_root;
-                this->_c_size = x.size();
+				this->_c_root = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&this->_c_root->element, value_type());
+				this->_c_root->r_flag = true;
+				this->_c_root->l_flag = false;
+				this->_c_root->right = this->_c_root;
+				this->_c_root->left = this->_c_root;
+				this->_c_size = 0;
+				if (x._c_root != NULL)
+				{
+					this->_c_root = x._c_root;
+					this->_c_size = x.size();
+				}
             }
 
             /**
@@ -613,6 +622,7 @@ namespace   ft
 			 */
             void erase (iterator first, iterator last)
             {
+            	std::cout << "------" << std::endl;
                 while (first != last)
                 {
                     std::cout << first->first << std::endl;
@@ -643,8 +653,8 @@ namespace   ft
              */
             void clear (void)
             {
-                erase(begin(), end());
-                //this->_c_node_allocator.deallocate(this->_c_root,1);
+            	if (this->_c_size > 0)
+                	erase(begin(), end());
             }
 
         //OPERATIONS
