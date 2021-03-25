@@ -30,7 +30,7 @@ namespace   ft
             typedef typename allocator_type::pointer                     pointer;
             typedef typename allocator_type::const_pointer               const_pointer;
             typedef mapIterator<Key, T>                         iterator;
-            typedef const mapIterator<Key, T>                   const_iterator;
+            typedef mapConstIterator<Key, T>                   const_iterator;
             typedef ptrdiff_t                                   difference_type;
             typedef size_t                                      size_type;
 
@@ -41,108 +41,200 @@ namespace   ft
 			std::allocator<btree<Key, T> >	    _c_node_allocator;
 			key_compare 						_cmp;
 
-			btree<Key, T>	*findSuccessor(btree<Key, T> *tmp)
+            /**
+             * This function finds the node wich in the ultimate left of the tree.
+             * 
+             * @node : the root of the tree.
+             * @return : the node wich in the ultimate left of the tree.
+             */
+            btree<Key, T>   *leftNode (btree<Key, T> *node)
+            {
+                while (node->l_flag == true)
+                    node = node->left;
+                return (node);
+            }
+
+            /**
+             * This function finds the node wich in the ultimate right of the tree.
+             * 
+             * @node : the root of the tree.
+             * @return : the node wich in the ultimate right of the tree.
+             */
+            btree<Key, T>   *rightNode (btree<Key, T> *node)
+            {
+                while (node->r_flag == true)
+                    node = node->right;
+                return (node);
+            }
+
+            /**
+             * This function finds the inorder successor of tmp.
+             * 
+             * @tmp : the node wich the successor is searched.
+             * @return : tmp's predecessor.
+             */
+			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
 			{
-				if (tmp->r_flag == true)
+				if (tmp->r_flag == false)
 					return (tmp->right);
 
 				tmp = tmp->right;
-				while (tmp->l_flag == false)
+				while (tmp->l_flag == false && tmp != this->_c_root)
 					tmp = tmp->left;
 				return (tmp);
 			}
 
-			btree<Key, T>	*findPredecessor(btree<Key, T> *tmp)
+            /**
+             * This function finds the inorder predecessor of tmp.
+             * 
+             * @tmp : the node wich the predecessor is searched.
+             * @return : tmp's predecessor.
+             */
+			btree<Key, T>	*inorderPredecessor (btree<Key, T> *tmp)
 			{
-				if (tmp->l_flag == true)
+				if (tmp->l_flag == false)
 					return (tmp->left);
 
 				tmp = tmp->left;
-				while (tmp->r_flag == false)
+				while (tmp->r_flag == false && tmp != this->_c_root)
 					tmp = tmp->right;
 				return (tmp);
 			}
 
-			btree<Key, T>	*eraseA(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
-			{
-				//if node to be deleted is root
-				if (node == NULL)
-				{
-					tmp_root = NULL;
-				}
+            /**
+             * This function will a node wich have no child.
+             * 
+             * @tmp : the node to be deleted.
+             * @node : the parent of tmp.
+             */
+            void    deleteNodeWithNoChild (btree<Key, T> *tmp, btree<Key, T> *node)
+            {
+                if (node == NULL)               //need to delete root
+                {
+                    this->_c_root->left = NULL;
+                    this->_c_root->l_flag = false;
+                    this->_c_root->r_flag = false;
+                    this->_c_root->left = this->_c_root;
+                    this->_c_root->right = this->_c_root;
+                }
+                else if (tmp == node->right)    //tmp is a right child 
+                {
+                    node->r_flag = false;
+                    node->right = tmp->right;
+                    if (tmp->right == this->_c_root)
+                        this->_c_root->left = node;
+                }
+                else                            //tmp is left child
+                {
+                    node->l_flag = false;
+                    node->left = tmp->left;
+                    if (tmp->left == this->_c_root)
+                        this->_c_root->right = node;
+                }
+            }
 
-				//if node to be deleted is left of its parent
-				else if (tmp == node->left)
-				{
-					node->l_flag = true;
-					node->left = tmp->left;
-				}
-				else
-				{
-					node->r_flag = true;
-					node->right = tmp->right;
-				}
+            /**
+             * This function will a node wich have only a right child.
+             * 
+             * @tmp : the node to delete.
+             * @node : the parent of tmp.
+             */
+            void    deleteNodeWithRightChild (btree<Key, T> *tmp, btree<Key, T> *node)
+            {
+                if (node == NULL)   //the node to delete is the root of the tree.
+                {
+                    this->_c_root->left = tmp->right;
+                    this->_c_root->right = leftNode(this->_c_root->left);
+                    leftNode(this->_c_root->left)->left = this->_c_root;
+                    return ;
+                }
+                if (node->right == tmp)
+                    node->right = tmp->right;
+                else
+                    node->left = tmp->right;
 
-				//destroy/free the element
-				this->_c_value_allocator.destroy(&tmp->element);
-				this->_c_node_allocator.deallocate(tmp, 1);
+                inorderSuccessor(tmp)->left = inorderPredecessor(tmp);
+                if (inorderPredecessor(tmp) == this->_c_root)
+                    this->_c_root->right = inorderSuccessor(tmp);
+                
+            }
 
-				return (tmp_root);
-			}
+            /**
+             * This function will a node wich have only a left child.
+             * 
+             * @tmp : the node to delete.
+             * @node : the parent of tmp.
+             */
+            void    deleteNodeWithLeftChild (btree<Key, T> *tmp, btree<Key, T> *node)
+            {
+                if (node == NULL)   //the node to delete is the root of the tree.
+                {
+                    this->_c_root->right = tmp->left;
+                    this->_c_root->left = rightNode(this->_c_root->left);
+                    rightNode(this->_c_root->left)->right = this->_c_root;
+                    return ;
+                }
+                if (node->left == tmp)
+                    node->left = tmp->left;
+                else
+                    node->right = tmp->left;
 
-			btree<Key, T>	*eraseB(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
-			{
-				btree<Key, T>		*child;
+                inorderSuccessor(tmp)->right = inorderPredecessor(tmp);
+                if (inorderPredecessor(tmp) == this->_c_root)
+                    this->_c_root->left = inorderSuccessor(tmp);
+                
+            }
 
-				if (tmp->l_flag == false)
-					child = tmp->left;
-				else
-					child = tmp->right;
+            /**
+             * This function will a node wich have two children.
+             * 
+             * @tmp : the node to delete.
+             * @node : the parent of tmp.
+             */
+            void    deleteNodeWithTwoChildren (btree<Key, T> *tmp, btree<Key, T> *node)
+            {
+                btree<Key, T>   *successor;
+                btree<Key, T>   *left;
 
-				if (node == NULL)
-					tmp_root = child;
-				else if (tmp == node->left)
-					node->left = child;
-				else
-					node->right = child;
+                //the left child will take the parent's place
+                tmp->l_flag = false;
+                successor = inorderSuccessor(tmp);
+                successor->left = tmp->left;
+                left = tmp->left;
+                tmp->left = leftNode(this->_c_root->left);
+                if (tmp->left == this->_c_root)
+                    this->_c_root->right = tmp;
+                
+                leftNode(this->_c_root->left)->left = tmp;
+                rightNode(this->_c_root->left)->right = successor;
+                successor->l_flag = true;
+                deleteNodeWithRightChild(tmp, node);
+            }
 
-				btree<Key, T>		*suc = findSuccessor(tmp);
-				btree<Key, T>		*pred = findPredecessor(tmp);
+            /**
+             * This function will redirect to the most appropriate function to delete a node.
+             * 
+             * @tmp : the node to delete.
+             * @node : the parent of tmp.
+             */
+			void    eraseElement (btree<Key, T> *tmp, btree<Key, T> *node)
+            {
+                if (tmp->l_flag == true && tmp->r_flag == true) //tmp has two children.
+                    deleteNodeWithTwoChildren(tmp, node);
+                else if (tmp->l_flag == true)                   //tmp has only a left child.
+                    deleteNodeWithLeftChild(tmp, node);
+                else if (tmp->r_flag == true)                   //tmp has only a left child.
+                    deleteNodeWithRightChild(tmp, node);
+                else                                            //tmp has no child.
+                    deleteNodeWithNoChild(tmp, node);
 
-				if (tmp->l_flag == false)
-					pred->right = suc;
-				else
-				{
-					if (tmp->r_flag == false)
-						suc->left = pred;
-				}
+                //destroy and deallocate the node and the element.
+                this->_c_value_allocator.destroy(&tmp->element);
+                this->_c_node_allocator.deallocate(tmp, 1);
 
-				//destroy/free the element
-				this->_c_value_allocator.destroy(&tmp->element);
-				this->_c_node_allocator.deallocate(tmp, 1);
-
-				return (tmp_root);
-			}
-
-			btree<Key, T>	*eraseC(btree<Key, T> *tmp_root, btree<Key, T> *node, btree<Key, T> *tmp)
-			{
-				btree<Key, T>	*pSuc = tmp;
-				btree<Key, T>	*suc = tmp->right;
-
-				while (suc->l_flag == false)
-				{
-					pSuc = suc;
-					suc = suc->left;
-				}
-
-				tmp->element = suc->element;
-
-				if (suc->l_flag == true && suc->r_flag == true)
-					tmp_root = eraseA(tmp_root, node, tmp);
-				else
-					tmp_root = eraseB(tmp_root, node, tmp);
-				return (tmp_root);
-			}
+                //the size of the tree is decreased by one.
+                --this->_c_size;
+            }
 
 	public:
         
@@ -207,10 +299,20 @@ namespace   ft
             /**
              * Destructor.
              */
-            ~map (void) {}
+            ~map (void)
+            {
+                clear();
+            }
 
         //ITERATORS
-        
+
+            /**
+             * Return iterator to beginning.
+             * 
+             * Returns an iterator referring to the first element in the map container.
+             * 
+             * @return : An iterator to the first element in the container.
+             */
             iterator    begin (void)
             {
                 btree<Key, T>       *node = this->_c_root->left;
@@ -220,6 +322,13 @@ namespace   ft
                 return (iterator(node));
             }
 
+            /**
+             * Return const_iterator to beginning.
+             * 
+             * Returns a const_iterator referring to the first element in the map container.
+             * 
+             * @return : A const_iterator to the first element in the container.
+             */
             const_iterator    begin (void) const
             {
                 btree<Key, T>       *node = this->_c_root->left;
@@ -229,11 +338,25 @@ namespace   ft
                 return (const_iterator(node));
             }
 
+            /**
+             * Return iterator to end.
+             * 
+             * Returns an iterator referring to the last element in the map container.
+             * 
+             * @return : An iterator to the last element in the container.
+             */
             iterator    end (void)
             {
                 return (iterator(this->_c_root));
             }
 
+            /**
+             * Return const_iterator to end.
+             * 
+             * Returns a const_iterator referring to the last element in the map container.
+             * 
+             * @return : A const_iterator to the last element in the container.
+             */
             const_iterator    end (void) const
             {
                 return (const_iterator(this->_c_root));
@@ -451,47 +574,48 @@ namespace   ft
 			{
 				btree<Key, T>		*tmp = this->_c_root->left;
 				btree<Key, T>		*node = NULL;
-				btree<Key, T>		*tmp_root = this->_c_root;
-				bool				found = false;
 
-				while (tmp != NULL)
+				while (tmp)
 				{
-					if (tmp->element.first == k)
+					if (_cmp(k, tmp->element.first))
 					{
-						found = true;
-						break ;
+						if (tmp->l_flag == false)
+                            return (0);
+						node = tmp;
+                        tmp = tmp->left;
 					}
-					node = tmp;
-					if (_cmp(tmp->element.first, k))
+					else if (_cmp(tmp->element.first,k))
 					{
-						if (tmp->l_flag == true)
-							tmp = tmp->left;
-						else
-							break ;
+						if (tmp->r_flag == false)
+                            return (0);
+						node = tmp;
+                        tmp = tmp->right;
 					}
-					else if (_cmp(k, tmp->element.first))
-					{
-						if (tmp->r_flag == true)
-							tmp = tmp->right;
-						else
-							break ;
-					}
+                    else
+                    {
+                        eraseElement(tmp, node);
+                        return (1);
+                    }
 				}
-
-				if (found == false)
-					return (0);
-				else if (tmp->l_flag == false && tmp->r_flag == false)	//two children
-					tmp_root = eraseA(tmp_root, node, tmp);
-				else if (tmp->l_flag == false)							//only left child
-					tmp_root = eraseB(tmp_root, node, tmp);
-				else if (tmp->r_flag == false)							//only right child
-					tmp_root = eraseC(tmp_root, node, tmp);
-				else													//no child
-					tmp_root = eraseA(tmp_root, node, tmp);
-				this->_c_root = tmp_root;
-				this->_c_size--;
-				return (1);
+                return (0);
 			}
+
+            /**
+			 * Removes elements.
+			 *
+			 * Removes from the map container either a single element or a range of elements ([first,last)).
+			 *
+			 * @first / @last : Iterators specifying a range within the map container to be removed:
+             * [first,last). i.e., the range includes all the elements between first and last, including
+             * the element pointed by first but not the one pointed by last. Member types iterator and
+             * const_iterator are bidirectional iterator types that point to elements.
+			 * @return : The number of elements erased.
+			 */
+            void erase (iterator first, iterator last)
+            {
+                while (first != last)
+                    erase(first++);
+            }
 
             /**
              * Swap content.
@@ -507,6 +631,17 @@ namespace   ft
                 tmp = *this;
                 *this = x;
                 x = tmp;
+            }
+
+            /**
+             * Clear content.
+             * 
+             * Removes all elements from the map container (which are destroyed), leaving the container with a size of 0.
+             */
+            void clear (void)
+            {
+                erase(begin(), end());
+                //this->_c_node_allocator.deallocate(this->_c_root,1);
             }
 
         //OPERATIONS

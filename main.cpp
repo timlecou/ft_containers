@@ -15,13 +15,13 @@ int main ()
 	
 	mymap['1'] = 3;
 	mymap['2'] = 42;
+	mymap['3'] = 12;
 
-	ft::map<char, int>::iterator	it = mymap.begin();
 
 	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
 		std::cout << "first: " << it1->first << std::endl;
 
-	mymap.erase(it);
+	mymap.clear();
 
 	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
 	{
