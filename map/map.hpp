@@ -23,7 +23,7 @@ namespace   ft
             typedef T                                           mapped_type;
             typedef ft::pair<const key_type,mapped_type>        value_type;
             typedef Compare                                     key_compare;
-        //    typedef blablabla                                   value_compare;
+        //    typedef .........                                   value_compare;
             typedef Alloc                                       allocator_type;
             typedef typename allocator_type::reference                   reference;
             typedef typename allocator_type::const_reference             const_reference;
@@ -234,6 +234,7 @@ namespace   ft
 
                 //the size of the tree is decreased by one.
                 --this->_c_size;
+                std::cout << "test: " << this->_c_size << std::endl;
             }
 
 	public:
@@ -419,7 +420,6 @@ namespace   ft
                 {
                     ft::pair<Key, T>    elem;
                     elem.first = k;
-                    //elem.second = 0;
                     return (insert(elem).first->second);
                 }
                 else
@@ -614,7 +614,10 @@ namespace   ft
             void erase (iterator first, iterator last)
             {
                 while (first != last)
+                {
+                    std::cout << first->first << std::endl;
                     erase(first++);
+                }
             }
 
             /**
@@ -656,10 +659,15 @@ namespace   ft
              */
             iterator find (const key_type& k)
             {
-                for (iterator it = begin(); it != end(); it++)
+                iterator    it = begin();
+
+                if (this->_c_size == 0)
+                    return (end());
+                while (it != this->end())
                 {
-                    if (it->first == k)
+                    if (k == it->first)
                         return (it);
+                    it++;
                 }
                 return (end());
             }
@@ -674,10 +682,17 @@ namespace   ft
              */
             const_iterator find (const key_type& k) const
             {
-                for (const_iterator it = begin(); it != end(); it++)
+                iterator    it = begin();
+                
+                if (this->_c_size == 0)
                 {
-					if (it->first == k)
+                    return (end());
+                }
+                while (it != this->end())
+                {
+                    if (k == it->first)
                         return (it);
+                    it++;
                 }
                 return (end());
             }

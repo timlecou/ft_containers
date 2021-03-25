@@ -11,22 +11,18 @@
 
 int main ()
 {
-	ft::map<char, int> mymap;
-	
-	mymap['1'] = 3;
-	mymap['2'] = 42;
-	mymap['3'] = 12;
+  ft::map<int,int> mymap;
 
+  mymap[42] = 45;
+  mymap[45] = 25;
 
-	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
-		std::cout << "first: " << it1->first << std::endl;
+  mymap.erase(42);
+  mymap.erase(42);
 
-	mymap.clear();
+  mymap[0]=12;
+  mymap[-1]=24;
 
-	for (ft::map<char, int>::iterator it1 = mymap.begin(); it1 != mymap.end(); it1++)
-	{
-		std::cout << "second: " << it1->first << std::endl;
-	}
-
-  	return 0;
+  mymap.erase(mymap.begin(), mymap.end());
+  //std::cout << mymap.size() << std::endl;
+  return 0;
 }

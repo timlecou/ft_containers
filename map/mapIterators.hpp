@@ -284,8 +284,7 @@ namespace   ft
 			 */
 			mapConstIterator<Key, T>	&operator= (const mapIterator<Key, T> &it)
 			{
-            	this->_i_root->element.first = it->first;
-				this->_i_root->element.second = it->second;
+            	this->_i_root = reinterpret_cast<btree<Key, T> * >(&*it);
             	return (*this);
 			}
 
