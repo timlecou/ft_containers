@@ -311,7 +311,7 @@ namespace   ft
              */
             ~map (void)
             {
-                clear();
+                //clear();
             }
 
         //ITERATORS
@@ -586,6 +586,7 @@ namespace   ft
 
 				while (tmp)
 				{
+                    std::cout << "je passe" << std::endl;
 					if (_cmp(k, tmp->element.first))
 					{
 						if (tmp->l_flag == false)

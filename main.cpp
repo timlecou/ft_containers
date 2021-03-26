@@ -20,12 +20,20 @@ int main ()
 	map.insert(ft::pair<int, int>(6543, 12));
 	map.insert(ft::pair<int, int>(-5342, 12));
 
-	ft::map<int, int>	map2(map.begin(), map.end());
+	//ft::map<int, int>	map2(map.begin(), map.end());
 
 	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
 	std::cout << std::endl;
-	for (ft::map<int, int>::iterator it = map2.begin(); it != map2.end(); it++)
+	/*for (ft::map<int, int>::iterator it = map2.begin(); it != map2.end(); it++)
+		std::cout << " " << it->first;
+	std::cout << std::endl;*/
+  map.erase(map.begin());
+  for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
 	std::cout << std::endl;
+  map.erase(map.begin());
+  std::cout << "mpa.begin() = ";
+  //std::cout << map.begin()->first << std::endl;
+  return (0);
 }
