@@ -13,27 +13,29 @@ int main ()
 {
 	ft::map<int, int>	map;
 	//PROBLEME DANS ERASE, LA DEUXIEME MAP BOUCLE INFINI A L'APPEL DU CONSTRUCTEUR
-	map.insert(ft::pair<int, int>(42, 12));
-	map.insert(ft::pair<int, int>(2, 12));
 	map.insert(ft::pair<int, int>(4, 12));
-	map.insert(ft::pair<int, int>(432, 12));
-	map.insert(ft::pair<int, int>(6543, 12));
-	map.insert(ft::pair<int, int>(-5342, 12));
-
-	//ft::map<int, int>	map2(map.begin(), map.end());
+	map.insert(ft::pair<int, int>(2, 12));
+	map.insert(ft::pair<int, int>(6, 12));
+	map.insert(ft::pair<int, int>(1, 12));
+	map.insert(ft::pair<int, int>(3, 12));
+	map.insert(ft::pair<int, int>(5, 12));
+	map.insert(ft::pair<int, int>(7, 12));
 
 	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
 	std::cout << std::endl;
-	/*for (ft::map<int, int>::iterator it = map2.begin(); it != map2.end(); it++)
+
+	map.erase(map.begin(), map.end());
+
+	/*ft::map<int, int>::iterator	it = map.begin();
+	std::cout << "begin() = " << map.begin()->first << std::endl;
+
+	it++;
+	it++;
+	map.erase(it);
+
+	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
 	std::cout << std::endl;*/
-  map.erase(map.begin());
-  for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
-		std::cout << " " << it->first;
-	std::cout << std::endl;
-  map.erase(map.begin());
-  std::cout << "mpa.begin() = ";
-  //std::cout << map.begin()->first << std::endl;
   return (0);
 }

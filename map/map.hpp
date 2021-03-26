@@ -75,12 +75,12 @@ namespace   ft
              */
 			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
 			{
-				if (tmp->r_flag == false)
-					return (tmp->right);
+				if (tmp->l_flag == false)
+					return (tmp->left);
 
-				tmp = tmp->right;
-				while (tmp->l_flag == false && tmp != this->_c_root)
-					tmp = tmp->left;
+				tmp = tmp->left;
+				while (tmp->r_flag == false && tmp != this->_c_root)
+					tmp = tmp->right;
 				return (tmp);
 			}
 
@@ -92,23 +92,24 @@ namespace   ft
              */
 			btree<Key, T>	*inorderPredecessor (btree<Key, T> *tmp)
 			{
-				if (tmp->l_flag == false)
-					return (tmp->left);
+				if (tmp->r_flag == false)
+					return (tmp->right);
 
-				tmp = tmp->left;
-				while (tmp->r_flag == false && tmp != this->_c_root)
-					tmp = tmp->right;
+				tmp = tmp->right;
+				while (tmp->l_flag == false && tmp != this->_c_root)
+					tmp = tmp->left;
 				return (tmp);
 			}
 
             /**
-             * This function will a node wich have no child.
+             * This function will delete a node wich have no child.
              * 
              * @tmp : the node to be deleted.
              * @node : the parent of tmp.
              */
             void    deleteNodeWithNoChild (btree<Key, T> *tmp, btree<Key, T> *node)
             {
+                std::cout << "DELETE NO CHILD NODE" << std::endl;
                 if (node == NULL)               //need to delete root
                 {
                     this->_c_root->left = NULL;
@@ -117,42 +118,54 @@ namespace   ft
                     this->_c_root->left = this->_c_root;
                     this->_c_root->right = this->_c_root;
                 }
-                else if (tmp == node->right)    //tmp is a right child 
-                {
-                    node->r_flag = false;
-                    node->right = tmp->right;
-                    if (tmp->right == this->_c_root)
-                        this->_c_root->left = node;
-                }
-                else                            //tmp is left child
+                else if (tmp == node->left)    //tmp is a left child 
                 {
                     node->l_flag = false;
                     node->left = tmp->left;
                     if (tmp->left == this->_c_root)
                         this->_c_root->right = node;
                 }
+                else                            //tmp is right child
+                {
+                    node->r_flag = false;
+                    node->right = tmp->right;
+                    if (tmp->right == this->_c_root)
+                        this->_c_root->left = node;
+                }
             }
 
             /**
-             * This function will a node wich have only a right child.
+             * This function will delete a node wich have only a right child.
              * 
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
             void    deleteNodeWithRightChild (btree<Key, T> *tmp, btree<Key, T> *node)
             {
+                std::cout << "DELETE RIGHT CHILD NODE" << std::endl;
                 if (node == NULL)   //the node to delete is the root of the tree.
                 {
+                    std::cout << "ROOT DELETED" << std::endl;
                     this->_c_root->left = tmp->right;
                     this->_c_root->right = leftNode(this->_c_root->left);
                     leftNode(this->_c_root->left)->left = this->_c_root;
                     return ;
                 }
                 if (node->right == tmp)
+                {
+                    std::cout << "tmp is right child" << std::endl;
                     node->right = tmp->right;
+                }
                 else
+                {
+                    std::cout << "tmp is left child" << std::endl;
                     node->left = tmp->right;
+                    std::cout << "==" << tmp->element.first << "==" << std::endl;
+                }
 
+                //REPENDRE CE BOUT DE CODE
+                std::cout << "inorder successor = " << inorderSuccessor(tmp)->element.first << std::endl;
+                std::cout << "inorder predecessor = " << inorderPredecessor(tmp)->element.first << std::endl;
                 inorderSuccessor(tmp)->left = inorderPredecessor(tmp);
                 if (inorderPredecessor(tmp) == this->_c_root)
                     this->_c_root->right = inorderSuccessor(tmp);
@@ -160,13 +173,14 @@ namespace   ft
             }
 
             /**
-             * This function will a node wich have only a left child.
+             * This function will delete a node wich have only a left child.
              * 
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
             void    deleteNodeWithLeftChild (btree<Key, T> *tmp, btree<Key, T> *node)
             {
+                std::cout << "DELETE LEFT CHILD NODE" << std::endl;
                 if (node == NULL)   //the node to delete is the root of the tree.
                 {
                     this->_c_root->right = tmp->left;
@@ -193,6 +207,7 @@ namespace   ft
              */
             void    deleteNodeWithTwoChildren (btree<Key, T> *tmp, btree<Key, T> *node)
             {
+                std::cout << "DELETE 2 CHILDREN NODE" << std::endl;
                 btree<Key, T>   *successor;
                 btree<Key, T>   *left;
 
@@ -328,7 +343,9 @@ namespace   ft
                 btree<Key, T>       *node = this->_c_root->left;
 
                 while (node->l_flag == true)
+                {
                     node = node->left;
+                }
                 return (iterator(node));
             }
 
@@ -450,6 +467,10 @@ namespace   ft
             ft::pair<iterator,bool> insert (const value_type& val)
             {
                 btree<Key, T>   *node = this->_c_node_allocator.allocate(1);
+                node->l_flag = false;
+                node->r_flag = false;
+                node->right = NULL;
+                node->left = NULL;
                 ft::pair<iterator, bool>            ret;
 
                 ret.second = false;
@@ -465,7 +486,7 @@ namespace   ft
 
                     //add the element at the left of the dummy_node
                     this->_c_root->left = node;
-                    this->_c_root->l_flag = true;
+                    //this->_c_root->l_flag = true;
                     this->_c_size++;
                     ret.first = iterator(node);
                     ret.second = true;
@@ -477,10 +498,10 @@ namespace   ft
                 {
                     if (_cmp(node->element.first, val.first))
                     {
-                        btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                        this->_c_value_allocator.construct(&new_node->element, val);
                         if (node->r_flag == false)
                         {
+                            btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+                            this->_c_value_allocator.construct(&new_node->element, val);
                             new_node->right = node->right;
                             new_node->r_flag = node->r_flag;
                             new_node->l_flag = false;
@@ -497,13 +518,12 @@ namespace   ft
                         else
                             node = node->right;
                     }
-                    
                     else if (_cmp(val.first, node->element.first))
                     {
-                        btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                        this->_c_value_allocator.construct(&new_node->element, val);
                         if (node->l_flag == false)
                         {
+                            btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+                            this->_c_value_allocator.construct(&new_node->element, val);
                             new_node->left = node->left;
                             new_node->l_flag = node->l_flag;
                             new_node->r_flag = false;
@@ -584,25 +604,33 @@ namespace   ft
 				btree<Key, T>		*tmp = this->_c_root->left;
 				btree<Key, T>		*node = NULL;
 
-				while (tmp)
+                int i = 8;
+                std::cout << "want to erase " << k << std::endl;
+                std::cout << "ROOT = " << tmp->element.first << std::endl;
+				while (tmp && i)
 				{
-                    std::cout << "je passe" << std::endl;
+                    i--;
 					if (_cmp(k, tmp->element.first))
 					{
 						if (tmp->l_flag == false)
                             return (0);
+                        std::cout << "<----" << std::endl;
 						node = tmp;
                         tmp = tmp->left;
 					}
 					else if (_cmp(tmp->element.first,k))
-					{
+                    {
 						if (tmp->r_flag == false)
                             return (0);
+                        std::cout << "--->" << std::endl;
 						node = tmp;
                         tmp = tmp->right;
 					}
                     else
                     {
+                        std::cout << "erase element = ";
+                        std::cout << tmp->element.first << std::endl;
+                        std::cout << "previous element = " << node->element.first << std::endl;
                         eraseElement(tmp, node);
                         return (1);
                     }
@@ -623,10 +651,8 @@ namespace   ft
 			 */
             void erase (iterator first, iterator last)
             {
-            	std::cout << "------" << std::endl;
                 while (first != last)
                 {
-                    std::cout << first->first << std::endl;
                     erase(first++);
                 }
             }
