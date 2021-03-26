@@ -175,9 +175,13 @@ namespace   ft
 				mapIterator<Key, T>		tmp(*this);
 				
 				if (this->_i_root->l_flag == false)
+				{
+					std::cout << "NON" << std::endl;
 					this->_i_root = this->_i_root->left;
+				}
 				else
 				{
+					std::cout << "OUI" << std::endl;
 					this->_i_root = this->_i_root->left;
 					while (this->_i_root->r_flag == true)
 						this->_i_root = this->_i_root->right;

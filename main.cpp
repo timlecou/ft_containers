@@ -12,7 +12,7 @@
 int main ()
 {
 	ft::map<int, int>	map;
-	//PROBLEME DANS ERASE, LA DEUXIEME MAP BOUCLE INFINI A L'APPEL DU CONSTRUCTEUR
+
 	map.insert(ft::pair<int, int>(4, 12));
 	map.insert(ft::pair<int, int>(2, 12));
 	map.insert(ft::pair<int, int>(6, 12));
@@ -25,7 +25,9 @@ int main ()
 		std::cout << " " << it->first;
 	std::cout << std::endl;
 
-	map.erase(map.begin(), map.end());
+	ft::map<int, int>::iterator it1 = map.begin();
+	it1++;
+	map.erase(it1);
 	
 	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
