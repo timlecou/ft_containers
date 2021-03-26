@@ -68,38 +68,19 @@ namespace   ft
             }
 
             /**
-             * This function finds the inorder successor of tmp.
-             * 
-             * @tmp : the node wich the successor is searched.
-             * @return : tmp's predecessor.
-             */
-			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
-			{
-				if (tmp->r_flag == false)
-					return (tmp->right);
-
-				tmp = tmp->right;
-				while (tmp->l_flag == false && tmp != this->_c_root)
-					tmp = tmp->left;
-				return (tmp);
-			}
-
-            /**
              * This function finds the inorder predecessor of tmp.
              * 
              * @tmp : the node wich the predecessor is searched.
              * @return : tmp's predecessor.
              */
-			btree<Key, T>	*inorderPredecessor (btree<Key, T> *tmp)
+			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
 			{
 				if (tmp->l_flag == false)
 					return (tmp->left);
 
 				tmp = tmp->left;
-				while (tmp->r_flag == false && tmp != this->_c_root)
-                {
+				while (tmp->r_flag == true && tmp != this->_c_root)
 					tmp = tmp->right;
-                }
 				return (tmp);
 			}
 
@@ -142,9 +123,10 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithRightChild (btree<Key, T> *tmp, btree<Key, T> *node)
+            void    deleteNodeWithLeftChild (btree<Key, T> *tmp, btree<Key, T> *node)
             {
-                std::cout << "DELETE RIGHT CHILD NODE" << std::endl;
+                std::cout << "DELETE LEFT CHILD NODE" << std::endl;
+                std::cout << "PREVIOUS = " << tmp->previous->element.first << std::endl;
                 if (node == NULL)   //the node to delete is the root of the tree.
                 {
                     this->_c_root->left = tmp->right;
@@ -152,25 +134,19 @@ namespace   ft
                     leftNode(this->_c_root->left)->left = this->_c_root;
                     return ;
                 }
-                if (node->right == tmp)
+                if (tmp->previous->right == tmp)
                 {
-                    node->right = tmp->right;
+                    tmp->previous->right = inorderSuccessor(tmp);
                 }
                 else
                 {
-                    node->left = tmp->right;
+                    tmp->previous->left = inorderSuccessor(tmp);
                 }
 
                 //REPENDRE CE BOUT DE CODE
-                std::cout << "suc = " << inorderSuccessor(tmp)->element.first << std::endl;
-                std::cout << "pred = " << inorderPredecessor(tmp)->element.first << std::endl;
-                inorderSuccessor(tmp)->left = inorderPredecessor(tmp);
-                if (inorderPredecessor(tmp) == this->_c_root)
-                {
+                inorderSuccessor(tmp)->previous = tmp->previous;
+                if (tmp->previous == this->_c_root)
                     this->_c_root->right = inorderSuccessor(tmp);
-                
-                }
-                
             }
 
             /**
@@ -179,9 +155,9 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithLeftChild (btree<Key, T> *tmp, btree<Key, T> *node)
+            void    deleteNodeWithRightChild (btree<Key, T> *tmp, btree<Key, T> *node)
             {
-                std::cout << "DELETE LEFT CHILD NODE" << std::endl;
+                std::cout << "DELETE RIGHT CHILD NODE" << std::endl;
                 if (node == NULL)   //the node to delete is the root of the tree.
                 {
                     this->_c_root->right = tmp->left;
@@ -189,14 +165,14 @@ namespace   ft
                     rightNode(this->_c_root->left)->right = this->_c_root;
                     return ;
                 }
-                if (node->left == tmp)
-                    node->left = tmp->left;
+                if (tmp->previous->left == tmp)
+                    tmp->previous->left = inorderSuccessor(tmp);
                 else
-                    node->right = tmp->left;
+                    tmp->previous->right = inorderSuccessor(tmp);
 
-                inorderSuccessor(tmp)->right = inorderPredecessor(tmp);
-                if (inorderPredecessor(tmp) == this->_c_root)
-                    this->_c_root->left = inorderSuccessor(tmp);
+                inorderSuccessor(tmp)->previous = tmp->previous;
+                if (tmp->previous == this->_c_root)
+                    this->_c_root->right = inorderSuccessor(tmp);
                 
             }
 
@@ -217,12 +193,12 @@ namespace   ft
                 successor = inorderSuccessor(tmp);
                 successor->left = tmp->left;
                 left = tmp->left;
-                tmp->left = leftNode(this->_c_root->left);
+                tmp->left = leftNode(this->_c_root->right);
                 if (tmp->left == this->_c_root)
                     this->_c_root->right = tmp;
                 
-                leftNode(this->_c_root->left)->left = tmp;
-                rightNode(this->_c_root->left)->right = successor;
+                leftNode(this->_c_root->right)->left = tmp;
+                rightNode(this->_c_root->right)->right = successor;
                 successor->l_flag = true;
                 deleteNodeWithRightChild(tmp, node);
             }
@@ -341,12 +317,10 @@ namespace   ft
              */
             iterator    begin (void)
             {
-                btree<Key, T>       *node = this->_c_root->left;
+                btree<Key, T>       *node = this->_c_root->right;
 
-                while (node->l_flag == true)
-                {
-                    node = node->left;
-                }
+                while (node->r_flag == true)
+                    node = node->right;
                 return (iterator(node));
             }
 
@@ -359,10 +333,10 @@ namespace   ft
              */
             const_iterator    begin (void) const
             {
-                btree<Key, T>       *node = this->_c_root->left;
+                btree<Key, T>       *node = this->_c_root->right;
 
-                while (node->l_flag == true)
-                    node = node->left;
+                while (node->r_flag == true)
+                    node = node->right;
                 return (const_iterator(node));
             }
 
@@ -399,7 +373,7 @@ namespace   ft
              * 
              * @return : true if the container size is 0, false otherwise.
              */
-            bool empty() const
+            bool empty (void) const
             {
                 if (this->_c_size > 0)
                     return (false);
@@ -413,7 +387,7 @@ namespace   ft
              * 
              * @return : The number of elements in the container.
              */
-            size_type size() const
+            size_type size (void) const
             {
                 return (this->_c_size);
             }
@@ -425,7 +399,7 @@ namespace   ft
              * 
              * @return : The maximum number of elements a map container can hold as content.
              */
-            size_type max_size() const
+            size_type max_size (void) const
             {
                 return (this->_c_node_allocator.max_size());
             }
@@ -472,6 +446,7 @@ namespace   ft
                 node->r_flag = false;
                 node->right = NULL;
                 node->left = NULL;
+                node->previous = NULL;
                 ft::pair<iterator, bool>            ret;
 
                 ret.second = false;
@@ -480,23 +455,24 @@ namespace   ft
                 if (this->_c_root->left == this->_c_root && this->_c_root->right == this->_c_root)
                 {
                     this->_c_value_allocator.construct(&node->element, val);
-                    node->left = this->_c_root->left;
+                    node->right = this->_c_root->right;
                     node->l_flag = this->_c_root->l_flag;
                     node->r_flag = false;
-                    node->right = this->_c_root->right;
+                    node->left = this->_c_root->left;
 
                     //add the element at the left of the dummy_node
-                    this->_c_root->left = node;
+                    node->previous = this->_c_root;
+                    this->_c_root->right = node;
                     this->_c_size++;
                     ret.first = iterator(node);
                     ret.second = true;
                     return (ret);
                 }
 
-                node = this->_c_root->left;
+                node = this->_c_root->right;
                 while (true)
                 {
-                    if (_cmp(node->element.first, val.first))
+                    if (_cmp(val.first, node->element.first))
                     {
                         if (node->r_flag == false)
                         {
@@ -510,6 +486,7 @@ namespace   ft
                             //inserting node in the right
                             node->r_flag = true;
                             node->right = new_node;
+                            new_node->previous = node;
                             this->_c_size++;
                             ret.first = iterator(new_node);
                             ret.second = true;
@@ -518,7 +495,7 @@ namespace   ft
                         else
                             node = node->right;
                     }
-                    else if (_cmp(val.first, node->element.first))
+                    else if (_cmp(node->element.first, val.first))
                     {
                         if (node->l_flag == false)
                         {
@@ -532,6 +509,7 @@ namespace   ft
                             //inserting node in the left
                             node->l_flag = true;
                             node->left = new_node;
+                            new_node->previous = node;
                             this->_c_size++;
                             ret.first = iterator(new_node);
                             ret.second = true;
@@ -601,7 +579,7 @@ namespace   ft
 			 */
 			size_type erase (const key_type& k)
 			{
-				btree<Key, T>		*tmp = this->_c_root->left;
+				btree<Key, T>		*tmp = this->_c_root->right;
 				btree<Key, T>		*node = NULL;
 
                 int i = 8;
@@ -610,7 +588,7 @@ namespace   ft
 				while (tmp && i)
 				{
                     i--;
-					if (_cmp(k, tmp->element.first))
+					if (_cmp(tmp->element.first, k))
 					{
 						if (tmp->l_flag == false)
                             return (0);
@@ -618,7 +596,7 @@ namespace   ft
 						node = tmp;
                         tmp = tmp->left;
 					}
-					else if (_cmp(tmp->element.first,k))
+					else if (_cmp(k, tmp->element.first))
                     {
 						if (tmp->r_flag == false)
                             return (0);
@@ -628,9 +606,7 @@ namespace   ft
 					}
                     else
                     {
-                        std::cout << "erase element = ";
                         std::cout << tmp->element.first << std::endl;
-                        std::cout << "previous element = " << node->element.first << std::endl;
                         eraseElement(tmp, node);
                         return (1);
                     }
