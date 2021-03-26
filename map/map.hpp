@@ -75,12 +75,12 @@ namespace   ft
              */
 			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
 			{
-				if (tmp->l_flag == false)
-					return (tmp->left);
+				if (tmp->r_flag == false)
+					return (tmp->right);
 
-				tmp = tmp->left;
-				while (tmp->r_flag == false && tmp != this->_c_root)
-					tmp = tmp->right;
+				tmp = tmp->right;
+				while (tmp->l_flag == false && tmp != this->_c_root)
+					tmp = tmp->left;
 				return (tmp);
 			}
 
@@ -92,12 +92,14 @@ namespace   ft
              */
 			btree<Key, T>	*inorderPredecessor (btree<Key, T> *tmp)
 			{
-				if (tmp->r_flag == false)
-					return (tmp->right);
+				if (tmp->l_flag == false)
+					return (tmp->left);
 
-				tmp = tmp->right;
-				while (tmp->l_flag == false && tmp != this->_c_root)
-					tmp = tmp->left;
+				tmp = tmp->left;
+				while (tmp->r_flag == false && tmp != this->_c_root)
+                {
+					tmp = tmp->right;
+                }
 				return (tmp);
 			}
 
@@ -145,7 +147,6 @@ namespace   ft
                 std::cout << "DELETE RIGHT CHILD NODE" << std::endl;
                 if (node == NULL)   //the node to delete is the root of the tree.
                 {
-                    std::cout << "ROOT DELETED" << std::endl;
                     this->_c_root->left = tmp->right;
                     this->_c_root->right = leftNode(this->_c_root->left);
                     leftNode(this->_c_root->left)->left = this->_c_root;
@@ -153,22 +154,22 @@ namespace   ft
                 }
                 if (node->right == tmp)
                 {
-                    std::cout << "tmp is right child" << std::endl;
                     node->right = tmp->right;
                 }
                 else
                 {
-                    std::cout << "tmp is left child" << std::endl;
                     node->left = tmp->right;
-                    std::cout << "==" << tmp->element.first << "==" << std::endl;
                 }
 
                 //REPENDRE CE BOUT DE CODE
-                std::cout << "inorder successor = " << inorderSuccessor(tmp)->element.first << std::endl;
-                std::cout << "inorder predecessor = " << inorderPredecessor(tmp)->element.first << std::endl;
+                std::cout << "suc = " << inorderSuccessor(tmp)->element.first << std::endl;
+                std::cout << "pred = " << inorderPredecessor(tmp)->element.first << std::endl;
                 inorderSuccessor(tmp)->left = inorderPredecessor(tmp);
                 if (inorderPredecessor(tmp) == this->_c_root)
+                {
                     this->_c_root->right = inorderSuccessor(tmp);
+                
+                }
                 
             }
 
@@ -486,7 +487,6 @@ namespace   ft
 
                     //add the element at the left of the dummy_node
                     this->_c_root->left = node;
-                    //this->_c_root->l_flag = true;
                     this->_c_size++;
                     ret.first = iterator(node);
                     ret.second = true;

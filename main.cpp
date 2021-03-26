@@ -21,12 +21,31 @@ int main ()
 	map.insert(ft::pair<int, int>(5, 12));
 	map.insert(ft::pair<int, int>(7, 12));
 
+	for (ft::map<int, int>::iterator it = --(map.end()); it != map.begin(); it--)
+		std::cout << " " << it->first;
+	std::cout << std::endl;
 	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
 		std::cout << " " << it->first;
 	std::cout << std::endl;
 
-	map.erase(map.begin(), map.end());
+	map.erase(map.begin());
 
+	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
+		std::cout << " " << it->first;
+	std::cout << std::endl;
+	for (ft::map<int, int>::iterator it = map.end(); it != map.begin(); it--)
+		std::cout << " " << it->first;
+	std::cout << std::endl;
+	map.erase(map.begin());
+	for (ft::map<int, int>::iterator it = map.begin(); it != map.end(); it++)
+		std::cout << " " << it->first;
+	std::cout << std::endl;
+	for (ft::map<int, int>::iterator it = map.end(); it != map.begin(); it--)
+		std::cout << " " << it->first;
+	std::cout << std::endl;
+	
+	map.erase(map.begin());
+	map.erase(map.begin());
 	/*ft::map<int, int>::iterator	it = map.begin();
 	std::cout << "begin() = " << map.begin()->first << std::endl;
 
