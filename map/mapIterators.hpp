@@ -48,7 +48,7 @@ namespace   ft
              */
             mapIterator<Key, T> (const mapConstIterator<Key, T> &it)
 			{
-            	this->_i_root = it._i_root;
+            	this->_i_root = reinterpret_cast<btree<Key, T> *>(&*it);
 			}
 
 			/**
@@ -83,7 +83,7 @@ namespace   ft
 			 */
 			mapIterator<Key, T>	&operator= (const mapConstIterator<Key, T> &it)
 			{
-            	this->_i_root = it._i_root;
+            	this->_i_root = reinterpret_cast<btree<Key, T> *>(&*it);
             	return (*this);
 			}
 
@@ -249,7 +249,7 @@ namespace   ft
              */
             mapConstIterator<Key, T> (const mapIterator<Key, T> &it)
 			{
-            	this->_i_root = it._i_root;
+            	this->_i_root = reinterpret_cast<btree<Key, T> *>(&*it);
 			}
 
 			/**
@@ -271,7 +271,7 @@ namespace   ft
 			 */
 			mapConstIterator<Key, T>	&operator= (const mapConstIterator<Key, T> &it)
 			{
-            	this->_i_root = it._i_root;
+            	this->_i_root = reinterpret_cast<btree<Key, T> *>(&*it);
             	return (*this);
 			}
 
