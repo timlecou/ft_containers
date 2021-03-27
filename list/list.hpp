@@ -20,8 +20,8 @@ namespace	ft
 			typedef	value_type const &							const_reference;
 			typedef	value_type *								pointer;
 			typedef	value_type const *							const_pointer;
-			typedef	ft::listIterator<T>								iterator;
-			typedef	ft::listConstIterator<T>						const_iterator;
+			typedef	ft::listIterator<T>							iterator;
+			typedef	ft::listConstIterator<T>					const_iterator;
 			typedef ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 			typedef	ptrdiff_t									difference_type;

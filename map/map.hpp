@@ -19,20 +19,21 @@ namespace   ft
     class map
     {
         public:
-            typedef Key                                         key_type;
-            typedef T                                           mapped_type;
-            typedef ft::pair<const key_type,mapped_type>        value_type;
-            typedef Compare                                     key_compare;
-        //    typedef .........                                   value_compare;
-            typedef Alloc                                       allocator_type;
-            typedef typename allocator_type::reference                   reference;
-            typedef typename allocator_type::const_reference             const_reference;
-            typedef typename allocator_type::pointer                     pointer;
-            typedef typename allocator_type::const_pointer               const_pointer;
-            typedef mapIterator<Key, T>                         iterator;
-            typedef mapConstIterator<Key, T>                   const_iterator;
-            typedef ptrdiff_t                                   difference_type;
-            typedef size_t                                      size_type;
+            typedef Key                                         	key_type;
+            typedef T                                           	mapped_type;
+            typedef ft::pair<const key_type,mapped_type>        	value_type;
+            typedef Compare                                     	key_compare;
+            typedef Alloc                                       	allocator_type;
+            typedef typename allocator_type::reference              reference;
+            typedef typename allocator_type::const_reference        const_reference;
+            typedef typename allocator_type::pointer                pointer;
+            typedef typename allocator_type::const_pointer          const_pointer;
+            typedef mapIterator<Key, T>                     	    iterator;
+            typedef mapConstIterator<Key, T>                   		const_iterator;
+			typedef ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+            typedef ptrdiff_t                                   	difference_type;
+            typedef size_t                                      	size_type;
 
         private:
 			btree<Key, T>                       *_c_root;
@@ -92,7 +93,6 @@ namespace   ft
              */
             void    deleteNodeWithNoChild (btree<Key, T> *tmp)
             {
-            	std::cout << "NONE" << std::endl;
                 if (tmp->previous == NULL)               //need to delete root
                 {
                     this->_c_root->left = NULL;
@@ -115,6 +115,8 @@ namespace   ft
                     if (tmp->right == this->_c_root)
                         this->_c_root->left = tmp->previous;
                 }
+				this->_c_value_allocator.destroy(&tmp->element);
+				this->_c_node_allocator.deallocate(tmp, 1);
             }
 
             /**
@@ -125,7 +127,6 @@ namespace   ft
              */
             void    deleteNodeWithLeftChild (btree<Key, T> *tmp)
             {
-				std::cout << "LEFT" << std::endl;
                 if (tmp->previous == NULL)   //the node to delete is the root of the tree.
                 {
                 	tmp->left->previous = this->_c_root;
@@ -140,6 +141,8 @@ namespace   ft
                 inorderSuccessor(tmp)->previous = tmp->previous;
                 if (tmp->previous == this->_c_root)
                     this->_c_root->right = inorderSuccessor(tmp);
+				this->_c_value_allocator.destroy(&tmp->element);
+				this->_c_node_allocator.deallocate(tmp, 1);
             }
 
             /**
@@ -150,7 +153,6 @@ namespace   ft
              */
             void    deleteNodeWithRightChild (btree<Key, T> *tmp)
             {
-				std::cout << "RIGHT" << std::endl;
                 if (tmp->previous == NULL)   //the node to delete is the root of the tree.
                 {
 					tmp->right->previous = this->_c_root;
@@ -165,6 +167,8 @@ namespace   ft
                 inorderSuccessor(tmp)->previous = tmp->previous;
                 if (tmp->previous == this->_c_root)
                     this->_c_root->right = inorderSuccessor(tmp);
+				this->_c_value_allocator.destroy(&tmp->element);
+				this->_c_node_allocator.deallocate(tmp, 1);
             }
 
             /**
@@ -175,27 +179,13 @@ namespace   ft
              */
             void    deleteNodeWithTwoChildren (btree<Key, T> *tmp)
             {
-            	std::cout << "to delete = " << tmp->element.first << std::endl;
-				std::cout << "previous = " << tmp->previous->element.first << std::endl;
-				std::cout << "new node = " << rightNode(tmp->left)->element.first << std::endl;
-            	if (tmp->previous->left == tmp)
-            		tmp->previous->left = rightNode(tmp->left);
+            	tmp->element = rightNode(tmp->left)->element;
+            	if (rightNode(tmp->left)->r_flag == false && rightNode(tmp->left)->l_flag == false)
+            		deleteNodeWithNoChild(rightNode(tmp->left));
+            	else if (rightNode(tmp->left)->r_flag == false)
+            		deleteNodeWithLeftChild(rightNode(tmp->left));
             	else
-            		tmp->previous->right = rightNode(tmp->left);
-
-            	rightNode(tmp->left)->previous->r_flag = false;
-            	rightNode(tmp->left)->previous->right = rightNode(tmp->left);
-
-				rightNode(tmp->left)->previous = tmp->previous;
-
-				rightNode(tmp->left)->right = tmp->right;
-				rightNode(tmp->left)->left = tmp->left;
-
-				rightNode(tmp->left)->l_flag = true;
-				rightNode(tmp->left)->r_flag = true;
-
-                tmp->right->previous = rightNode(tmp->left);
-				tmp->left->previous = rightNode(tmp->left);
+					deleteNodeWithRightChild(rightNode(tmp->left));
             }
 
             /**
@@ -215,13 +205,91 @@ namespace   ft
                 else                                            //tmp has no child.
                     deleteNodeWithNoChild(tmp);
 
-                //destroy and deallocate the node and the element.
-                this->_c_value_allocator.destroy(&tmp->element);
-                this->_c_node_allocator.deallocate(tmp, 1);
-
                 //the size of the tree is decreased by one.
                 --this->_c_size;
             }
+
+			/**
+			 * Insert a node at the root of the tree.
+			 *
+			 * @param node : the new node.
+			 * @param val : the value inserted.
+			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
+			 * newly inserted element or to the element with an equivalent key in the map.
+			 */
+            ft::pair<iterator, bool>	insertRoot (btree<Key, T> *node, const value_type &val)
+			{
+				ft::pair<iterator, bool>	ret;
+				this->_c_value_allocator.construct(&node->element, val);
+				node->right = this->_c_root->right;
+				node->l_flag = this->_c_root->l_flag;
+				node->r_flag = false;
+				node->left = this->_c_root->left;
+
+				//add the element at the right of the dummy_node
+				node->previous = this->_c_root;
+				this->_c_root->right = node;
+				this->_c_size++;
+				ret.first = iterator(node);
+				ret.second = true;
+				return (ret);
+			}
+
+			/**
+			 * Insert a node at the right of its parent.
+			 *
+			 * @param node : the parent node.
+			 * @param val : the value inserted.
+			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
+			 * newly inserted element or to the element with an equivalent key in the map.
+			 */
+			ft::pair<iterator, bool>	insertRightNode (btree<Key, T> *node, const value_type &val)
+			{
+				ft::pair<iterator, bool>	ret;
+				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->element, val);
+				new_node->right = node->right;
+				new_node->r_flag = node->r_flag;
+				new_node->l_flag = false;
+				new_node->left = node;
+
+				//inserting node in the right
+				node->r_flag = true;
+				node->right = new_node;
+				new_node->previous = node;
+				this->_c_size++;
+				ret.first = iterator(new_node);
+				ret.second = true;
+				return (ret);
+			}
+
+			/**
+			 * Insert a node at the left of its parent.
+			 *
+			 * @param node : the parent node.
+			 * @param val : the value inserted.
+			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
+			 * newly inserted element or to the element with an equivalent key in the map.
+			 */
+			ft::pair<iterator, bool>	insertLeftNode (btree<Key, T> *node, const value_type &val)
+			{
+				ft::pair<iterator, bool>	ret;
+				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+				this->_c_value_allocator.construct(&new_node->element, val);
+				new_node->left = node->left;
+				new_node->l_flag = node->l_flag;
+				new_node->r_flag = false;
+				new_node->right = node;
+
+				//inserting node in the left
+				node->l_flag = true;
+				node->left = new_node;
+				new_node->previous = node;
+				this->_c_size++;
+				ret.first = iterator(new_node);
+				ret.second = true;
+				return (ret);
+			}
 
 	public:
         
@@ -298,7 +366,7 @@ namespace   ft
              */
             ~map (void)
             {
-                //clear();
+                clear();
             }
 
         //ITERATORS
@@ -362,6 +430,54 @@ namespace   ft
             {
                 return (const_iterator(this->_c_root));
             }
+
+            /**
+             * Return reverse iterator to reverse begin.
+             *
+             * Returns a reverse iterator pointing to the last element in the container (i.e., its reverse beginning).
+             *
+             * @return : an iterator to the reverse beginning of the sequence container.
+             */
+			reverse_iterator rbegin (void)
+			{
+				return (++(reverse_iterator(this->_c_root)));
+			}
+
+			/**
+			 * Return const reverse iterator to reverse begin.
+			 *
+			 * Returns a const reverse iterator pointing to the last element in the container (i.e., its reverse beginning).
+			 *
+			 * @return : a const iterator to the reverse beginning of the sequence container.
+			 */
+			const_reverse_iterator rbegin (void) const
+			{
+				return (++(const_reverse_iterator(this->_c_root)));
+			}
+
+			/**
+			 * Return reverse iterator to reverse end.
+			 *
+			 * Returns a reverse iterator pointing to the first element in the container (i.e., its reverse end).
+			 *
+			 * @return : an iterator to the reverse end of the sequence container.
+			 */
+			reverse_iterator rend (void)
+			{
+				return (reverse_iterator(this->_c_root));
+			}
+
+			/**
+			 * Return const reverse iterator to reverse end.
+			 *
+			 * Returns a const reverse iterator pointing to the first element in the container (i.e., its reverse end).
+			 *
+			 * @return : a const iterator to the reverse end of the sequence container.
+			 */
+			const_reverse_iterator rend (void) const
+			{
+				return (reverse_iterator(this->_c_root));
+			}
 
         //CAPACITY
 
@@ -446,85 +562,32 @@ namespace   ft
                 node->right = NULL;
                 node->left = NULL;
                 node->previous = NULL;
-                ft::pair<iterator, bool>            ret;
 
-                ret.second = false;
-
-                //if there is no value in the tree
+                //INSERT ROOT
                 if (this->_c_root->left == this->_c_root && this->_c_root->right == this->_c_root)
-                {
-                    this->_c_value_allocator.construct(&node->element, val);
-                    node->right = this->_c_root->right;
-                    node->l_flag = this->_c_root->l_flag;
-                    node->r_flag = false;
-                    node->left = this->_c_root->left;
-
-                    //add the element at the left of the dummy_node
-                    node->previous = this->_c_root;
-                    this->_c_root->right = node;
-                    this->_c_size++;
-                    ret.first = iterator(node);
-                    ret.second = true;
-                    return (ret);
-                }
+                	return (insertRoot(node, val));
 
                 node = this->_c_root->right;
                 while (true)
                 {
                     if (_cmp(val.first, node->element.first))
                     {
-                        if (node->r_flag == false)
-                        {
-                            btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                            this->_c_value_allocator.construct(&new_node->element, val);
-                            new_node->right = node->right;
-                            new_node->r_flag = node->r_flag;
-                            new_node->l_flag = false;
-                            new_node->left = node;
-
-                            //inserting node in the right
-                            node->r_flag = true;
-                            node->right = new_node;
-                            new_node->previous = node;
-                            this->_c_size++;
-                            ret.first = iterator(new_node);
-                            ret.second = true;
-                            return (ret);
-                        }
+                        if (node->r_flag == false)		//INSERT NODE AT THE RIGHT OF ITS PARENT
+                        	return (insertRightNode(node, val));
                         else
                             node = node->right;
                     }
                     else if (_cmp(node->element.first, val.first))
                     {
-                        if (node->l_flag == false)
-                        {
-                            btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
-                            this->_c_value_allocator.construct(&new_node->element, val);
-                            new_node->left = node->left;
-                            new_node->l_flag = node->l_flag;
-                            new_node->r_flag = false;
-                            new_node->right = node;
-
-                            //inserting node in the left
-                            node->l_flag = true;
-                            node->left = new_node;
-                            new_node->previous = node;
-                            this->_c_size++;
-                            ret.first = iterator(new_node);
-                            ret.second = true;
-                            return (ret);
-                        }
+                        if (node->l_flag == false)		//INSERT NODE AT THE LEFT OF ITS PARENT
+							return (insertLeftNode(node, val));
                         else
                             node = node->left;
                     }
                     else
-                    {
-                        ret.first = iterator(node);
-                        ret.second = false;
-                        return (ret);
-                    }
+                        return (ft::pair<iterator, bool>(iterator(node), false));
                 }
-                return (ret);
+                return (ft::pair<iterator, bool>(iterator(node), false));
             }
 
             /**
@@ -649,6 +712,56 @@ namespace   ft
                 	erase(begin(), end());
             }
 
+        //OBSERVERS
+
+        	/**
+        	 * Value comparison object.
+        	 */
+			class value_compare
+			{
+				protected : //variable
+					Compare cmp;
+
+				protected : //func
+					value_compare (Compare c) : cmp(c) {}
+
+				public:
+					value_compare () : cmp(Compare()) {}
+					value_compare (const value_compare &c) : cmp(c.cmp) {}
+					value_compare &operator=(const value_compare &c) { cmp = c.cmp; return (*this); }
+					typedef bool result_type;
+							typedef value_type first_argument_type;
+					typedef value_type second_argument_type;
+					bool operator() (const value_type &x, const value_type &y)
+					{
+						return (cmp(x.first, y.first));
+					}
+			};
+
+			/**
+			 * Return key comparison object.
+			 *
+			 * Returns a copy of the comparison object used by the container to compare keys.
+			 *
+			 * @return : The comparison object.
+			 */
+			key_compare     key_comp (void) const
+			{
+				return (_cmp);
+			}
+
+			/**
+			 * Return value comparison object.
+			 *
+			 * Returns a comparison object that can be used to compare two elements to get whether the key of the first one goes before the second.
+			 *
+			 * @return : The comparison object for element values.
+			 */
+			value_compare     value_comp (void) const
+			{
+				return (value_compare());
+			}
+
         //OPERATIONS
 
             /**
@@ -717,6 +830,112 @@ namespace   ft
                 }
                 return (0);
             }
+
+            /**
+             * Return iterator to lower bound.
+             *
+             * Returns an iterator pointing to the first element in the container whose key is
+             * not considered to go before k (i.e., either it is equivalent or goes after).
+             *
+             * @k : Key to search for.
+             * @return : An iterator to the the first element in the container whose key is
+             * not considered to go before k, or map::end if all keys are considered to go before k.
+             */
+			iterator lower_bound (const key_type& k)
+			{
+            	for (iterator it = begin(); it != end(); it++)
+				{
+            		if (!_cmp(it->first, k))
+            			return (it);
+				}
+            	return (end());
+			}
+
+			/**
+			 * Return const_iterator to lower bound.
+			 *
+			 * Returns an iterator pointing to the first element in the container whose key is
+			 * not considered to go before k (i.e., either it is equivalent or goes after).
+			 *
+			 * @k : Key to search for.
+			 * @return : A const_iterator to the the first element in the container whose key is
+			 * not considered to go before k, or map::end if all keys are considered to go before k.
+			 */
+			const_iterator lower_bound (const key_type& k) const
+			{
+				for (const_iterator it = begin(); it != end(); it++)
+				{
+					if (!_cmp(it->first, k))
+						return (it);
+				}
+				return (end());
+			}
+
+			/**
+			 * Return iterator to upper bound.
+			 *
+			 * Returns an iterator pointing to the first element in the container whose key is considered to go after k.
+			 *
+			 * @param k : Key to search for.
+			 * @return : An iterator to the the first element in the container whose key is considered to go after k,
+			 * or map::end if no keys are considered to go after k.
+			 */
+			iterator upper_bound (const key_type& k)
+			{
+				for (iterator it = begin(); it != end(); it++)
+				{
+					if (_cmp(k, it->first))
+						return (it);
+				}
+				return (end());
+			}
+
+			/**
+			 * Return const_iterator to upper bound.
+			 *
+			 * Returns a const_iterator pointing to the first element in the container whose key is considered to go after k.
+			 *
+			 * @param k : Key to search for.
+			 * @return : A const_iterator to the the first element in the container whose key is considered to go after k,
+			 * or map::end if no keys are considered to go after k.
+			 */
+			const_iterator upper_bound (const key_type& k) const
+			{
+				for (const_iterator it = begin(); it != end(); it++)
+				{
+					if (_cmp(k, it->first))
+						return (it);
+				}
+				return (end());
+			}
+
+			/**
+			 * Get range of equal elements.
+			 *
+			 * Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+			 *
+			 * @param k : Key to search for.
+			 * @return : The function returns a pair, whose member pair::first is the lower bound of the range
+			 * (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound).
+			 */
+			pair<iterator, iterator>             equal_range (const key_type& k)
+			{
+				return (ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
+			}
+
+			/**
+			 * Get range of equal elements.
+			 *
+			 * Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+			 *
+			 * @param k : Key to search for.
+			 * @return : The function returns a pair, whose member pair::first is the lower bound of the range
+			 * (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound).
+			 */
+			pair<const_iterator, const_iterator>             equal_range (const key_type& k) const
+			{
+				return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
+			}
     };
 }
 
