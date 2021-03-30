@@ -214,7 +214,7 @@ namespace	ft
 			 */
 			listConstIterator<T>	&operator= (const listIterator<T> &it)
 			{
-				this->_i_container = it._i_container;
+				this->_i_container = reinterpret_cast<node<T> *>(&*it);
 				return (*this);
 			}
 
