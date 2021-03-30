@@ -1,6 +1,7 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 # include "vectorIterators.hpp"
+# include <cstddef>
 
 /**
  * The namespace "ft" contains the Vector class
