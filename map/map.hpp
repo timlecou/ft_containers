@@ -32,7 +32,7 @@ namespace   ft
             typedef mapIterator<Key, T>                     	    iterator;
             typedef mapConstIterator<Key, T>                   		const_iterator;
 			typedef ft::reverse_iterator<iterator>					reverse_iterator;
-			typedef ft::reverse_iterator<iterator>		const_reverse_iterator;
+			typedef ft::reverse_iterator<iterator>					const_reverse_iterator;
             typedef ptrdiff_t                                   	difference_type;
             typedef size_t                                      	size_type;
 
@@ -695,11 +695,14 @@ namespace   ft
              */
             void swap (map& x)
             {
-                map tmp;
+                btree<Key, T> 	*tmp = x._c_root;
+                size_type		tmp_size = x.size();
 
-                tmp = *this;
-                *this = x;
-                x = tmp;
+                x._c_size = this->_c_size;
+                this->_c_size = tmp_size;
+
+                x._c_root = this->_c_root;
+                this->_c_root = tmp;
             }
 
             /**

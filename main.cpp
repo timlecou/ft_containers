@@ -27,10 +27,25 @@ int main ()
 	ma[45] = 32;
 	ma[21] = 45;
 
-	ft::map<int, int>::const_reverse_iterator it = ma.rbegin();
+	ft::map<int, int> ma2;
 
-	std::cout << it->first << " - " << it->second << std::endl;
-	it++;
-	std::cout << it->first << " - " << it->second << std::endl;
+	ma2[1] = 2;
+	ma2[2] = 3;
+
+	for (ft::map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)
+		std::cout << " " << it->first << ": " << it->second;
+	std::cout << std::endl;
+	for (ft::map<int, int>::iterator it = ma2.begin(); it != ma2.end(); it++)
+		std::cout << " " << it->first << ": " << it->second;
+	std::cout << std::endl;
+
+	ma.swap(ma2);
+
+	for (ft::map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)
+		std::cout << " " << it->first << ": " << it->second;
+	std::cout << std::endl;
+	for (ft::map<int, int>::iterator it = ma2.begin(); it != ma2.end(); it++)
+		std::cout << " " << it->first << ": " << it->second;
+	std::cout << std::endl;
 	return 0;
 }
