@@ -319,7 +319,7 @@ namespace   ft
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			const_reference	operator* (void) const { return (this->_i_root->element); }
+			reference	operator* (void) const { return (this->_i_root->element); }
 
 			/**
 			 * Dereference operator.

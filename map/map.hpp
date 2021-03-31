@@ -919,7 +919,7 @@ namespace   ft
 			 * @return : The function returns a pair, whose member pair::first is the lower bound of the range
 			 * (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound).
 			 */
-			pair<iterator, iterator>             equal_range (const key_type& k)
+			ft::pair<iterator, iterator>             equal_range (const key_type& k)
 			{
 				return (ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
 			}
@@ -933,7 +933,7 @@ namespace   ft
 			 * @return : The function returns a pair, whose member pair::first is the lower bound of the range
 			 * (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound).
 			 */
-			pair<const_iterator, const_iterator>             equal_range (const key_type& k) const
+			ft::pair<const_iterator, const_iterator>             equal_range (const key_type& k) const
 			{
 				return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
 			}

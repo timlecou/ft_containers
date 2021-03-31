@@ -11,8 +11,11 @@
 
 int main ()
 {
-	ft::list<int> mymap(12, 42);
+	ft::map<int, int> mymap;
+	mymap[42] = 12;
 
-	ft::list<int>::const_reverse_iterator crit = mymap.rbegin();
+	ft::map<int, int>::const_reverse_iterator crit = mymap.rend();
+
+	std::cout << crit->first << std::endl;
 	return 0;
 }
