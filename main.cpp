@@ -22,10 +22,15 @@
 
 int main ()
 {
-	ft::list<int> mymap(3, 4);
+	ft::map<int, int> ma;
 
-	ft::list<int>::reverse_iterator crit = mymap.rend();
+	ma[45] = 32;
+	ma[21] = 45;
 
-	std::cout << *crit << std::endl;
+	ft::map<int, int>::const_iterator it = ma.begin();
+
+	std::cout << it->first << " - " << it->second << std::endl;
+	it++;
+	std::cout << it->first << " - " << it->second << std::endl;
 	return 0;
 }

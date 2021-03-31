@@ -374,14 +374,14 @@ namespace   ft
 			{
 				(void)n;
 				mapConstIterator<Key, T>		tmp(*this);
-				
-				if (this->_i_root->r_flag == false)
-					this->_i_root = this->_i_root->right;
+
+				if (this->_i_root->l_flag == false)
+					this->_i_root = this->_i_root->left;
 				else
 				{
-					this->_i_root = this->_i_root->right;
-					while (this->_i_root->l_flag == true)
-						this->_i_root = this->_i_root->left;
+					this->_i_root = this->_i_root->left;
+					while (this->_i_root->r_flag == true)
+						this->_i_root = this->_i_root->right;
 				}
 				return (tmp);
 			}
@@ -396,14 +396,14 @@ namespace   ft
 			{
 				(void)n;
 				mapConstIterator<Key, T>		tmp(*this);
-				
-				if (this->_i_root->l_flag == false)
-					this->_i_root = this->_i_root->left;
+
+				if (this->_i_root->r_flag == false)
+					this->_i_root = this->_i_root->right;
 				else
 				{
-					this->_i_root = this->_i_root->left;
-					while (this->_i_root->r_flag == true)
-						this->_i_root = this->_i_root->right;
+					this->_i_root = this->_i_root->right;
+					while (this->_i_root->l_flag == true)
+						this->_i_root = this->_i_root->left;
 				}
 				return (tmp);
 			}
