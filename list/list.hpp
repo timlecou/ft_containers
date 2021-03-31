@@ -24,7 +24,7 @@ namespace	ft
 			typedef	ft::listIterator<T>							iterator;
 			typedef	ft::listConstIterator<T>					const_iterator;
 			typedef ft::reverse_iterator<iterator>				reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef ft::const_reverse_iterator<const_iterator>	const_reverse_iterator;
 			typedef	ptrdiff_t									difference_type;
 			typedef	size_t										size_type;
 

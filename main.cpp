@@ -1,3 +1,14 @@
+
+
+
+
+
+
+
+
+
+
+
 #include "list/list.hpp"
 #include "vector/vector.hpp"
 #include "stack/stack.hpp"
@@ -11,11 +22,10 @@
 
 int main ()
 {
-	ft::map<int, int> mymap;
-	mymap[42] = 12;
+	ft::list<int> mymap(3, 4);
 
-	ft::map<int, int>::reverse_iterator crit = mymap.rend();
+	ft::list<int>::reverse_iterator crit = mymap.rend();
 
-	std::cout << crit->first << std::endl;
+	std::cout << *crit << std::endl;
 	return 0;
 }
