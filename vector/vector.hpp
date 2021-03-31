@@ -21,6 +21,7 @@ namespace ft
 			typedef	vectorIterator<T>						iterator;
 			typedef	vectorConstIterator<T>					const_iterator;
 			typedef reverse_iterator<iterator>				reverse_iterator;
+			typedef	reverse_iterator<const_iterator>		const_reverse_iterator;
 			typedef	ptrdiff_t								difference_type;
 			typedef	size_t									size_type;
 
@@ -184,10 +185,10 @@ namespace ft
 		 *
 		 * Returns a const reverse iterator pointing to the last element in the vector.
 		 */
-//		const_reverse_iterator rbegin (void) const
-//		{
-//			return (reverse_iterator(this->_c_container + this->_c_size - 1));
-//		}
+		const_reverse_iterator rbegin (void) const
+		{
+			return (reverse_iterator(this->_c_container + this->_c_size - 1));
+		}
 
 		/**
 		 * Return a reverse iterator to reverse end.
@@ -206,10 +207,10 @@ namespace ft
 		 * Returns a const reverse iterator pointing to the theoretical element
 		 * preceding the first element in the vector.
 		 */
-//		const_reverse_iterator rend (void) const
-//		{
-//			return (reverse_iterator(this->_c_container - 1));
-//		}
+		const_reverse_iterator rend (void) const
+		{
+			return (reverse_iterator(this->_c_container - 1));
+		}
 
 
 	//CAPACITY METHODS
