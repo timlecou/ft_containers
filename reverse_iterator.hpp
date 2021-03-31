@@ -57,7 +57,7 @@ namespace   ft
 
 			operator	const_reverse_iterator<Iterator> (void)
 			{
-				return (const_reverse_iterator<Iterator>(this->it));
+				return (const_reverse_iterator<Iterator>(base()));
 			}
 
 			reference   operator[](difference_type n) const { return (it[-n - 1]); }
@@ -160,7 +160,7 @@ namespace   ft
 
 		operator	reverse_iterator<ConstIterator> (void)
 		{
-			return (reverse_iterator<ConstIterator>(this->it));
+			return (reverse_iterator<ConstIterator>(base()));
 		}
 
 		reference   operator[](difference_type n) const { return (it[-n - 1]); }

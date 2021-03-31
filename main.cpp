@@ -27,7 +27,7 @@ int main ()
 	ma[45] = 32;
 	ma[21] = 45;
 
-	ft::map<int, int>::const_iterator it = ma.begin();
+	ft::map<int, int>::const_reverse_iterator it = ma.rbegin();
 
 	std::cout << it->first << " - " << it->second << std::endl;
 	it++;
