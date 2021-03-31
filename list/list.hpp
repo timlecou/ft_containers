@@ -178,7 +178,7 @@ namespace	ft
 			 */
 			reverse_iterator rbegin (void)
 			{
-				return (reverse_iterator(iterator(this->_c_node->previous)));
+				return (reverse_iterator(end()));
 			}
 
 			/**
@@ -190,7 +190,7 @@ namespace	ft
 			 */
 			const_reverse_iterator rbegin (void) const
 			{
-				return (const_reverse_iterator(const_iterator(this->_c_node->previous)));
+				return (const_reverse_iterator(end()));
 			}
 
 			/**
@@ -202,7 +202,7 @@ namespace	ft
 			 */
 			reverse_iterator rend (void)
 			{
-				return (reverse_iterator(iterator(this->_c_node)));
+				return (reverse_iterator(begin()));
 			}
 
 			/**
@@ -214,7 +214,7 @@ namespace	ft
 			 */
 			const_reverse_iterator rend (void) const
 			{
-				return (const_reverse_iterator(const_iterator(this->_c_node)));
+				return (const_reverse_iterator(begin()));
 			}
 
 		//CAPACITY METHODS
