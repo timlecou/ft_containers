@@ -44,7 +44,7 @@ namespace   ft
 			key_compare 						_cmp;
 
             /**
-             * This function finds the node wich in the ultimate left of the tree.
+             * This function finds the node which in the ultimate left of the tree.
              * 
              * @node : the root of the tree.
              * @return : the node wich in the ultimate left of the tree.
@@ -57,7 +57,7 @@ namespace   ft
             }
 
             /**
-             * This function finds the node wich in the ultimate right of the tree.
+             * This function finds the node which in the ultimate right of the tree.
              * 
              * @node : the root of the tree.
              * @return : the node wich in the ultimate right of the tree.
