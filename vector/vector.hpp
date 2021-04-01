@@ -20,8 +20,8 @@ namespace ft
 			typedef	T*	const								const_pointer;
 			typedef	vectorIterator<T>						iterator;
 			typedef	vectorConstIterator<T>					const_iterator;
-			typedef reverse_iterator<iterator>				reverse_iterator;
-			typedef	reverse_iterator<const_iterator>		const_reverse_iterator;
+			typedef ft::reverse_iterator<iterator>				reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 			typedef	ptrdiff_t								difference_type;
 			typedef	size_t									size_type;
 
@@ -177,7 +177,7 @@ namespace ft
 		 */
 		reverse_iterator rbegin (void)
 		{
-			return (reverse_iterator(this->_c_container + this->_c_size - 1));
+			return (reverse_iterator(end()));
 		}
 
 		/**
@@ -187,7 +187,7 @@ namespace ft
 		 */
 		const_reverse_iterator rbegin (void) const
 		{
-			return (reverse_iterator(this->_c_container + this->_c_size - 1));
+			return (reverse_iterator(end()));
 		}
 
 		/**
@@ -198,7 +198,7 @@ namespace ft
 		 */
 		reverse_iterator rend (void)
 		{
-			return (reverse_iterator(this->_c_container - 1));
+			return (reverse_iterator(begin()));
 		}
 
 		/**
@@ -209,7 +209,7 @@ namespace ft
 		 */
 		const_reverse_iterator rend (void) const
 		{
-			return (reverse_iterator(this->_c_container - 1));
+			return (reverse_iterator(begin()));
 		}
 
 
