@@ -718,11 +718,24 @@ namespace	ft
 			 */
 			void merge (list& x)
 			{
-				if (&x == this || x.empty())
+				iterator	it(begin());
+				iterator	beg_x(x.begin());
+				iterator	last(end());
+
+				if (&x == this)
 					return ;
-				insert(begin(), x.begin(), x.end());
-				sort();
-				x.clear();
+				while (it != last)
+				{
+					if (x.size() && *beg_x < *it)
+					{
+						this->splice(it, x, beg_x);
+						beg_x = x.begin();
+					}
+					else
+						++it;
+				}
+				if (x.size())
+					this->splice(it, x, beg_x, x.end());
 			}
 
 			/**
@@ -740,11 +753,24 @@ namespace	ft
 			template <class Compare>
 			void merge (list& x, Compare comp)
 			{
-				if (&x == this || x.empty())
+				iterator	it(begin());
+				iterator	beg_x(x.begin());
+				iterator	last(end());
+
+				if (&x == this)
 					return ;
-				insert(begin(), x.begin(), x.end());
-				sort(comp);
-				x.clear();
+				while (it != last)
+				{
+					if (x.size() && comp(*beg_x, *it))
+					{
+						this->splice(it, x, beg_x);
+						beg_x = x.begin();
+					}
+					else
+						++it;
+				}
+				if (x.size())
+					this->splice(it, x, beg_x, x.end());
 			}
 
 			/**
@@ -876,18 +902,19 @@ namespace	ft
 
 			bool operator> (const list<T,Alloc>& rhs)
 			{
-				if (this->size() != rhs.size())
-					return (false);
-				list::iterator	it1 = this->begin();
-				list::iterator	it2 = rhs.begin();
-				while (it1 != this->end() || it2 != rhs.end())
+				const_iterator	it_this(begin());
+				const_iterator	last(end());
+				const_iterator	it_rhs(rhs.begin());
+				const_iterator	last_rhs(rhs.end());
+
+				while (it_this != last && it_rhs != last_rhs)
 				{
-					if (*it1 > *it2)
+					if (*it_this > *it_rhs)
 						return (true);
-					it1++;
-					it2++;
+					else if (*it_rhs++ > *it_this++)
+						return (false);
 				}
-				return (false);
+				return (this->size() > rhs.size());
 			}
 
 			bool operator< (const list<T,Alloc>& rhs)
@@ -908,34 +935,12 @@ namespace	ft
 
 			bool operator>= (const list<T,Alloc>& rhs)
 			{
-				if (this->size() != rhs.size())
-					return (false);
-				list::iterator	it1 = this->begin();
-				list::iterator	it2 = rhs.begin();
-				while (it1 != this->end() || it2 != rhs.end())
-				{
-					if (*it1 < *it2)
-						return (false);
-					it1++;
-					it2++;
-				}
-				return (true);
+            	return ((*this == rhs) || (*this > rhs));
 			}
 
 			bool operator<= (const list<T,Alloc>& rhs)
 			{
-				if (this->size() != rhs.size())
-					return (false);
-				list::iterator	it1 = this->begin();
-				list::iterator	it2 = rhs.begin();
-				while (it1 != this->end() || it2 != rhs.end())
-				{
-					if (*it1 > *it2)
-						return (false);
-					it1++;
-					it2++;
-				}
-				return (true);
+            	return ((*this == rhs) || (*this < rhs));
 			}
 
 	};

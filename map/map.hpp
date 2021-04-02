@@ -971,48 +971,47 @@ namespace   ft
             bool operator!= (const map &x) const
             {
                 return (!(*this == x));
-                /*iterator         itx(x.begin());
-
-                if (x.size() == this->_c_size)
-                    return (false);
-                for (iterator it = begin(); it != end(); it++)
-                {
-                    if ((it->first != itx->first || it->second != itx->second))
-                        return (true);
-                    ++itx;
-                }
-                return (false);*/
             }
 
-            bool operator< (const map &x) const
+            bool operator< (const map &x)
             {
-                const_iterator    xit(x.begin());
-                const_iterator    xlast(x.end());
-                const_iterator    tit(this->begin());
-                const_iterator    tlast(this->end());
+                iterator    xit(x.begin());
+                iterator    xlast(x.end());
+                iterator    tit(this->begin());
+                iterator    tlast(this->end());
                 
-                while (tit != tlast)
+                while (tit != tlast && xit != xlast)
                 {
-                    if (xit == xlast || *xit < *tit)
-                        return 0;
                     if (*tit < *xit)
-                        return 1;
+                        return (true);
                     ++tit;
                     ++xit;
                 }
-                return (xit != xlast);
+                return (false);
             }
-            bool operator> (const map &x) const
+            bool operator> (const map &x)
             {
-                return (x < *this);
+                iterator    xit(x.begin());
+                iterator    xlast(x.end());
+                iterator    tit(this->begin());
+                iterator    tlast(this->end());
+                
+                while (tit != tlast && xit != xlast)
+                {
+                    if (*tit > *xit)
+                        return (true);
+                    ++tit;
+                    ++xit;
+                }
+                return (false);
             }
-            bool operator>= (const map &x) const
+            bool operator>= (const map &x)
             {
-                return (!(*this < x));
+                return ((*this > x) || (*this == x));
             }
-            bool operator<= (const map &x) const
+            bool operator<= (const map &x)
             {
-                return (!(x < *this));
+                return ((*this < x) || (*this == x));
             }
 
             /**

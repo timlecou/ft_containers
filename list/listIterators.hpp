@@ -78,7 +78,7 @@ namespace	ft
 			 */
 			listIterator<T>	&operator= (const listConstIterator<T> &it)
 			{
-				this->_i_container = it._i_container;
+				this->_i_container = &*it;
 				return (*this);
 			}
 
@@ -187,7 +187,7 @@ namespace	ft
 			 */
 			listConstIterator<T> (const listIterator<T> &it)
 			{
-				this->_i_container = it._i_container;
+				this->_i_container = reinterpret_cast<node<T> *>(&*it);
 			}
 
 			//OPERATORS

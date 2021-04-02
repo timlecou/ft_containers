@@ -667,19 +667,7 @@ namespace ft
 
 		bool operator<= (const vector<T,Alloc>& rhs)
 		{
-			const_iterator it_this(this->begin());
-            const_iterator last(end());
-            const_iterator it_rhs(rhs.begin());
-            const_iterator last_rhs(rhs.end());
-
-            while(it_this != last && it_rhs != last_rhs)
-            {
-                if (*it_this <= *it_rhs)
-                    return (1);
-                else if (*it_rhs++ <= *it_this++)
-                    return (0);
-            }
-            return (this->size() <= rhs.size());
+			return ((*this < rhs) || (*this == rhs));
 		}
 
 		bool operator> (const vector<T,Alloc>& rhs)
@@ -701,19 +689,7 @@ namespace ft
 
 		bool operator>= (const vector<T,Alloc>& rhs)
 		{
-			const_iterator it_this(this->begin());
-            const_iterator last(end());
-            const_iterator it_rhs(rhs.begin());
-            const_iterator last_rhs(rhs.end());
-
-            while(it_this != last && it_rhs != last_rhs)
-            {
-                if (*it_this >= *it_rhs)
-                    return (1);
-                else if (*it_rhs++ >= *it_this++)
-                    return (0);
-            }
-            return (this->size() >= rhs.size());
+			return ((*this > rhs) || (*this == rhs));
 		}
 
 	};
