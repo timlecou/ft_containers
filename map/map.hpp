@@ -952,80 +952,78 @@ namespace   ft
 				return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
 			}
 
-        //OPERATORS
-
-            bool operator== (const map &x) const
-            {
-                iterator         itx(x.begin());
-
-                if (x.size() != this->_c_size)
-                    return (false);
-                for (iterator it = begin(); it != end(); it++)
-                {
-                    if ((it->first != itx->first || it->second != itx->second))
-                        return (false);
-                    ++itx;
-                }
-                return (true);
-            }
-            bool operator!= (const map &x) const
-            {
-                return (!(*this == x));
-            }
-
-            bool operator< (const map &x)
-            {
-                iterator    xit(x.begin());
-                iterator    xlast(x.end());
-                iterator    tit(this->begin());
-                iterator    tlast(this->end());
-                
-                while (tit != tlast && xit != xlast)
-                {
-                    if (*tit < *xit)
-                        return (true);
-                    ++tit;
-                    ++xit;
-                }
-                return (false);
-            }
-            bool operator> (const map &x)
-            {
-                iterator    xit(x.begin());
-                iterator    xlast(x.end());
-                iterator    tit(this->begin());
-                iterator    tlast(this->end());
-                
-                while (tit != tlast && xit != xlast)
-                {
-                    if (*tit > *xit)
-                        return (true);
-                    ++tit;
-                    ++xit;
-                }
-                return (false);
-            }
-            bool operator>= (const map &x)
-            {
-                return ((*this > x) || (*this == x));
-            }
-            bool operator<= (const map &x)
-            {
-                return ((*this < x) || (*this == x));
-            }
-
-            /**
-             * Swap content map.
-             * 
-             * Swap the content of x and y.
-             * 
-             * @x / @y : map containers.
-             */
-            void    swap(map<Key, T, Compare, Alloc> &x, map<Key, T, Compare, Alloc> &y)
-            {
-                x.swap(y);
-            }
     };
+
+	template<class Key, class T, class Compare>
+	bool operator== (map<Key, T, Compare> &lhs,
+					 map<Key, T, Compare> &rhs)
+	{
+		if (lhs.size() != rhs.size())
+		{
+			return (false);
+		}
+		if (lhs.size() > 0)
+		{
+			typedef typename map<Key, T, Compare>::iterator iterator;
+			iterator                                        rhs_begin = rhs.begin();
+			for (iterator                                   lhs_begin = lhs.begin();
+				 lhs_begin != lhs.end(); lhs_begin++)
+			{
+				if (lhs_begin->first != rhs_begin->first || lhs_begin->second != rhs_begin->second)
+				{
+					return (false);
+				}
+				rhs_begin++;
+			}
+		}
+		return (true);
+	}
+
+	template<class Key, class T, class Compare>
+	bool operator!= (map<Key, T, Compare> &lhs,
+					 map<Key, T, Compare> &rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template<class Key, class T, class Compare>
+	bool operator< (map<Key, T, Compare> &lhs,
+					map<Key, T, Compare> &rhs)
+	{
+		return (!((rhs == lhs) || (rhs > lhs)));
+	}
+
+	template<class Key, class T, class Compare>
+	bool operator> (map<Key, T, Compare> &lhs,
+					map<Key, T, Compare> &rhs)
+	{
+		if (lhs.size() > rhs.size())
+			return (true);
+		typename map<Key, T, Compare>::const_iterator it = lhs.begin();
+		typename map<Key, T, Compare>::const_iterator it2 = rhs.begin();
+		while (it != lhs.end() && it2 != rhs.end())
+		{
+			if (*it > *it2)
+				return (true);
+			++it2;
+			++it;
+		}
+		return (false);
+	}
+
+	template<class Key, class T, class Compare>
+	bool operator<= (map<Key, T, Compare> &lhs,
+					 map<Key, T, Compare> &rhs)
+	{
+		return ((rhs < lhs) || (rhs == lhs));
+	}
+
+	template<class Key, class T, class Compare>
+	bool operator>= (map<Key, T, Compare> &lhs,
+					 map<Key, T, Compare> &rhs)
+	{
+		return ((rhs > lhs) || (rhs == lhs));
+	}
 }
 
 #endif

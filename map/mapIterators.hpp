@@ -113,6 +113,14 @@ namespace   ft
 			 */
 			bool	operator!= (const mapIterator<Key, T> &it) { return (this->_i_root != it._i_root); }
 
+			bool	operator> (const mapIterator<Key, T> &it) { return (this->_i_root > it._i_root); }
+
+			bool	operator< (const mapIterator<Key, T> &it) { return (this->_i_root < it._i_root); }
+
+			bool	operator>= (const mapIterator<Key, T> &it) { return (this->_i_root >= it._i_root); }
+
+			bool	operator<= (const mapIterator<Key, T> &it) { return (this->_i_root <= it._i_root); }
+
 			/**
 			 * Dereference operator.
 			 *
@@ -305,6 +313,14 @@ namespace   ft
 			 * @return : true is the two values are equals, otherwise it returns false.
 			 */
 			bool	operator== (const mapConstIterator<Key, T> &it) { return (this->_i_root == it._i_root); }
+
+			bool	operator> (const mapConstIterator<Key, T> &it) { return (this->_i_root > it._i_root); }
+
+			bool	operator< (const mapConstIterator<Key, T> &it) { return (this->_i_root < it._i_root); }
+
+			bool	operator>= (const mapConstIterator<Key, T> &it) { return (this->_i_root >= it._i_root); }
+
+			bool	operator<= (const mapConstIterator<Key, T> &it) { return (this->_i_root <= it._i_root); }
 
 			/**
 			 * Inequality operator.
