@@ -1,6 +1,7 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 # include "vectorIterators.hpp"
+# include "../utils.hpp"
 # include <cstddef>
 
 /**
@@ -621,24 +622,10 @@ namespace ft
 		}
 
 		/**
-		 * Exchanges contents of vectors.
+		 * Relational operators for vector.
 		 *
-		 * The contents of container x are exchanged with those of y.
-		 * @x/@y : vector containers of the same type.
+		 * Performs the appropriate comparison operation between the vector containers lhs and rhs.
 		 */
-		void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
-		{
-			vector	tmp = x;
-
-			x = y;
-			y = tmp;
-		}
-
-	/**
-	 * Relational operators for vector.
-	 *
-	 * Performs the appropriate comparison operation between the vector containers lhs and rhs.
-	 */
 		bool operator== (const vector<T,Alloc>& rhs)
 		{
 			if (this->_c_size != rhs.size())
@@ -727,6 +714,18 @@ namespace ft
 		}
 
 	};
-}
+
+	/**
+	 * Exchanges contents of vectors.
+	 *
+	 * The contents of container x are exchanged with those of y.
+	 * @x/@y : vector containers of the same type.
+	 */
+	template<class T, class Alloc>
+	void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
+	{
+		x.swap(y);
+	}
+};
 
 #endif

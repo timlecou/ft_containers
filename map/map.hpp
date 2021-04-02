@@ -94,7 +94,6 @@ namespace   ft
              */
             void    deleteNodeWithNoChild (btree<Key, T> *tmp)
             {
-                std::cout << "delete no child = " << tmp->element.first << std::endl;
                 if (tmp->previous == this->_c_root)               //need to delete root
                 {
                     this->_c_root->left = NULL;
@@ -129,7 +128,6 @@ namespace   ft
              */
             void    deleteNodeWithLeftChild (btree<Key, T> *tmp)
             {
-                std::cout << "delete left child = " << tmp->element.first << std::endl;
                 if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
                 	tmp->left->previous = this->_c_root;
@@ -137,13 +135,11 @@ namespace   ft
                     return ;
                 }
                 if (tmp->previous->right == tmp)
-                    tmp->previous->right = inorderSuccessor(tmp);
+                    tmp->previous->right = tmp->left;
                 else
-                    tmp->previous->left = inorderSuccessor(tmp);
+                    tmp->previous->left = tmp->left;
 
-                inorderSuccessor(tmp)->previous = tmp->previous;
-                if (tmp->previous == this->_c_root)
-                    this->_c_root->right = inorderSuccessor(tmp);
+                tmp->left->previous = tmp->previous;
 				this->_c_value_allocator.destroy(&tmp->element);
 				this->_c_node_allocator.deallocate(tmp, 1);
             }
@@ -156,7 +152,6 @@ namespace   ft
              */
             void    deleteNodeWithRightChild (btree<Key, T> *tmp)
             {
-                std::cout << "delete right child = " << tmp->element.first << std::endl;
                 if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
 					tmp->right->previous = this->_c_root;
@@ -164,13 +159,11 @@ namespace   ft
                     return ;
                 }
                 if (tmp->previous->left == tmp)
-                    tmp->previous->left = inorderSuccessor(tmp);
+                    tmp->previous->left = tmp->right;
                 else
-                    tmp->previous->right = inorderSuccessor(tmp);
+                    tmp->previous->right = tmp->right;
 
-                inorderSuccessor(tmp)->previous = tmp->previous;
-                if (tmp->previous == this->_c_root)
-                    this->_c_root->right = inorderSuccessor(tmp);
+                tmp->right->previous = tmp->previous;
 				this->_c_value_allocator.destroy(&tmp->element);
 				this->_c_node_allocator.deallocate(tmp, 1);
             }
@@ -183,7 +176,6 @@ namespace   ft
              */
             void    deleteNodeWithTwoChildren (btree<Key, T> *tmp)
             {
-                std::cout << "delete two children = " << tmp->element.first << std::endl;
             	tmp->element = rightNode(tmp->left)->element;
             	if (rightNode(tmp->left)->r_flag == false && rightNode(tmp->left)->l_flag == false)
             		deleteNodeWithNoChild(rightNode(tmp->left));
@@ -666,32 +658,22 @@ namespace   ft
 			{
 				btree<Key, T>		*tmp = this->_c_root->right;
 
-                std::cout << k << " : ";
-                std::cout << size() << std::endl;
 				while (tmp)
 				{
 					if (_cmp(tmp->element.first, k))
 					{
-                        std::cout << "tmp = " << tmp->element.first << std::endl;
 						if (tmp->l_flag == false)
-                        {
-                            std::cout << "QUIT" << std::endl;
                             return (0);
-                        }
                         tmp = tmp->left;
 					}
 					else if (_cmp(k, tmp->element.first))
                     {
 						if (tmp->r_flag == false)
-                        {
-                            std::cout << "QUIT" << std::endl;
                             return (0);
-                        }
                         tmp = tmp->right;
 					}
                     else
                     {
-                        std::cout << "delete element" << std::endl;
                         eraseElement(tmp);
                         return (1);
                     }
