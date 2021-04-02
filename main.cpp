@@ -22,16 +22,14 @@
 
 int main ()
 {
-  ft::vector<int> v1;
-	ft::vector<int> v3;
-	v1.push_back(1);
-	v1.push_back(2);
-	v1.push_back(3);
-	v3 = v1;
-	std::cout << (v1 > v3) << std::endl;
-  std::cout << (v1 < v3) << std::endl;
-	v1.push_back(42);
-  std::cout << (v1 > v3) << std::endl;
-  std::cout << (v1 < v3) << std::endl;
+  ft::stack<int> st;
+
+  st.push(42);
+
+  ft::stack<int> st1;
+
+  st1.push(2);
+
+  std::cout << (st < st1) << std::endl;
   return 0;
 }

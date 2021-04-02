@@ -117,34 +117,29 @@ namespace	ft
 			 * Performs the appropriate comparison operation between lhs and rhs.
 			 */
 
-
-  			bool operator== (const stack<T,Container>& rhs)
+			bool operator==(const stack& rhs)
 			{
 				return (this->_container == rhs._container);
 			}
-
-  			bool operator!= (const stack<T,Container>& rhs)
+			bool operator!=(const stack& rhs)
 			{
 				return (this->_container != rhs._container);
 			}
-
-  			bool operator<  (const stack<T,Container>& rhs)
+			bool operator<(const stack& rhs)
 			{
-				return (!(this->_container >= rhs._container));
+				return (this->_container < rhs._container);
 			}
-
-  			bool operator<= (const stack<T,Container>& rhs)
+			bool operator>(const stack& rhs)
 			{
-				return (this->_container <= rhs._container);
+				return (this->_container > rhs._container);
 			}
-  			bool operator>  (const stack<T,Container>& rhs)
-			{
-				return (!(this->_container <= rhs._container));
-			}
-
-  			bool operator>= (const stack<T,Container>& rhs)
+			bool operator>=(const stack& rhs)
 			{
 				return (this->_container >= rhs._container);
+			}
+			bool operator<=(const stack& rhs)
+			{
+				return (this->_container <= rhs._container);
 			}
 	};
 }
