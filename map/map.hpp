@@ -22,7 +22,7 @@ namespace   ft
         public:
             typedef Key                                         	key_type;
             typedef T                                           	mapped_type;
-            typedef ft::pair<const key_type,mapped_type>        	value_type;
+            typedef ft::pair<const key_type, mapped_type>        	value_type;
             typedef Compare                                     	key_compare;
             typedef Alloc                                       	allocator_type;
             typedef typename allocator_type::reference              reference;
@@ -94,7 +94,8 @@ namespace   ft
              */
             void    deleteNodeWithNoChild (btree<Key, T> *tmp)
             {
-                if (tmp->previous == NULL)               //need to delete root
+                std::cout << "delete no child = " << tmp->element.first << std::endl;
+                if (tmp->previous == this->_c_root)               //need to delete root
                 {
                     this->_c_root->left = NULL;
                     this->_c_root->l_flag = false;
@@ -128,7 +129,8 @@ namespace   ft
              */
             void    deleteNodeWithLeftChild (btree<Key, T> *tmp)
             {
-                if (tmp->previous == NULL)   //the node to delete is the root of the tree.
+                std::cout << "delete left child = " << tmp->element.first << std::endl;
+                if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
                 	tmp->left->previous = this->_c_root;
                     this->_c_root->right = tmp->left;
@@ -154,7 +156,8 @@ namespace   ft
              */
             void    deleteNodeWithRightChild (btree<Key, T> *tmp)
             {
-                if (tmp->previous == NULL)   //the node to delete is the root of the tree.
+                std::cout << "delete right child = " << tmp->element.first << std::endl;
+                if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
 					tmp->right->previous = this->_c_root;
 					this->_c_root->right = tmp->right;
@@ -180,6 +183,7 @@ namespace   ft
              */
             void    deleteNodeWithTwoChildren (btree<Key, T> *tmp)
             {
+                std::cout << "delete two children = " << tmp->element.first << std::endl;
             	tmp->element = rightNode(tmp->left)->element;
             	if (rightNode(tmp->left)->r_flag == false && rightNode(tmp->left)->l_flag == false)
             		deleteNodeWithNoChild(rightNode(tmp->left));
@@ -220,7 +224,6 @@ namespace   ft
 			 */
             ft::pair<iterator, bool>	insertRoot (btree<Key, T> *node, const value_type &val)
 			{
-				ft::pair<iterator, bool>	ret;
 				this->_c_value_allocator.construct(&node->element, val);
 				node->right = this->_c_root->right;
 				node->l_flag = this->_c_root->l_flag;
@@ -231,9 +234,7 @@ namespace   ft
 				node->previous = this->_c_root;
 				this->_c_root->right = node;
 				this->_c_size++;
-				ret.first = iterator(node);
-				ret.second = true;
-				return (ret);
+				return (ft::pair<iterator, bool>(iterator(node), true));
 			}
 
 			/**
@@ -246,7 +247,6 @@ namespace   ft
 			 */
 			ft::pair<iterator, bool>	insertRightNode (btree<Key, T> *node, const value_type &val)
 			{
-				ft::pair<iterator, bool>	ret;
 				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->element, val);
 				new_node->right = node->right;
@@ -259,9 +259,7 @@ namespace   ft
 				node->right = new_node;
 				new_node->previous = node;
 				this->_c_size++;
-				ret.first = iterator(new_node);
-				ret.second = true;
-				return (ret);
+				return (ft::pair<iterator, bool>(iterator(new_node), true));
 			}
 
 			/**
@@ -274,7 +272,6 @@ namespace   ft
 			 */
 			ft::pair<iterator, bool>	insertLeftNode (btree<Key, T> *node, const value_type &val)
 			{
-				ft::pair<iterator, bool>	ret;
 				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->element, val);
 				new_node->left = node->left;
@@ -287,10 +284,35 @@ namespace   ft
 				node->left = new_node;
 				new_node->previous = node;
 				this->_c_size++;
-				ret.first = iterator(new_node);
-				ret.second = true;
-				return (ret);
+				return (ft::pair<iterator, bool>(iterator(new_node), true));
 			}
+
+            btree<Key, T>      *find_key (const key_type &k)
+            {
+                btree<Key, T>   *node = this->_c_root->right;
+
+                if (node == NULL)
+                    return (NULL);
+                while (true)
+                {
+                    if (_cmp(k, node->element.first))
+                    {
+                        if (node->r_flag == false)		//INSERT NODE AT THE RIGHT OF ITS PARENT
+                        	return (node);
+                        else
+                            node = node->right;
+                    }
+                    else if (_cmp(node->element.first, k))
+                    {
+                        if (node->l_flag == false)		//INSERT NODE AT THE LEFT OF ITS PARENT
+							return (node);
+                        else
+                            node = node->left;
+                    }
+                    else
+                        return (node);
+                }
+            }
 
 	public:
         
@@ -346,7 +368,7 @@ namespace   ft
              * 
              * @x : Another map object of the same type (with the same class template arguments Key, T, Compare and Alloc), whose contents are either copied or acquired.
              */
-            map (const map& x)
+            map (const map& x): _c_value_allocator(x._c_value_allocator), _cmp(x._cmp)
             {
 				this->_c_root = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&this->_c_root->element, value_type());
@@ -355,11 +377,12 @@ namespace   ft
 				this->_c_root->right = this->_c_root;
 				this->_c_root->left = this->_c_root;
 				this->_c_size = 0;
-				if (x._c_root != NULL)
+				if (x._c_root->right != NULL)
 				{
-					this->_c_root = x._c_root;
-					this->_c_size = x.size();
+                    insert(x.begin(), x.end());
 				}
+                else
+                    this->_c_root = NULL;
             }
 
             /**
@@ -541,7 +564,6 @@ namespace   ft
                 }
                 else
                     return (it->second);
-                
             }
 
         //MODIFIERS
@@ -644,22 +666,32 @@ namespace   ft
 			{
 				btree<Key, T>		*tmp = this->_c_root->right;
 
+                std::cout << k << " : ";
+                std::cout << size() << std::endl;
 				while (tmp)
 				{
 					if (_cmp(tmp->element.first, k))
 					{
+                        std::cout << "tmp = " << tmp->element.first << std::endl;
 						if (tmp->l_flag == false)
+                        {
+                            std::cout << "QUIT" << std::endl;
                             return (0);
+                        }
                         tmp = tmp->left;
 					}
 					else if (_cmp(k, tmp->element.first))
                     {
 						if (tmp->r_flag == false)
+                        {
+                            std::cout << "QUIT" << std::endl;
                             return (0);
+                        }
                         tmp = tmp->right;
 					}
                     else
                     {
+                        std::cout << "delete element" << std::endl;
                         eraseElement(tmp);
                         return (1);
                     }
@@ -681,9 +713,7 @@ namespace   ft
             void erase (iterator first, iterator last)
             {
                 while (first != last)
-                {
                     erase(first++);
-                }
             }
 
             /**
@@ -804,9 +834,7 @@ namespace   ft
                 iterator    it = begin();
                 
                 if (this->_c_size == 0)
-                {
                     return (end());
-                }
                 while (it != this->end())
                 {
                     if (k == it->first)
@@ -943,7 +971,7 @@ namespace   ft
 
         //OPERATORS
 
-            bool operator==(const map &x) const
+            bool operator== (const map &x) const
             {
                 iterator         itx(x.begin());
 
@@ -952,27 +980,28 @@ namespace   ft
                 for (iterator it = begin(); it != end(); it++)
                 {
                     if ((it->first != itx->first || it->second != itx->second))
-                        return false;
+                        return (false);
                     ++itx;
                 }
                 return (true);
             }
-            bool operator!=(const map &x) const
+            bool operator!= (const map &x) const
             {
-                iterator         itx(x.begin());
+                return (!(*this == x));
+                /*iterator         itx(x.begin());
 
                 if (x.size() == this->_c_size)
                     return (false);
                 for (iterator it = begin(); it != end(); it++)
                 {
-                    if ((it->first == itx->first || it->second == itx->second))
-                        return false;
+                    if ((it->first != itx->first || it->second != itx->second))
+                        return (true);
                     ++itx;
                 }
-                return (true);
+                return (false);*/
             }
 
-            bool operator<(const map &x) const
+            bool operator< (const map &x) const
             {
                 const_iterator    xit(x.begin());
                 const_iterator    xlast(x.end());
@@ -990,15 +1019,15 @@ namespace   ft
                 }
                 return (xit != xlast);
             }
-            bool operator>(const map &x) const
+            bool operator> (const map &x) const
             {
                 return (x < *this);
             }
-            bool operator>=(const map &x) const
+            bool operator>= (const map &x) const
             {
                 return (!(*this < x));
             }
-            bool operator<=(const map &x) const
+            bool operator<= (const map &x) const
             {
                 return (!(x < *this));
             }

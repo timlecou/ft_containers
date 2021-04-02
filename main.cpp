@@ -29,16 +29,25 @@ struct classcomp {
 
 int main ()
 {
-  std::map<int, int>	var;
+  ft::map<int, int>	var;
 
-  var[3] =  42;
+  var[1] =  42;
+  var[2] =  45;
+  var[45] =  65;
+  var[3] =  74;
+  var.erase(var.begin(), var.end());
+  var[1] =  42;
+  var[2] =  45;
+  var[45] =  65;
+  var[3] =  74;
+  ft::map<int, int>::iterator   it = var.begin();
 
-  std::map<int, int>	var2;
+  it++;
+  std::cout << "---------------" << std::endl;
+  var.erase(it, var.end());
+  std::cout << "---------------" << std::endl;
 
-  var2[2] = 41;
-  var2[1] = 12;
-
-  std::cout << (var < var2) << std::endl;
+  std::cout << var.size() << std::endl;
   
   return 0;
 }
