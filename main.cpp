@@ -43,9 +43,7 @@ int main ()
   ft::map<int, int>::iterator   it = var.begin();
 
   it++;
-  std::cout << "---------------" << std::endl;
   var.erase(it,var.end());
-  std::cout << "---------------" << std::endl;
 
   std::cout << var.size() << std::endl;
   

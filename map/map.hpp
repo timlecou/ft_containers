@@ -1,6 +1,7 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 # include "mapIterators.hpp"
+# include "../reverse_iterator.hpp"
 # include <iostream>
 # include <cstddef>
 
@@ -33,7 +34,7 @@ namespace   ft
             typedef mapConstIterator<Key, T>                   		const_iterator;
 			typedef ft::reverse_iterator<iterator>					reverse_iterator;
 			typedef ft::reverse_iterator<iterator>					const_reverse_iterator;
-            typedef ptrdiff_t                                   	difference_type;
+            typedef std::ptrdiff_t                                 	difference_type;
             typedef size_t                                      	size_type;
 
         private:
