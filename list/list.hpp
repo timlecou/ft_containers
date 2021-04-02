@@ -577,8 +577,8 @@ namespace	ft
 			 */
 			void clear (void)
 			{
-				while (this->_c_size)
-					pop_back();
+				if (this->_c_size > 0)
+					erase(begin(), end());
 			}
 
 		//OPERATIONS
@@ -675,7 +675,7 @@ namespace	ft
 				iterator	it1 = begin();
 
 				it1++;
-				for (iterator it = begin(); it != end(); it1++)
+				for (iterator it = begin(); it != end() && it1 != end(); it1++)
 				{
 					if (*it == *it1)
 						it = erase(it1);
@@ -699,7 +699,7 @@ namespace	ft
 				iterator	it1 = begin();
 
 				it1++;
-				for (iterator it = begin(); it != end(); it1++)
+				for (iterator it = begin(); it != end() && it1 != end(); it1++)
 				{
 					if (binary_pred(*it, *it1))
 						it = erase(it1);

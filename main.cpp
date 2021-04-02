@@ -20,32 +20,18 @@
 
 #include <iostream>
 
-bool fncomp (char lhs, char rhs) {return lhs<rhs;}
-
-struct classcomp {
-  bool operator() (const char& lhs, const char& rhs) const
-  {return lhs<rhs;}
-};
-
 int main ()
 {
-  ft::map<int, int>	var;
-
-  var[1] =  42;
-  var[2] =  45;
-  var[45] =  65;
-  var[3] =  74;
-  var.erase(var.begin(), var.end());
-  var[1] =  42;
-  var[2] =  45;
-  var[45] =  65;
-  var[3] =  74;
-  ft::map<int, int>::iterator   it = var.begin();
-
-  it++;
-  var.erase(it,var.end());
-
-  std::cout << var.size() << std::endl;
-  
+  ft::vector<int> v1;
+	ft::vector<int> v3;
+	v1.push_back(1);
+	v1.push_back(2);
+	v1.push_back(3);
+	v3 = v1;
+	std::cout << (v1 > v3) << std::endl;
+  std::cout << (v1 < v3) << std::endl;
+	v1.push_back(42);
+  std::cout << (v1 > v3) << std::endl;
+  std::cout << (v1 < v3) << std::endl;
   return 0;
 }

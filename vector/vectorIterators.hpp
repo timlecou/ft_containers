@@ -279,7 +279,7 @@ namespace	ft
 				 */
 				vectorConstIterator<T> (const vectorIterator<T> &it)
 				{
-					this->_i_container = it._i_container;
+					this->_i_container = &*it;
 				}
 
 				/**

@@ -645,72 +645,75 @@ namespace ft
 
 		bool operator!= (const vector<T,Alloc>& rhs)
 		{
-			iterator	it1 = begin();
-			iterator	it2 = rhs.begin();
-			while (it1 != end() || it2 != rhs.end())
-			{
-				if (*it1 == *it2)
-					return (false);
-				it1++;
-				it2++;
-			}
-			return (true);
+			return (!(*this == rhs));
 		}
 
 		bool operator< (const vector<T,Alloc>& rhs)
 		{
-			iterator	it1 = begin();
-			iterator	it2 = rhs.begin();
-			while (it1 != end() || it2 != rhs.end())
-			{
-				if (*it1 < *it2)
-					return (true);
-				it1++;
-				it2++;
-			}
-			return (false);
+			const_iterator it_this(this->begin());
+            const_iterator last(end());
+            const_iterator it_rhs(rhs.begin());
+            const_iterator last_rhs(rhs.end());
+
+            while(it_this != last && it_rhs != last_rhs)
+            {
+                if (*it_this < *it_rhs)
+                    return (1);
+                else if (*it_rhs++ < *it_this++)
+                    return (0);
+            }
+            return (this->size() < rhs.size());
 		}
 
 		bool operator<= (const vector<T,Alloc>& rhs)
 		{
-			iterator	it1 = begin();
-			iterator	it2 = rhs.begin();
-			while (it1 != end() || it2 != rhs.end())
-			{
-				if (*it1 > *it2)
-					return (false);
-				it1++;
-				it2++;
-			}
-			return (true);
+			const_iterator it_this(this->begin());
+            const_iterator last(end());
+            const_iterator it_rhs(rhs.begin());
+            const_iterator last_rhs(rhs.end());
+
+            while(it_this != last && it_rhs != last_rhs)
+            {
+                if (*it_this <= *it_rhs)
+                    return (1);
+                else if (*it_rhs++ <= *it_this++)
+                    return (0);
+            }
+            return (this->size() <= rhs.size());
 		}
 
 		bool operator> (const vector<T,Alloc>& rhs)
 		{
-			iterator	it1 = begin();
-			iterator	it2 = rhs.begin();
-			while (it1 != end() || it2 != rhs.end())
-			{
-				if (*it1 > *it2)
-					return (true);
-				it1++;
-				it2++;
-			}
-			return (false);
+			const_iterator it_this(this->begin());
+            const_iterator last(end());
+            const_iterator it_rhs(rhs.begin());
+            const_iterator last_rhs(rhs.end());
+
+            while(it_this != last && it_rhs != last_rhs)
+            {
+                if (*it_this > *it_rhs)
+                    return (1);
+                else if (*it_rhs++ > *it_this++)
+                    return (0);
+            }
+            return (this->size() > rhs.size());
 		}
 
 		bool operator>= (const vector<T,Alloc>& rhs)
 		{
-			iterator	it1 = begin();
-			iterator	it2 = rhs.begin();
-			while (it1 != end() || it2 != rhs.end())
-			{
-				if (*it1 < *it2)
-					return (false);
-				it1++;
-				it2++;
-			}
-			return (true);
+			const_iterator it_this(this->begin());
+            const_iterator last(end());
+            const_iterator it_rhs(rhs.begin());
+            const_iterator last_rhs(rhs.end());
+
+            while(it_this != last && it_rhs != last_rhs)
+            {
+                if (*it_this >= *it_rhs)
+                    return (1);
+                else if (*it_rhs++ >= *it_this++)
+                    return (0);
+            }
+            return (this->size() >= rhs.size());
 		}
 
 	};
