@@ -940,6 +940,80 @@ namespace   ft
 			{
 				return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
 			}
+
+        //OPERATORS
+
+            bool operator==(const map &x) const
+            {
+                iterator         itx(x.begin());
+
+                if (x.size() != this->_c_size)
+                    return (false);
+                for (iterator it = begin(); it != end(); it++)
+                {
+                    if ((it->first != itx->first || it->second != itx->second))
+                        return false;
+                    ++itx;
+                }
+                return (true);
+            }
+            bool operator!=(const map &x) const
+            {
+                iterator         itx(x.begin());
+
+                if (x.size() == this->_c_size)
+                    return (false);
+                for (iterator it = begin(); it != end(); it++)
+                {
+                    if ((it->first == itx->first || it->second == itx->second))
+                        return false;
+                    ++itx;
+                }
+                return (true);
+            }
+
+            bool operator<(const map &x) const
+            {
+                const_iterator    xit(x.begin());
+                const_iterator    xlast(x.end());
+                const_iterator    tit(this->begin());
+                const_iterator    tlast(this->end());
+                
+                while (tit != tlast)
+                {
+                    if (xit == xlast || *xit < *tit)
+                        return 0;
+                    if (*tit < *xit)
+                        return 1;
+                    ++tit;
+                    ++xit;
+                }
+                return (xit != xlast);
+            }
+            bool operator>(const map &x) const
+            {
+                return (x < *this);
+            }
+            bool operator>=(const map &x) const
+            {
+                return (!(*this < x));
+            }
+            bool operator<=(const map &x) const
+            {
+                return (!(x < *this));
+            }
+
+            /**
+             * Swap content map.
+             * 
+             * Swap the content of x and y.
+             * 
+             * @x / @y : map containers.
+             */
+            void    swap(map<Key, T, Compare, Alloc> &x, map<Key, T, Compare, Alloc> &y)
+            {
+                x.swap(y);
+            }
     };
 }
 

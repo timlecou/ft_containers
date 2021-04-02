@@ -20,32 +20,25 @@
 
 #include <iostream>
 
+bool fncomp (char lhs, char rhs) {return lhs<rhs;}
+
+struct classcomp {
+  bool operator() (const char& lhs, const char& rhs) const
+  {return lhs<rhs;}
+};
+
 int main ()
 {
-	ft::map<int, int> ma;
+  std::map<int, int>	var;
 
-	ma[45] = 32;
-	ma[21] = 45;
+  var[3] =  42;
 
-	ft::map<int, int> ma2;
+  std::map<int, int>	var2;
 
-	ma2[1] = 2;
-	ma2[2] = 3;
+  var2[2] = 41;
+  var2[1] = 12;
 
-	for (ft::map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)
-		std::cout << " " << it->first << ": " << it->second;
-	std::cout << std::endl;
-	for (ft::map<int, int>::iterator it = ma2.begin(); it != ma2.end(); it++)
-		std::cout << " " << it->first << ": " << it->second;
-	std::cout << std::endl;
-
-	ma.swap(ma2);
-
-	for (ft::map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)
-		std::cout << " " << it->first << ": " << it->second;
-	std::cout << std::endl;
-	for (ft::map<int, int>::iterator it = ma2.begin(); it != ma2.end(); it++)
-		std::cout << " " << it->first << ": " << it->second;
-	std::cout << std::endl;
-	return 0;
+  std::cout << (var < var2) << std::endl;
+  
+  return 0;
 }
