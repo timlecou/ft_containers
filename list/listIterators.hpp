@@ -118,12 +118,12 @@ namespace	ft
 			/**
 			 * Incrementation operator.
 			 */
-			listIterator<T>	operator++ (int n) { (void)n; _i_container = _i_container->next; return (listIterator<T>(_i_container->previous)); }
+			listIterator<T>	operator++ (int n) { (void)n; listIterator<T>	copy(*this); _i_container = _i_container->next; return (copy); }
 
 			/**
 			 * Decrementation operator.
 			 */
-			listIterator<T>	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (listIterator<T>(_i_container->next)); }
+			listIterator<T>	operator-- (int n) { (void)n; listIterator<T>	copy(*this);_i_container = _i_container->previous; return (copy); }
 
 			/**
 			 * Value incrementation operator.
@@ -254,12 +254,12 @@ namespace	ft
 			/**
 			 * Incrementation operator.
 			 */
-			listConstIterator<T>	operator++ (int n) { (void)n; _i_container = _i_container->next; return (*this); }
+			listConstIterator<T>	operator++ (int n) { (void)n; listIterator<T>	copy(*this); _i_container = _i_container->next; return (copy); }
 
 			/**
 			 * Decrementation operator.
 			 */
-			listConstIterator<T>	operator-- (int n) { (void)n; _i_container = _i_container->previous; return (*this); }
+			listConstIterator<T>	operator-- (int n) { (void)n; listIterator<T>	copy(*this); _i_container = _i_container->previous; return (copy); }
 
 			/**
 			 * Value incrementation operator.

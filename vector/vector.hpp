@@ -30,7 +30,7 @@ namespace ft
 
 		protected:
 			value_type		*_c_container;
-			allocator_type 	_c_allocator;
+			allocator_type 		_c_allocator;
 			size_type		_c_size;
 			size_type		_c_capacity;
 
@@ -51,6 +51,8 @@ namespace ft
 					this->_c_allocator.construct(tmp + i, this->_c_container[i]);
 				for (size_type j = 0; j < this->_c_size; j++)
 					this->_c_allocator.destroy(this->_c_container + j);
+				if (this->_c_capacity > 0)
+					this->_c_allocator.deallocate(this->_c_container, this->_c_capacity);
 				this->_c_container = tmp;
 				this->_c_capacity = new_capacity;
 			}
@@ -63,9 +65,8 @@ namespace ft
 		 * Constructs an empty container, with no elements.
 		 * @param alloc : Allocator object
 		 */
-		explicit	vector (const allocator_type& alloc = allocator_type())
+		explicit	vector (const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
-			this->_c_allocator = alloc;
 			this->_c_container = NULL;
 			this->_c_size = 0;
 			this->_c_capacity = 0;
@@ -140,6 +141,7 @@ namespace ft
 		~vector (void)
 		{
 			clear();
+			//this->_c_allocator.deallocate(this->_c_container, this->_c_capacity);
 		}
 
 		vector& operator= (const vector& x)
@@ -588,7 +590,7 @@ namespace ft
 			iterator	ret(position);
 			iterator	save_end(end());
 
-			while (position  + 1 != save_end)
+			while (position + 1 != save_end)
 				*position++ = *(position + 1);
 			this->_c_allocator.destroy(&*position);
 			--this->_c_size;
@@ -629,20 +631,17 @@ namespace ft
 		 */
 		void swap (vector& x)
 		{
-			vector		tmp;
-			size_type	size = x.size();
+			value_type	*tmp = x._c_container;;
+			size_type	size = x._c_size;
+			size_type	cap = x._c_capacity;
 
-			tmp.reserve(size);
-			for (size_type i = 0; i < size; i++)
-				tmp.push_back(x[i]);
-			while (x.size() > 0)
-				x.pop_back();
-			for (size_type j = 0; j < this->_c_size; j++)
-				x.push_back(this->_c_container[j]);
-			while (this->_c_size > 0)
-				pop_back();
-			for (size_type k = 0; k < tmp.size(); k++)
-				push_back(tmp[k]);
+			x._c_container = this->_c_container;
+			x._c_size = this->_c_size;
+			x._c_capacity = this->_c_capacity;
+
+			this->_c_container = tmp;
+			this->_c_size = size;
+			this->_c_capacity = cap;
 		}
 
 		/**
@@ -686,18 +685,18 @@ namespace ft
 		bool operator< (const vector<T,Alloc>& rhs)
 		{
 			const_iterator it_this(this->begin());
-            const_iterator last(end());
-            const_iterator it_rhs(rhs.begin());
-            const_iterator last_rhs(rhs.end());
+            		const_iterator last(end());
+            		const_iterator it_rhs(rhs.begin());
+            		const_iterator last_rhs(rhs.end());
 
-            while(it_this != last && it_rhs != last_rhs)
-            {
-                if (*it_this < *it_rhs)
-                    return (1);
-                else if (*it_rhs++ < *it_this++)
-                    return (0);
-            }
-            return (this->size() < rhs.size());
+            		while(it_this != last && it_rhs != last_rhs)
+            		{
+            		    if (*it_this < *it_rhs)
+            		        return (1);
+            		    else if (*it_rhs++ < *it_this++)
+            		        return (0);
+            		}
+            		return (this->size() < rhs.size());
 		}
 
 		bool operator<= (const vector<T,Alloc>& rhs)
@@ -708,18 +707,18 @@ namespace ft
 		bool operator> (const vector<T,Alloc>& rhs)
 		{
 			const_iterator it_this(this->begin());
-            const_iterator last(end());
-            const_iterator it_rhs(rhs.begin());
-            const_iterator last_rhs(rhs.end());
+            		const_iterator last(end());
+            		const_iterator it_rhs(rhs.begin());
+            		const_iterator last_rhs(rhs.end());
 
-            while(it_this != last && it_rhs != last_rhs)
-            {
-                if (*it_this > *it_rhs)
-                    return (1);
-                else if (*it_rhs++ > *it_this++)
-                    return (0);
-            }
-            return (this->size() > rhs.size());
+            		while(it_this != last && it_rhs != last_rhs)
+            		{
+            		    if (*it_this > *it_rhs)
+            		        return (1);
+            		    else if (*it_rhs++ > *it_this++)
+            		        return (0);
+            		}
+            		return (this->size() > rhs.size());
 		}
 
 		bool operator>= (const vector<T,Alloc>& rhs)

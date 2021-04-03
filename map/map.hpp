@@ -384,14 +384,16 @@ namespace   ft
             ~map (void)
             {
                 clear();
+		this->_c_value_allocator.destroy(&this->_c_root->element);
+		this->_c_node_allocator.deallocate(this->_c_root, 1);
             }
 
             map &operator=(const map<Key, T> &x)
-			{
-				clear();
-				insert(x.begin(), x.end());
-				return (*this);
-			}
+	    {
+		    clear();
+		    insert(x.begin(), x.end());
+		    return (*this);
+	    }
 
         //ITERATORS
 

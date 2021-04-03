@@ -30,8 +30,8 @@ namespace	ft
 
 		protected:
 			node<T>						*_c_node;
-			allocator_type				_c_value_allocator;
-			std::allocator<node<T> >	_c_node_allocator;
+			allocator_type					_c_value_allocator;
+			std::allocator<node<T> >			_c_node_allocator;
 			size_type					_c_size;
 
 		public:
@@ -111,6 +111,7 @@ namespace	ft
 			virtual	~list (void)
 			{
 				clear();
+				this->_c_node_allocator.deallocate(this->_c_node, 1);
 			}
 
 			/**
@@ -502,20 +503,19 @@ namespace	ft
 			  */
 			iterator erase (iterator position)
 			{
-				node<T>	*tmp = this->_c_node->next;
+				node<T>	*tmp = reinterpret_cast<node<T> *>(&*position);
 
-				for (iterator it = begin(); it != position; it++)
-					tmp = tmp->next;
+				++position;
 
-				tmp->next->previous = tmp->previous;
 				tmp->previous->next = tmp->next;
+				tmp->next->previous = tmp->previous;
 
 				this->_c_value_allocator.destroy(&tmp->content);
 				this->_c_node_allocator.deallocate(tmp, 1);
 
 				this->_c_size--;
 
-				return (--position);
+				return (position);
 			}
 
 			/**
@@ -527,9 +527,23 @@ namespace	ft
 			 */
 			iterator erase (iterator first, iterator last)
 			{
+				iterator	it;
+				node<T>		*elem1 = reinterpret_cast<node<T> *>(&*first);
+				node<T>		*elem2 = reinterpret_cast<node<T> *>(&*last);
+
+				elem1 = elem1->previous;
 				while (first != last)
-					erase(first++);
-				return (first);
+				{
+					it = first;
+					++it;
+					this->_c_value_allocator.destroy(&*first);
+					this->_c_node_allocator.deallocate(reinterpret_cast<node<T> *>(&*first), 1);
+					first = it;
+					--this->_c_size;
+				}
+				elem1->next = elem2;
+				elem2->previous = elem1;
+				return (last);
 			}
 
 
@@ -643,9 +657,15 @@ namespace	ft
 			 */
 			void remove (const value_type& val)
 			{
-				for (iterator it = begin(); it != end(); it++)
-					if (*it == val)
-						erase(it);
+				iterator	beg(begin());
+				iterator	en(end());
+				while (beg != en)
+				{
+					if (*beg == val)
+						erase(beg++);
+					else
+						++beg;
+				}
 			}
 
 			/**
@@ -659,9 +679,15 @@ namespace	ft
 			template <class Predicate>
 			void remove_if (Predicate pred)
 			{
-				for (iterator it = begin(); it != end(); it++)
-					if (pred(*it) == true)
-						erase(it);
+				iterator	beg(begin());
+				iterator	en(end());
+				while (beg != en)
+				{
+					if (pred(*beg))
+						erase(beg++);
+					else
+						++beg;
+				}
 			}
 
 			/**
@@ -672,15 +698,23 @@ namespace	ft
 			 */
 			void unique (void)
 			{
-				iterator	it1 = begin();
+				iterator	it = begin();
+				iterator	it1 = (++begin());
+				iterator	ite = end();
 
-				it1++;
-				for (iterator it = begin(); it != end() && it1 != end(); it1++)
+				while (it1 != ite)
 				{
 					if (*it == *it1)
-						it = erase(it1);
+					{
+						erase(it1);
+						it1 = it;
+						++it1;
+					}
 					else
-						it++;
+					{
+						++it1;
+						++it;
+					}
 				}
 			}
 
@@ -696,15 +730,23 @@ namespace	ft
 			template <class BinaryPredicate>
 			void unique (BinaryPredicate binary_pred)
 			{
-				iterator	it1 = begin();
+				iterator	it = begin();
+				iterator	it1 = (++begin());
+				iterator	ite = end();
 
-				it1++;
-				for (iterator it = begin(); it != end() && it1 != end(); it1++)
+				while (it1 != ite)
 				{
 					if (binary_pred(*it, *it1))
-						it = erase(it1);
+					{
+						erase(it1);
+						it1 = it;
+						++it1;
+					}
 					else
-						it++;
+					{
+						++it1;
+						++it;
+					}
 				}
 			}
 
