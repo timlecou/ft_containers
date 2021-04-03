@@ -35,17 +35,22 @@ namespace ft
 			size_type		_c_capacity;
 
 		private:
+			size_t			more_capacity(size_t new1)
+			{
+				size_type	new2 = this->_c_size > 0 ? this->_c_size * 2 : 1;
+
+				return (new1 > new2 ? new1 : new2);
+			}
+
 			void			realloc(size_type new_capacity)
 			{
 				value_type	*tmp;
 
-				if (new_capacity > max_size())
-					throw std::length_error("vector::reserve");
 				tmp = this->_c_allocator.allocate(new_capacity);
 				for (size_type i = 0; i < this->_c_size; i++)
-					tmp[i] = this->_c_container[i];
+					this->_c_allocator.construct(tmp + i, this->_c_container[i]);
 				for (size_type j = 0; j < this->_c_size; j++)
-					this->_c_allocator.destroy(&this->_c_container[j]);
+					this->_c_allocator.destroy(this->_c_container + j);
 				this->_c_container = tmp;
 				this->_c_capacity = new_capacity;
 			}
@@ -77,14 +82,10 @@ namespace ft
 		 */
 		explicit	vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
-			/*this->_c_size = 0;
-			this->_c_container = this->_c_allocator.allocate(n);
-			this->_c_capacity = n;
-			assign(n, val);*/
-			this->_c_container = (this->allocator).allocate(static_cast<size_type>(n));
-            for (this->_c_capacity = 0; array_capacity < n; array_capacity++)
-                (this->_c_allocator).construct(&this->_c_container[this->_c_capacity], val);
-            this->_c_size = this->_c_capacity;
+			this->_c_container = (this->_c_allocator).allocate(static_cast<size_type>(n));
+            		for (this->_c_capacity = 0; this->_c_capacity < n; this->_c_capacity++)
+                		(this->_c_allocator).construct(&this->_c_container[this->_c_capacity], val);
+            		this->_c_size = this->_c_capacity;
 		}
 
 		/**
@@ -99,21 +100,18 @@ namespace ft
 		template <class InputIterator>
 		vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
-			/*this->_c_size = 0;
-			this->_c_container = this->_c_allocator.allocate(1);
-			assign(first, last);*/
 			InputIterator copy_first = first;
-            size_t          i;
+            		size_t          i;
 
-            this->_c_allocator = alloc;
-            for(this->_c_capacity = 0; first != last; first++)
-                this->_c_capacity++;
-            array = (this->alloc).allocate(static_cast<size_t>(this->_c_capacity));
+            		this->_c_allocator = alloc;
+            		for(this->_c_capacity = 0; first != last; first++)
+            		    this->_c_capacity++;
+            		this->_c_container = (this->_c_allocator).allocate(static_cast<size_t>(this->_c_capacity));
 
-            first = copy_first;
-            for(i = 0; first != last; i++)
-                (this->_c_allocator).construct(&this->_c_container[i], *first++);
-            this->_c_size = this->_c_capacity;
+            		first = copy_first;
+            		for(i = 0; first != last; i++)
+            		    (this->_c_allocator).construct(&this->_c_container[i], *first++);
+            		this->_c_size = this->_c_capacity;
 		}
 
 		/**
@@ -126,17 +124,14 @@ namespace ft
 		 */
 		vector (const vector& x)
 		{
-			/*this->_c_size = 0;
-			this->_c_container = this->_c_allocator.allocate(1);
-			assign(x.begin(), x.end());*/
 			size_type i;
 
-            this->_c_capacity = x._c_size;
-            this->_c_allocator = allocator_type();
-            this->_c_size = 0;
-            this->_c_container = (this->alloc).allocate(static_cast<size_type>(this->_c_capacity));
-            for (i = 0; i < x._c_size; i++)
-                this->push_back(x._c_container[i]);
+            		this->_c_capacity = x._c_size;
+            		this->_c_allocator = allocator_type();
+            		this->_c_size = 0;
+            		this->_c_container = (this->_c_allocator).allocate(static_cast<size_type>(this->_c_capacity));
+            		for (i = 0; i < x._c_size; i++)
+            		    this->push_back(x._c_container[i]);
 		}
 
 		/**
@@ -275,11 +270,13 @@ namespace ft
 		 */
 		void resize (size_type n, value_type val = value_type())
 		{
+			if (n > this->_c_capacity)
+				realloc(more_capacity(n));
 			if (n < this->_c_size)
-				while (this->_c_size != n)
+				while (this->_c_size > n)
 					pop_back();
-			else
-				while (this->_c_size != n)
+			else if (n > this->_c_size)
+				while (this->_c_size < n)
 					push_back(val);
 		}
 
@@ -318,9 +315,9 @@ namespace ft
 		 */
 		void reserve (size_type n)
 		{
-			if (n == 0)
-				realloc(1);
-			if (n > this->_c_size)
+			if (n > max_size())
+				throw std::length_error("vector::reserve");
+			if (n > this->_c_capacity)
 				realloc(n);
 		}
 
@@ -365,8 +362,8 @@ namespace ft
 			if (n >= this->_c_size || n < 0)
 			{
 				std::stringstream ss;
-                ss << "vector::_M_range_check";
-                throw std::out_of_range(ss.str());
+                		ss << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is " << this->_c_size << ")";
+                		throw std::out_of_range(ss.str());
 			}
 			return (this->_c_container[n]);
 		}
@@ -384,8 +381,8 @@ namespace ft
 			if (n >= this->_c_size || n < 0)
 			{
 				std::stringstream ss;
-                ss << "vector::_M_range_check";
-                throw std::out_of_range(ss.str());
+                		ss << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is " << this->_c_size << ")";
+                			throw std::out_of_range(ss.str());
 			}
 			return (this->_c_container[n]);
 		}
@@ -494,9 +491,9 @@ namespace ft
 		 */
 		void push_back (const value_type& val)
 		{
-			if (this->_c_capacity <= this->_c_size)
-				reserve(this->_c_size * 2);
-			this->_c_allocator.construct(&this->_c_container[this->_c_size], val);
+			if (this->_c_size >= this->_c_capacity)
+				realloc(more_capacity(this->_c_capacity + 1));
+			this->_c_allocator.construct(this->_c_container + this->_c_size, val);
 			this->_c_size++;
 		}
 
@@ -507,8 +504,8 @@ namespace ft
 		 */
 		void pop_back (void)
 		{
-			this->_c_allocator.destroy(&this->_c_container[this->_c_size]);
-			this->_c_size--;
+			if (this->_c_capacity > 0)
+				this->_c_allocator.destroy(&this->_c_container[--this->_c_size]);
 		}
 
 		/**
@@ -529,7 +526,7 @@ namespace ft
 			for (iterator it = begin(); it != position; it++)
 				pos++;
 			if (this->_c_size <= this->_c_capacity)
-				reserve(this->_c_size + 1);
+				realloc(this->_c_capacity + 1);
 			while (end > pos)
 			{
 				this->_c_allocator.destroy(&this->_c_container[end]);
@@ -612,9 +609,9 @@ namespace ft
 			iterator	ret(first);
 			iterator	save_end(end());
 
-			while (last != save_end)
+			while (last < save_end)
 				*first++ = *last++;
-			while (first != save_end)
+			while (first < save_end)
 			{
 				this->_c_allocator.destroy(&*(first++));
 				this->_c_size--;
