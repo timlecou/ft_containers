@@ -961,7 +961,8 @@ namespace	ft
 
 			bool operator< (const list<T,Alloc>& rhs)
 			{
-				if (this->size() != rhs.size())
+				return (!(*this >= rhs));
+				/*if (this->size() != rhs.size())
 					return (false);
 				list::iterator	it1 = this->begin();
 				list::iterator	it2 = rhs.begin();
@@ -972,7 +973,7 @@ namespace	ft
 					it1++;
 					it2++;
 				}
-				return (false);
+				return (false);*/
 			}
 
 			bool operator>= (const list<T,Alloc>& rhs)

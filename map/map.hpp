@@ -17,31 +17,31 @@ namespace   ft
      * 
      * Maps are typically implemented as binary search trees.
      */
-    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key,T> > >
+    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
     class map
     {
         public:
             typedef Key                                         	key_type;
             typedef T                                           	mapped_type;
-            typedef ft::pair<const key_type, mapped_type>        	value_type;
+            typedef ft::pair<key_type, mapped_type>             	value_type;
             typedef Compare                                     	key_compare;
             typedef Alloc                                       	allocator_type;
             typedef typename allocator_type::reference              reference;
             typedef typename allocator_type::const_reference        const_reference;
             typedef typename allocator_type::pointer                pointer;
             typedef typename allocator_type::const_pointer          const_pointer;
-            typedef mapIterator<Key, T>                     	    iterator;
-            typedef mapConstIterator<Key, T>                   		const_iterator;
+            typedef mapIterator<const Key, T>                       iterator;
+            typedef mapConstIterator<const Key, T>             		const_iterator;
 			typedef ft::reverse_iterator<iterator>					reverse_iterator;
 			typedef ft::reverse_iterator<iterator>					const_reverse_iterator;
             typedef std::ptrdiff_t                                 	difference_type;
             typedef size_t                                      	size_type;
 
         private:
-			btree<Key, T>                       *_c_root;
+			btree<const Key, T>                       *_c_root;
             size_type                           _c_size;
             allocator_type				        _c_value_allocator;
-			std::allocator<btree<Key, T> >	    _c_node_allocator;
+			std::allocator<btree<const Key, T> >	    _c_node_allocator;
 			key_compare 						_cmp;
 
             /**
@@ -50,7 +50,7 @@ namespace   ft
              * @node : the root of the tree.
              * @return : the node wich in the ultimate left of the tree.
              */
-            btree<Key, T>   *leftNode (btree<Key, T> *node)
+            btree<const Key, T>   *leftNode (btree<const Key, T> *node)
             {
                 while (node->l_flag == true)
                     node = node->left;
@@ -63,7 +63,7 @@ namespace   ft
              * @node : the root of the tree.
              * @return : the node wich in the ultimate right of the tree.
              */
-            btree<Key, T>   *rightNode (btree<Key, T> *node)
+            btree<const Key, T>   *rightNode (btree<const Key, T> *node)
             {
                 while (node->r_flag == true)
                     node = node->right;
@@ -76,7 +76,7 @@ namespace   ft
              * @tmp : the node wich the predecessor is searched.
              * @return : tmp's predecessor.
              */
-			btree<Key, T>	*inorderSuccessor (btree<Key, T> *tmp)
+			btree<const Key, T>	*inorderSuccessor (btree<const Key, T> *tmp)
 			{
 				if (tmp->l_flag == false)
 					return (tmp->left);
@@ -93,7 +93,7 @@ namespace   ft
              * @tmp : the node to be deleted.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithNoChild (btree<Key, T> *tmp)
+            void    deleteNodeWithNoChild (btree<const Key, T> *tmp)
             {
                 if (tmp->previous == this->_c_root)               //need to delete root
                 {
@@ -127,7 +127,7 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithLeftChild (btree<Key, T> *tmp)
+            void    deleteNodeWithLeftChild (btree<const Key, T> *tmp)
             {
                 if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
@@ -151,7 +151,7 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithRightChild (btree<Key, T> *tmp)
+            void    deleteNodeWithRightChild (btree<const Key, T> *tmp)
             {
                 if (tmp->previous == this->_c_root)   //the node to delete is the root of the tree.
                 {
@@ -175,9 +175,10 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-            void    deleteNodeWithTwoChildren (btree<Key, T> *tmp)
+            void    deleteNodeWithTwoChildren (btree<const Key, T> *tmp)
             {
-            	tmp->element = rightNode(tmp->left)->element;
+                this->_c_value_allocator.destroy(&tmp->element);
+                this->_c_value_allocator.construct(&rightNode(tmp->left)->element);
             	if (rightNode(tmp->left)->r_flag == false && rightNode(tmp->left)->l_flag == false)
             		deleteNodeWithNoChild(rightNode(tmp->left));
             	else if (rightNode(tmp->left)->r_flag == false)
@@ -192,7 +193,7 @@ namespace   ft
              * @tmp : the node to delete.
              * @node : the parent of tmp.
              */
-			void    eraseElement (btree<Key, T> *tmp)
+			void    eraseElement (btree<const Key, T> *tmp)
             {
                 if (tmp->l_flag == true && tmp->r_flag == true) //tmp has two children.
                     deleteNodeWithTwoChildren(tmp);
@@ -215,7 +216,7 @@ namespace   ft
 			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
 			 * newly inserted element or to the element with an equivalent key in the map.
 			 */
-            ft::pair<iterator, bool>	insertRoot (btree<Key, T> *node, const value_type &val)
+            ft::pair<iterator, bool>	insertRoot (btree<const Key, T> *node, const value_type &val)
 			{
 				this->_c_value_allocator.construct(&node->element, val);
 				node->right = this->_c_root->right;
@@ -238,9 +239,9 @@ namespace   ft
 			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
 			 * newly inserted element or to the element with an equivalent key in the map.
 			 */
-			ft::pair<iterator, bool>	insertRightNode (btree<Key, T> *node, const value_type &val)
+			ft::pair<iterator, bool>	insertRightNode (btree<const Key, T> *node, const value_type &val)
 			{
-				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+				btree<const Key, T>   *new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->element, val);
 				new_node->right = node->right;
 				new_node->r_flag = node->r_flag;
@@ -263,9 +264,9 @@ namespace   ft
 			 * @return : a pair, with its member pair::first set to an iterator pointing to either the
 			 * newly inserted element or to the element with an equivalent key in the map.
 			 */
-			ft::pair<iterator, bool>	insertLeftNode (btree<Key, T> *node, const value_type &val)
+			ft::pair<iterator, bool>	insertLeftNode (btree<const Key, T> *node, const value_type &val)
 			{
-				btree<Key, T>   *new_node = this->_c_node_allocator.allocate(1);
+				btree<const Key, T>   *new_node = this->_c_node_allocator.allocate(1);
 				this->_c_value_allocator.construct(&new_node->element, val);
 				new_node->left = node->left;
 				new_node->l_flag = node->l_flag;
@@ -280,9 +281,9 @@ namespace   ft
 				return (ft::pair<iterator, bool>(iterator(new_node), true));
 			}
 
-            btree<Key, T>      *find_key (const key_type &k)
+            btree<const Key, T>      *find_key (const key_type &k)
             {
-                btree<Key, T>   *node = this->_c_root->right;
+                btree<const Key, T>   *node = this->_c_root->right;
 
                 if (node == NULL)
                     return (NULL);
@@ -406,7 +407,7 @@ namespace   ft
              */
             iterator    begin (void)
             {
-                btree<Key, T>       *node = this->_c_root->right;
+                btree<const Key, T>       *node = this->_c_root->right;
 
                 if (this->_c_size == 0)
 					return (iterator(this->_c_root));
@@ -424,7 +425,7 @@ namespace   ft
              */
             const_iterator    begin (void) const
             {
-                btree<Key, T>       *node = this->_c_root->right;
+                btree<const Key, T>       *node = this->_c_root->right;
 
 				if (this->_c_size == 0)
 					return (const_iterator(this->_c_root));
@@ -581,7 +582,7 @@ namespace   ft
              */
             ft::pair<iterator,bool> insert (const value_type& val)
             {
-                btree<Key, T>   *node = this->_c_node_allocator.allocate(1);
+                btree<const Key, T>   *node = this->_c_node_allocator.allocate(1);
                 node->l_flag = false;
                 node->r_flag = false;
                 node->right = NULL;
@@ -666,7 +667,7 @@ namespace   ft
 			 */
 			size_type erase (const key_type& k)
 			{
-				btree<Key, T>		*tmp = this->_c_root->right;
+				btree<const Key, T>		*tmp = this->_c_root->right;
 
 				while (tmp)
 				{
@@ -717,7 +718,7 @@ namespace   ft
              */
             void swap (map& x)
             {
-                btree<Key, T> 	*tmp = x._c_root;
+                btree<const Key, T> 	*tmp = x._c_root;
                 size_type		tmp_size = x.size();
 
                 x._c_size = this->_c_size;

@@ -12,10 +12,10 @@ namespace   ft
     {
         public:
             typedef	T									value_type;
-			typedef	ft::pair<Key, T>					&reference;
-			typedef	ft::pair<Key, T>	const			&const_reference;
-			typedef	ft::pair<Key, T>					*pointer;
-			typedef	ft::pair<Key, T>	const			*const_pointer;
+			typedef	ft::pair<const Key, T>				&reference;
+			typedef	ft::pair<const Key, const T>		&const_reference;
+			typedef	ft::pair<const Key, T>				*pointer;
+			typedef	ft::pair<const Key, const T>		*const_pointer;
 			typedef	std::ptrdiff_t						difference_type;
         
         private:
@@ -223,10 +223,10 @@ namespace   ft
     {
         public:
             typedef	T									value_type;
-			typedef	ft::pair<Key, T>					&reference;
-			typedef	ft::pair<Key, T>	const			&const_reference;
-			typedef	ft::pair<Key, T>					*pointer;
-			typedef	ft::pair<Key, T>	const			*const_pointer;
+			typedef	ft::pair<const Key, T>					&reference;
+			typedef	ft::pair<const Key, T>	const		&const_reference;
+			typedef	ft::pair<const Key, T>					*pointer;
+			typedef	ft::pair<const Key, T>	const		*const_pointer;
 			typedef	std::ptrdiff_t						difference_type;
         
         private:
@@ -337,14 +337,14 @@ namespace   ft
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			reference	operator* (void) const { return (this->_i_root->element); }
+			const_reference	operator* (void) const { return (this->_i_root->element); }
 
 			/**
 			 * Dereference operator.
 			 *
 			 * @return : the value of the dereferenced container.
 			 */
-			pointer		operator-> (void) const { return (&this->_i_root->element); }
+			const_pointer		operator-> (void) const { return (&this->_i_root->element); }
 
 			/**
 			 * Increment operator.

@@ -7,11 +7,11 @@
 # include <stack>
 # include <queue>
 # include <iostream>
-# include "../../ft_containers/vector/vector.hpp"
-# include "../../ft_containers/list/list.hpp"
-# include "../../ft_containers/map/map.hpp"
-# include "../../ft_containers/queue/queue.hpp"
-# include "../../ft_containers/stack/stack.hpp"
+# include "../../vector/vector.hpp"
+# include "../../list/list.hpp"
+# include "../../map/map.hpp"
+# include "../../queue/queue.hpp"
+# include "../../stack/stack.hpp"
 
 # ifdef __linux__
 #  define RESET "\e[0m"
