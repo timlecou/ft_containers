@@ -77,10 +77,14 @@ namespace ft
 		 */
 		explicit	vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
-			this->_c_size = 0;
+			/*this->_c_size = 0;
 			this->_c_container = this->_c_allocator.allocate(n);
 			this->_c_capacity = n;
-			assign(n, val);
+			assign(n, val);*/
+			this->_c_container = (this->allocator).allocate(static_cast<size_type>(n));
+            for (this->_c_capacity = 0; array_capacity < n; array_capacity++)
+                (this->_c_allocator).construct(&this->_c_container[this->_c_capacity], val);
+            this->_c_size = this->_c_capacity;
 		}
 
 		/**
@@ -95,9 +99,21 @@ namespace ft
 		template <class InputIterator>
 		vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _c_allocator(alloc)
 		{
-			this->_c_size = 0;
+			/*this->_c_size = 0;
 			this->_c_container = this->_c_allocator.allocate(1);
-			assign(first, last);
+			assign(first, last);*/
+			InputIterator copy_first = first;
+            size_t          i;
+
+            this->_c_allocator = alloc;
+            for(this->_c_capacity = 0; first != last; first++)
+                this->_c_capacity++;
+            array = (this->alloc).allocate(static_cast<size_t>(this->_c_capacity));
+
+            first = copy_first;
+            for(i = 0; first != last; i++)
+                (this->_c_allocator).construct(&this->_c_container[i], *first++);
+            this->_c_size = this->_c_capacity;
 		}
 
 		/**
@@ -110,9 +126,17 @@ namespace ft
 		 */
 		vector (const vector& x)
 		{
-			this->_c_size = 0;
+			/*this->_c_size = 0;
 			this->_c_container = this->_c_allocator.allocate(1);
-			assign(x.begin(), x.end());
+			assign(x.begin(), x.end());*/
+			size_type i;
+
+            this->_c_capacity = x._c_size;
+            this->_c_allocator = allocator_type();
+            this->_c_size = 0;
+            this->_c_container = (this->alloc).allocate(static_cast<size_type>(this->_c_capacity));
+            for (i = 0; i < x._c_size; i++)
+                this->push_back(x._c_container[i]);
 		}
 
 		/**
