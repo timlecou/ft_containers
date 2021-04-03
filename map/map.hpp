@@ -178,7 +178,7 @@ namespace   ft
             void    deleteNodeWithTwoChildren (btree<const Key, T> *tmp)
             {
                 this->_c_value_allocator.destroy(&tmp->element);
-                this->_c_value_allocator.construct(&rightNode(tmp->left)->element);
+                this->_c_value_allocator.construct(&tmp->element, rightNode(tmp->left)->element);
             	if (rightNode(tmp->left)->r_flag == false && rightNode(tmp->left)->l_flag == false)
             		deleteNodeWithNoChild(rightNode(tmp->left));
             	else if (rightNode(tmp->left)->r_flag == false)

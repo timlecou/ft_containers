@@ -22,7 +22,7 @@ namespace   ft
         template <class U, class V>
 		pair<T1, T2>    &operator= (const pair<U, V> &pr)
 		{
-			first = std::move(pr.first);
+			first = pr.first;
 			second = pr.second;
 
 			return (*this);
