@@ -3,6 +3,8 @@
 # include "vectorIterators.hpp"
 # include "../utils.hpp"
 # include <cstddef>
+# include <stdexcept>
+# include <sstream>
 
 /**
  * The namespace "ft" contains the Vector class
@@ -38,7 +40,7 @@ namespace ft
 				value_type	*tmp;
 
 				if (new_capacity > max_size())
-					throw std::length_error("vector::resize");
+					throw std::length_error("vector::reserve");
 				tmp = this->_c_allocator.allocate(new_capacity);
 				for (size_type i = 0; i < this->_c_size; i++)
 					tmp[i] = this->_c_container[i];
@@ -336,6 +338,12 @@ namespace ft
 		 */
 		reference at (size_type n)
 		{
+			if (n >= this->_c_size || n < 0)
+			{
+				std::stringstream ss;
+                ss << "vector::_M_range_check";
+                throw std::out_of_range(ss.str());
+			}
 			return (this->_c_container[n]);
 		}
 
@@ -349,6 +357,12 @@ namespace ft
 		 */
 		const_reference at (size_type n) const
 		{
+			if (n >= this->_c_size || n < 0)
+			{
+				std::stringstream ss;
+                ss << "vector::_M_range_check";
+                throw std::out_of_range(ss.str());
+			}
 			return (this->_c_container[n]);
 		}
 

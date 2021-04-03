@@ -26,37 +26,26 @@ bool mycomparison (double first, double second)
 
 int main ()
 {
-	std::list<double> first, second, third;
+	ft::map<std::string, int> m1;
+	std::map<std::string, int> m2;
+	ft::map<std::string, int> m3;
+	std::map<std::string, int> m4;
+	m1["a"] = 1;
+	m1["b"] = 42;
+	m1["c"] = 42;
+	m1["d"] = 42;
+	m3["a"] = 1;
+	m3["b"] = 42;
+	m3["c"] = 42;
+	m3["d"] = 42;
+	m3 = m1;
+	m4 = m2;
+	m1["e"] = 1;
+	m2["e"] = 1;
+	m3["e"] = 3;
+	m4["e"] = 3;
 
-	first.push_back(3.1);
-	first.push_back(2.2);
-	first.push_back(2.9);
-
-	second.push_back(3.7);
-	second.push_back(7.1);
-	second.push_back(1.4);
-
-	third.push_back(3.7);
-	third.push_back(7.1);
-	third.push_back(1.4);
-
-	first.sort();
-	second.sort();
-
-	first.merge(second);
-
-	// (second is now empty)
-
-	second.push_back(2.1);
-
-	first.merge(second, mycomparison);
-
-	first.merge(third);
-
-	std::cout << "first contains:";
-	for (std::list<double>::iterator it = first.begin(); it != first.end(); ++it)
-		std::cout << ' ' << *it;
-	std::cout << '\n';
-
+	std::cout << (m1 == m3) << std::endl;
+	std::cout << (m2 == m4) << std::endl;
 	return 0;
 }

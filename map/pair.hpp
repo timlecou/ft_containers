@@ -19,7 +19,7 @@ namespace   ft
 
 		pair(const first_type &a, const second_type &b) : first(a), second(b) {}
 
-		pair    &operator=(const pair &pr)
+		pair    &operator= (const pair &pr)
 		{
 			first = pr.first;
 			second = pr.second;
@@ -28,29 +28,29 @@ namespace   ft
 		}
 
 		bool operator==(const pair &pr) const
-		{
-			return (first == pr.first && second == pr.second);
-		}
-		bool operator!=(const pair &pr) const
-		{
-			return (!(*this == pr));
-		}
-		bool operator<(const pair &pr) const
-		{
-			return (first < pr.first || (!(pr.first < first) && second < pr.second));
-		}
-		bool operator>(const pair &pr) const
-		{
-			return (pr < *this);
-		}
-		bool operator<=(const pair &pr) const
-		{
-			return !(pr < *this);
-		}
-		bool operator>=(const pair &pr) const
-		{
-			return !(*this < pr);
-		}
+        {
+            return (first == pr.first && second == pr.second);
+        }
+        bool operator!=(const pair &pr) const
+        {
+            return (first != pr.first || second != pr.second);
+        }
+        bool operator<(const pair &pr) const
+        {
+            return (first < pr.first || (!(pr.first < first) && second < pr.second));
+        }
+        bool operator>(const pair &pr) const
+        {
+            return (!(*this <= pr));
+        }
+         bool operator<=(const pair &pr) const
+        {
+            return !(pr < *this);
+        }
+        bool operator>=(const pair &pr) const
+        {
+            return !(*this < pr);
+        }
 	};
 }
 

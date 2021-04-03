@@ -142,15 +142,16 @@ namespace   ft
 			 */
 			mapIterator<Key, T> &operator++ (void)
 			{
-				if (this->_i_root->l_flag == false)
-					this->_i_root = this->_i_root->left;
-				else
-				{
-					this->_i_root = this->_i_root->left;
-					while (this->_i_root->r_flag == true)
-						this->_i_root = this->_i_root->right;
-				}
-				return (*this);
+				bool flag;
+
+                flag = this->_i_root->l_flag;
+                this->_i_root = this->_i_root->left;
+
+                while (flag == true && this->_i_root->r_flag)
+                {
+                    this->_i_root = this->_i_root->right;
+                }
+                return (*this);
 			}
 
 			/**
@@ -160,15 +161,16 @@ namespace   ft
 			 */
 			mapIterator<Key, T> &operator-- (void)
 			{
-				if (this->_i_root->r_flag == false)
-					this->_i_root = this->_i_root->right;
-				else
-				{
-					this->_i_root = this->_i_root->right;
-					while (this->_i_root->l_flag == true)
-						this->_i_root = this->_i_root->left;
-				}
-				return (*this);
+				bool flag;
+
+                flag = this->_i_root->r_flag;
+                this->_i_root = this->_i_root->right;
+
+                while (flag == true && this->_i_root->l_flag)
+                {
+                    this->_i_root = this->_i_root->left;
+                }
+                return (*this);
 			}
 
 			/**
@@ -181,15 +183,15 @@ namespace   ft
 			{
 				(void)n;
 				mapIterator<Key, T>		tmp(*this);
-				
-				if (this->_i_root->l_flag == false)
-					this->_i_root = this->_i_root->left;
-				else
-				{
-					this->_i_root = this->_i_root->left;
-					while (this->_i_root->r_flag == true)
-						this->_i_root = this->_i_root->right;
-				}
+				bool flag;
+
+                flag = this->_i_root->l_flag;
+                this->_i_root = this->_i_root->left;
+
+                while (flag == true && this->_i_root->r_flag)
+                {
+                    this->_i_root = this->_i_root->right;
+                }
 				return (tmp);
 			}
 
@@ -203,15 +205,15 @@ namespace   ft
 			{
 				(void)n;
 				mapIterator<Key, T>		tmp(*this);
+				bool flag;
 
-				if (this->_i_root->r_flag == false)
-					this->_i_root = this->_i_root->right;
-				else
-				{
-					this->_i_root = this->_i_root->right;
-					while (this->_i_root->l_flag == true)
-						this->_i_root = this->_i_root->left;
-				}
+                flag = this->_i_root->r_flag;
+                this->_i_root = this->_i_root->right;
+
+                while (flag == true && this->_i_root->l_flag)
+                {
+                    this->_i_root = this->_i_root->left;
+                }
 				return (tmp);
 			}
     };

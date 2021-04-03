@@ -386,6 +386,13 @@ namespace   ft
                 clear();
             }
 
+            map &operator=(const map<Key, T> &x)
+			{
+				clear();
+				insert(x.begin(), x.end());
+				return (*this);
+			}
+
         //ITERATORS
 
             /**
@@ -954,53 +961,39 @@ namespace   ft
 
     };
 
-	template<class Key, class T, class Compare>
-	bool operator== (map<Key, T, Compare> &lhs,
-					 map<Key, T, Compare> &rhs)
+	template <class Key, class T, class Compare, class Alloc>
+	void swap(ft::map<Key, T, Compare, Alloc> &x, ft::map<Key, T, Compare, Alloc> &y)
+	{
+		x.swap(y);
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator==(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
 	{
 		if (lhs.size() != rhs.size())
-		{
 			return (false);
-		}
-		if (lhs.size() > 0)
+		typename ft::map<Key, T, Compare, Alloc>::const_iterator it = lhs.begin();
+		typename ft::map<Key, T, Compare, Alloc>::const_iterator it2 = rhs.begin();
+		while (it != lhs.end() && it2 != rhs.end())
 		{
-			typedef typename map<Key, T, Compare>::iterator iterator;
-			iterator                                        rhs_begin = rhs.begin();
-			for (iterator                                   lhs_begin = lhs.begin();
-				 lhs_begin != lhs.end(); lhs_begin++)
-			{
-				if (lhs_begin->first != rhs_begin->first || lhs_begin->second != rhs_begin->second)
-				{
-					return (false);
-				}
-				rhs_begin++;
-			}
+			if (it->first != it2->first || it->second != it2->second)
+				return (false);
+			--it;
+			--it2;
 		}
 		return (true);
-	}
-
-	template<class Key, class T, class Compare>
-	bool operator!= (map<Key, T, Compare> &lhs,
-					 map<Key, T, Compare> &rhs)
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
 	{
-		return !(lhs == rhs);
-	}
-
-	template<class Key, class T, class Compare>
-	bool operator< (map<Key, T, Compare> &lhs,
-					map<Key, T, Compare> &rhs)
-	{
-		return (!((rhs == lhs) || (rhs > lhs)));
-	}
-
-	template<class Key, class T, class Compare>
-	bool operator> (map<Key, T, Compare> &lhs,
-					map<Key, T, Compare> &rhs)
+		return (!(lhs == rhs));
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
 	{
 		if (lhs.size() > rhs.size())
 			return (true);
-		typename map<Key, T, Compare>::const_iterator it = lhs.begin();
-		typename map<Key, T, Compare>::const_iterator it2 = rhs.begin();
+		typename ft::map<Key, T, Compare, Alloc>::const_iterator it = lhs.begin();
+		typename ft::map<Key, T, Compare, Alloc>::const_iterator it2 = rhs.begin();
 		while (it != lhs.end() && it2 != rhs.end())
 		{
 			if (*it > *it2)
@@ -1009,21 +1002,22 @@ namespace   ft
 			++it;
 		}
 		return (false);
-	}
-
-	template<class Key, class T, class Compare>
-	bool operator<= (map<Key, T, Compare> &lhs,
-					 map<Key, T, Compare> &rhs)
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
 	{
-		return ((rhs < lhs) || (rhs == lhs));
-	}
-
-	template<class Key, class T, class Compare>
-	bool operator>= (map<Key, T, Compare> &lhs,
-					 map<Key, T, Compare> &rhs)
+		return (!(lhs > rhs) && !(lhs == rhs));
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
 	{
-		return ((rhs > lhs) || (rhs == lhs));
-	}
+		return (!(lhs < rhs));
+	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+	{
+		return (!(lhs > rhs));
+	};
 }
 
 #endif
